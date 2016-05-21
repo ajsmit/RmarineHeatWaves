@@ -1,0 +1,23 @@
+Package: RmarineHeatWaves
+Type: Package
+Title: Detect Marine Heat Waves and Marine Cold Spells
+Version: 0.7.0
+Author: Eric C. J. Oliver, Robert W. Schlegel, Albertus J. Smit
+Maintainer: Albertus J. Smit <albertus.smit@gmail.com>
+Suggests: ggplot2
+Imports:
+    zoo,
+    lubridate,
+    reshape2,
+    plyr,
+    raster,
+    dplyr
+Description: Applies the Hobday et al. (2016) marine heat wave definition to
+    an input time series of temperature along with a time vector. It outputs
+    properties of all detected marine heat waves. The package provides data
+    of observed SST records for three three historical MHWs: the 2011
+    Western Australia event, the 2012 Northwest Atlantic event, and the
+    2003 Mediterranean event.
+License: GPL-2
+LazyData: TRUE
+RoxygenNote: 5.0.1
