@@ -47,8 +47,6 @@
 #' @param cold_spells Boolean specifying if the code should detect cold events
 #' instead of heat events. Default is \code{FALSE}.
 #'
-#' @details
-#'
 #' @return The function will return a list of two components, \code{clim} and
 #' \code{mhw}, which are the climatology and MHW events, respectively. The
 #' climatology contains the full time series of daily temperatures, as well as
@@ -119,11 +117,8 @@ detect <-
     #
     # Sort out the dates.
     #===========================================================================
-    # TODO: test if specified years are full years...
-    # TODO: what happens when climatology_period is given but dates outside of
-    # the time series are provided? It should fail with the appropriate error
-    # message retruned - possibly something helpful such as start and end dates.
-    clim_start <- paste(climatology_period[1], "01", "01", sep = "-")
+    clim_start <-
+      paste(climatology_period[1], "01", "01", sep = "-")
     clim_end <- paste(climatology_period[2], "12", "31", sep = "-")
 
     t_series <- data
@@ -134,7 +129,7 @@ detect <-
 
     # Flip temperature in time series if detecting cold spells.
     if (cold_spells)
-      t_series <- -1 * t_series
+      t_series$temp <- -t_series$temp
 
     #
     # Calculate start and end dates if not provided.
@@ -266,6 +261,9 @@ detect <-
     s1 <- split(zoo::index(t_series$thresh_criterion), ind1)
     # Find contiguous regions of thresh_criterion = TRUE.
     proto_events <- s1[ex1$values == TRUE]
+    # Not necessary for the normal functioning of the package, but it suppresses
+    # the notes when checking package build; marked with ###
+    index_stop <- index_start <- NULL ###
     proto_events_rng <-
       lapply(proto_events, function(x)
         data.frame(index_start = min(x), index_stop = max(x)))
@@ -273,6 +271,7 @@ detect <-
     # Set mode = TRUE for detecting 'proto-events' (i.e. tresholds exceeded but
     # not yet meeting the min_duration criterion), and mode = FALSE for
     # detecting the gaps between protoevents.
+    duration <- NULL ###
     protoFunc <- function(data, mode = TRUE)  {
       out <- dplyr::mutate(data, duration = index_stop - index_start + 1)
       if (mode)
@@ -328,6 +327,7 @@ detect <-
     ind3 <- rep(seq_along(ex3$lengths), ex3$lengths)
     s3 <- split(zoo::index(t_series$event), ind3)
     events <- s3[ex3$values == TRUE]
+    event_no <- NULL ###
     events_rng <-
       lapply(events, function(x)
         data.frame(index_start = min(x), index_stop = max(x)))
@@ -362,7 +362,15 @@ detect <-
       ))
 
     # intensity metrics
-    ### index_peak
+    int_mean <-
+      int_max <-
+      int_cum <-
+      int_mean_rel_thresh <-
+      int_max_rel_thresh <-
+      int_cum_rel_thresh <-
+      int_mean_abs <-
+      int_max_abs <-
+      int_cum_abs <- int_mean_norm <- int_max_norm <- temp <- doy <- NULL ###
     events$date_peak <-
       plyr::ldply(events_list, function(x)
         x$date[x$mhw_rel_seas == max(x$mhw_rel_seas)][1])[, 2]
@@ -414,7 +422,6 @@ detect <-
     # last point)
     # rate of onset
     mhw_rel_seas <- t_series$temp - t_series$seas_clim_year
-
     A <- mhw_rel_seas[events$index_start]
     B <- t_series$temp[events$index_start - 1]
     C <- t_series$seas_clim_year[events$index_start - 1]
@@ -472,6 +479,28 @@ detect <-
       )
     }
     events$rate_decline <- rateDecline(events, stopType)
+
+    # Revert climatology and flip and intensties in case of cold spell detection.
+    if (cold_spells) {
+      events <- events %>% dplyr::mutate(
+        int_mean = -int_mean,
+        int_max = -int_max,
+        int_cum = -int_cum,
+        int_mean_rel_thresh = -int_mean_rel_thresh,
+        int_max_rel_thresh = -int_max_rel_thresh,
+        int_cum_rel_thresh = -int_cum_rel_thresh,
+        int_mean_abs = -int_mean_abs,
+        int_max_abs = -int_max_abs,
+        int_cum_abs = -int_cum_abs,
+        int_mean_norm = -int_mean_norm,
+        int_max_norm = -int_max_norm
+      )
+      t_series <- t_series %>% dplyr::mutate(
+        temp = -temp,
+        seas_clim_year = -seas_clim_year,
+        thresh_clim_year = -thresh_clim_year
+      )
+    }
 
     list(clim = t_series,
          mhw = events)

@@ -70,6 +70,7 @@ make_whole <- function(data) {
 
   # Modify day-of-year vector so that non-leap-years run 1...59 then 61...366.
   feb28 <- 59
+  doy <- NULL ###
   tSeries <-
     data.frame(
       doy = lubridate::yday(tSeries),

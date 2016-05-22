@@ -103,9 +103,6 @@ i.e., threshold - climatology.)
 Applies the Hobday et al. (2016) marine heat wave definition to an input time
 series of temperature along with a time vector.
 }
-\details{
-
-}
 \examples{
 t_dat <- make_whole(sst_WA)
 res <- detect(t_dat, climatology_period = c(1983, 2012))
