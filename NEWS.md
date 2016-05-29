@@ -1,31 +1,60 @@
 ---
 output: pdf_document
 ---
-# RmarineHeatWaves 0.8.0.
+# RmarineHeatWaves 0.9.3.
 
-# Version changes:
-## Changes in version 0.8.0
-* MCS option enabled.
-* Hacky changes to suppress some notes during package compilation.
+# VERSION CHANGES:
+## Changes in version 0.9.3 (29-MAY-2016)
+* Expanded documentation.
 
-## Changes in version 0.7.0
-* Internal variable name changes (remove more camelCase).
+## Changes in version 0.9.2 (29-MAY-2016)
+* Changes to 'event_line' documentation.
+* Renamed 'metric' options to function as 'mean', 'maximum', 'cumulative'.
+* Added more TODOs at the bottom of this file.
+
+## Changes in version 0.9.1 (28-MAY-2016)
+* Minor refinements to the documentation (i.e. package description).
+
+## Changes in version 0.9.0 (28-MAY-2016)
+* Replace 'mhw' with 'event'.
+* Add basic plotting functionality a-la Robert Schlegel in the form of the 
+'event_line' function (plus edits to make Rob's code produce a clean build 
+process, thereby avoiding throwing 'notes' that might be frowned upon by the 
+CRAN people.)
+* Renamed some things: 'make_whole.R' -> 'makeWhole.R'; 'marineHeatWaves-package.r' 
+-> 'RmarineHeatWaves-package.r'; 'marineHeatWaves.R' -> 'RmarineHeatWaves.R'.
+
+## Changes in version 0.8.2 (22-MAY-2016)
+* Include CITATION file.
+* Update DESCRIPTION file.
+* Update author, creator and contributor roles.
+
+## Changes in version 0.8.1 (22-MAY-2016)
+* Add dates to NEWS.md file.
+
+## Changes in version 0.8.0 (22-MAY-2016)
+* Marine cold spell option enabled.
+* Hacky changes to suppress some notes during package compilation, needed for
+acceptance to CRAN, apparently.
+
+## Changes in version 0.7.0 (20-MAY-2016)
+* Internal variable name changes (replace more camelCase).
 * Less problematic handling of NA.
 * Improved/expanded documentation.
 
-## Changes in version 0.6.0
+## Changes in version 0.6.0 (19-MAY-2016)
 * Internal variable name changes (replace camelCase).
 * Split out 'make_whole' function.
 * Add 'make_whole' example.
 
-## Changes in version 0.5.0
+## Changes in version 0.5.0 (18-MAY-2016)
 * Added data and a functional example.
 * Slightly improved documentation.
 
-## Changes in version 0.4.0
+## Changes in version 0.4.0 (18-MAY-2016)
 * Robert Schlegel added as co-author for work on graphing functions.
 
-## Changes in version 0.3.0
+## Changes in version 0.3.0 (18-MAY-2016)
 * Changed 'eventNo' calculation to properly reflect the actual events, and not 
 one of the proto-event types.
 * Changed ID variable in 'mhw' output to 'eventNo', thereby following the same
@@ -33,7 +62,7 @@ naming convention.
 * Removed ', .id = NULL' from the event metrics 'ldply' calculations, enabling
 compatibility with plyr (version < 1.8.3).
 
-## Changes in version 0.2.0
+## Changes in version 0.2.0 (17-MAY-2016)
 * Add 'eventNo' to climatology output to identify each unique event and to
 fascilitate plotting of filled polygons using 'geom_polygon' in ggplot2, as per
 Robert Schlegel's suggestion.
@@ -49,3 +78,17 @@ retruned - possibly something helpful such as start and end dates of the first
 and last full years.
 * Enable 'smooth_percentile' = TRUE / FALSE.
 * Enable 'join_across_gaps' = TRUE / FALSE.
+* 'event_line' function: if 'start_date' and 'end_date' are not provided, make
+the function automatically select the beginning and end dates of the whole time
+series.
+* 'event_line' function: Windows computers do not easily produce pdf files as 
+output. Provide the option to output png and jpg files, and maybe have a jpg as
+default.
+
+# THOUGHTS:
+* My intention with the output is that the objects are simple enough for users 
+to interact with directly ...
+* Implement diagnostics, assessment, and exploration of the input data.
+* Implement diagnostics, assessment, and exploration of these data objects.
+* Could the review of these data objects be streamlined using classes and methods?
+* If so, how should these be structured?

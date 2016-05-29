@@ -12,13 +12,13 @@
 #' is a vector of dates of class \code{Date}, while \code{temp} is the
 #' temperatures. Data of the appropriate format are created by the function
 #' \code{\link{make_whole}}, but your own data can be supplied if they meet the
-#' criteria specified by \code{make_whole}.
+#' criteria specified by \code{\link{make_whole}}.
 #' @param climatology_period Period over which the (varying by day-of-year)
-#' seasonal cycle and extremes threshold are calculated. The function checks if
-#' the years are full years (either 365 or 366 days), and if not, will find the
-#' next (and/or previous) available full year. It is recommended that a
-#' climatology period of at least 30 years is specified in order to capture
-#' decadal thermal periodicities. Default is \code{c(1983, 2012)}.
+#' seasonal cycle and extremes threshold are calculated. It is recommended
+#' that a climatology period of at least 30 years is specified in order to capture
+#' decadal thermal periodicities. Default is \code{c(1983, 2012)}. If omitted, the
+#' function checks if the years are full years (either 365 or 366 days), and if
+#' not, will automatically find the first and last full years for the climatology.
 #' @param pctile Threshold percentile (\%) for detection of extreme values.
 #' Default is \code{90}th percentile for marine heat waves and \code{10}th
 #' percentile for marine cold spells.
@@ -47,26 +47,77 @@
 #' @param cold_spells Boolean specifying if the code should detect cold events
 #' instead of heat events. Default is \code{FALSE}.
 #'
+#' @details
+#' \enumerate{
+#' \item This function assumes that the input time series consists of continuous
+#' daily values with few missing values. Time ranges which start and end
+#' part-way through the calendar year are supported. The accompanying function
+#' \code{\link{make_whole}} aids in the preparation of a time series that is
+#' suitable for use with \code{detect}, although this may also be accomplished
+#' 'by hand' as long as the criteria are met as discussed in the documentation
+#' to \code{\link{make_whole}}.
+#' documentation.
+#' \item This function supports leap years. This is done by ignoring Feb 29s
+#' for the initial calculation of the climatology and threshold. The value of
+#' these for Feb 29 is then linearly interpolated from the values for Feb 28
+#' and Mar 1.
+#' \item The calculation of onset and decline rates assumes that the heat wave
+#' started a half-day before the start day and ended a half-day after the
+#' end-day. (This is consistent with the duration definition as implemented,
+#' which assumes duration = end day - start day + 1.)
+#' \item For the purposes of MHW detection, any missing temp values not
+#' interpolated over (through optional \code{maxPadLLength}) will be set equal
+#' to the seasonal climatology. This means they will trigger the end/start of
+#' any adjacent temp values which satisfy the MHW criteria.
+#' \item If the code is used to detect cold events (\code{coldSpells} = TRUE),
+#' then it works just as for heat waves except that events are detected as
+#' deviations below the (100 - pctile)th percentile  (e.g., the 10th instead of
+#' 90th) for at least 5 days. Intensities are reported as negative values and
+#' represent the temperature anomaly below climatology.
+#' }
+#' The original python algorithm was written by Eric Oliver, Institue for
+#' Marine and Antarctic Studies, University of Tasmania, Feb 2015, and is
+#' documented by Hobday et al. (2016). The marine cold spell option was
+#' implemented in version 0.13 (21 Nov 2015) in the python module as a result
+#' of our the preparation of Schlegel et al. (submitted), wherein the cold events
+#' receive a brief overview.
+#'
 #' @return The function will return a list of two components, \code{clim} and
-#' \code{mhw}, which are the climatology and MHW events, respectively. The
+#' \code{event}, which are the climatology and MHW (or MCS) events, respectively. The
 #' climatology contains the full time series of daily temperatures, as well as
 #' the the seasonal climatology, the threshold and various aspects of the
-#' events that were detected. The events are summarised using a range of event
-#' metrics:
-#'   \item{index_start}{Start index of MHW.}
-#'   \item{index_stop}{Stop index of MHW}
+#' events that were detected:
+#'   \item{doy}{Julian day (day-of-year). For non-leap years it runs 1...59 and
+#'   61...366, while leap years run 1...366.}
+#'   \item{date}{The date of the temperature measurement.}
+#'   \item{temp}{Seawater temperature on the specified date [deg. C].}
+#'   \item{seas_clim_year}{Climatological seasonal cycle [deg. C].}
+#'   \item{thresh_clim_year}{Seasonally varying threshold (e.g., 90th
+#'   percentile) [deg. C].}
+#'   \item{thresh_criterion}{Boolean indicating if \code{temp} exceeds
+#'   \code{thresh_clim_year}.}
+#'   \item{duration_criterion}{Boolean indicating whether periods of consecutive
+#'   \code{thresh_criterion} are >= \code{min_duration}.}
+#'   \item{event}{Boolean indicting if all criteria that define a MHW or MCS are
+#'   met.}
+#'   \item{event_no}{A sequential number indicating the number and order of
+#'   occurence of the MHWs or MCSs.}
+#'
+#' The events are summarised using a range of event metrics:
+#'   \item{index_start}{Start index of event.}
+#'   \item{index_stop}{Stop index of event.}
 #'   \item{event_no}{A sequential ID number indicating the identity and order of
 #'   the events.}
-#'   \item{duration}{Duration of MHW [days].}
-#'   \item{date_start}{Start date of MHW [date].}
-#'   \item{date_stop}{Stop date of MHW [date].}
-#'   \item{date_peak}{Date of MHW peak [date].}
+#'   \item{duration}{Duration of event [days].}
+#'   \item{date_start}{Start date of event [date].}
+#'   \item{date_stop}{Stop date of event [date].}
+#'   \item{date_peak}{Date of event peak [date].}
 #'   \item{int_mean}{Mean intensity [deg. C].}
 #'   \item{int_max}{Maximum (peak) intensity [deg. C].}
 #'   \item{int_var}{Intensity variability (standard deviation) [deg. C].}
 #'   \item{int_cum}{Cumulative intensity [deg. C x days].}
-#'   \item{rate_onset}{Onset rate of MHW [deg. C / days].}
-#'   \item{rate_decline}{Decline rate of MHW [deg. C / days].}
+#'   \item{rate_onset}{Onset rate of event [deg. C / day].}
+#'   \item{rate_decline}{Decline rate of event [deg. C / day].}
 #'
 #' \code{int_max_rel_thresh}, \code{int_mean_rel_thresh},
 #' \code{int_var_rel_thresh}, and \code{int_cum_rel_thresh}
@@ -79,7 +130,7 @@
 #'
 #' \code{int_max_norm} and \code{int_mean_norm} are as above except
 #' units are in multiples of threshold exceedances, i.e., a value of 1.5
-#' indicates the MHW intensity (relative to the climatology) was 1.5 times the
+#' indicates the event intensity (relative to the climatology) was 1.5 times the
 #' value of the threshold (relative to climatology,
 #' i.e., threshold - climatology.)
 #'
@@ -101,7 +152,7 @@
 #' # show a portion of the climatology:
 #' head(res$clim)
 #' # show some of the heat waves:
-#' res$mhw[1:5, 1:10]
+#' res$event[1:5, 1:10]
 detect <-
   function(data,
            climatology_period = c(1983, 2012),
@@ -503,5 +554,5 @@ detect <-
     }
 
     list(clim = t_series,
-         mhw = events)
+         event = events)
   }

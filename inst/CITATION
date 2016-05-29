@@ -1,0 +1,51 @@
+citHeader("To cite the theory behind marine heat waves and the underlying algorithm,
+          please cite Hobday et al. (2016). To cite the RmarineHeatWaves package,
+          the reference is Smit et al. (2016). Details follow:")
+
+year <- sub("-.*", "", meta$Date)
+note <- sprintf("R package version %s", meta$Version)
+
+citEntry(entry = "Article",
+    author = personList(as.person("Alistair J. Hobday"),
+                        as.person("Lisa V. Alexander"),
+                        as.person("Sarah E. Perkins"),
+                        as.person("Dan A. Smale"),
+                        as.person("Sandra C. Straub"),
+                        as.person("Eric C.J. Oliver"),
+                        as.person("Jessica A. Benthuysen"),
+                        as.person("Michael T. Burrows"),
+                        as.person("Markus G. Donat"),
+                        as.person("Ming Feng"),
+                        as.person("Neil J. Holbrook"),
+                        as.person("Pippa J. Moore"),
+                        as.person("Hillary A. Scannell"),
+                        as.person("Alex Sen Gupta"),
+                        as.person("Thomas Wernberg")),
+    title = "A hierarchical approach to defining marine heatwaves.",
+    journal = "Progress in Oceanography", year = 2016,
+    volume = 141, pages = "227--238",
+    url = "http://www.sciencedirect.com/science/article/pii/S0079661116000057",
+    textVersion = paste("Hobday, A. J., Alexander, L. V., Perkins, S. E., Smale, D. A., Straub, S. C., Oliver, E. C. J., et al. (2016)",
+        "A hierarchical approach to defining marine heatwaves.",
+        "Progress in Oceanography, 141(C), 227--238"))
+
+citEntry(entry = "manual",
+    title = "{RmarineHeatWaves}: {P}ackage for the calculation of marine heat waves",
+    author = c(person("Albertus J. Smit"),
+               person("Eric C. J. Oliver"),
+               person("Robert W. Schlegel")),
+    organization = "University of the Western Cape",
+    address = "Belville, Cape Town, South Africa",
+    note = note,
+    year = year,
+    url = "https://github.com/ecjoliver/marineHeatWaves",
+    textVersion  = paste("Smit, A. J. et al. (2016)",
+        "RmarineHeatWaves: Package for the calculation of marine heat waves",
+        "Version 0.8.2. University of the Western Cape, Belville, Cape Town, South Africa.",
+        "https://github.com/ecjoliver/marineHeatWaves")
+)
+
+citFooter("As RmarineHeatWaves is continually evolving, you may want to cite its
+          version number. Find it with 'help(package=RmarineHeatWaves)'.
+          If you do not want to cite the R package, at the very least cite
+          Hobday et al. (2016). It would be nice if both were cited, however!")

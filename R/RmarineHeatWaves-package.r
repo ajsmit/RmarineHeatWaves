@@ -1,4 +1,4 @@
-#' marineHeatWaves
+#' RmarineHeatWaves.
 #'
 #' This package is an R implementation of the python script \code{marineHeatWaves}
 #' (\url{https://github.com/ecjoliver/marineHeatWaves}) written by Eric C. J.
@@ -8,8 +8,8 @@
 #' it is equally capable of detecting marine cold spells (MCS). This
 #' functionality is also present in the python package, where it was
 #' implemented as a result of the publication Schlegel et al. (submitted for
-#' review in April 2016), wherein the quantification and detection of the
-#' anomalously cold events were first discussed.
+#' review in April 2016) that discusses the quantification and detection of the
+#' anomalously cold events.
 #'
 #' The main function is the detection function \code{\link{detect}} which takes as
 #' input a time series of temperature (and a corresponding series of dates)
@@ -27,14 +27,14 @@
 #' @author Albertus J. Smit <\email{ajsmit@@uwc.ac.za}>, Robert W. Schlegel,
 #' Eric C. J. Oliver
 #'
-#' @references Hobday, A.J. et al. (2016), A hierarchical approach to defining
-#' marine heatwaves, Progress in Oceanography, 141, pp. 227-238,
+#' @references Hobday, A. J. et al. (2016), A hierarchical approach to defining
+#' marine heatwaves. Progress in Oceanography, 141, pp. 227-238,
 #' doi: 10.1016/j.pocean.2015.12.014 (official citation for this package).
 #'
-#' Schlegel, R. W., Oliver, C. J., Wernberg, T. W., Smit, A. J. (submitted)
+#' Schlegel, R. W., Oliver, E. C. J., Wernberg, T. W., Smit, A. J. (submitted)
 #' Coastal and offshore co-occurrences of marine heatwaves and cold-spells.
 #' Progress in Oceanography.
 #'
-#' @name marineHeatWaves
+#' @name RmarineHeatWaves
 #' @docType package
 NULL

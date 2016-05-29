@@ -1,23 +1,34 @@
 Package: RmarineHeatWaves
-Type: Package
+Version: 0.9.3
+Date: 2016-05-22
 Title: Detect Marine Heat Waves and Marine Cold Spells
-Version: 0.7.0
-Author: Eric C. J. Oliver, Robert W. Schlegel, Albertus J. Smit
-Maintainer: Albertus J. Smit <albertus.smit@gmail.com>
-Suggests: ggplot2
+Type: Package
+Authors@R: c(person("Albertus J.", "Smit", role = c("aut", "cre"),
+    email = "ajsmit@uwc.ac.za", comment = "R implementation."),
+    person("Eric C. J.", "Oliver", role = "aut", comment = "The brain. Python
+    implementation."),
+    person("Robert W.", "Schlegel", role = "ctb", comment = "Graphical and data
+    summaries."))
+Author: Albertus J. Smit [aut, cre],
+    Eric C. J. Oliver [aut],
+    Robert W. Schlegel [ctb]
+Maintainer: Albertus J. Smit <ajsmit@uwc.ac.za>
 Imports:
+    ggplot2,
     zoo,
     lubridate,
     reshape2,
     plyr,
     raster,
-    dplyr
+    dplyr,
+    grid
 Description: Applies the Hobday et al. (2016) marine heat wave definition to
-    an input time series of temperature along with a time vector. It outputs
-    properties of all detected marine heat waves. The package provides data
-    of observed SST records for three three historical MHWs: the 2011
-    Western Australia event, the 2012 Northwest Atlantic event, and the
-    2003 Mediterranean event.
+    an input time series of daily temperature. It outputs properties of all
+    detected marine heat waves (and marine cold spells sensu Schlegel et al.,
+    submitted). The package provides data of observed SST records for three
+    historical MHWs: the 2011 Western Australia event, the 2012 Northwest
+    Atlantic event and the 2003 Mediterranean event.
 License: GPL-2
+URL: https://github.com/ecjoliver/marineHeatWaves
 LazyData: TRUE
 RoxygenNote: 5.0.1
