@@ -23,10 +23,11 @@
 #' @param spread The the number of days leading and trailing the largest event
 #' (as per \code{metric}) detected within the time period specified by
 #' \code{start_date} and \code{end_date}. The default is 150 days.
-#' @param metric One of the following options: \code{mean}, \code{maximum}, \code{cumulative} or
-#' \code{duration}. These refer to the mean intensity [deg. C], maximum (peak)
-#' intensity [deg. C], cumulative intensity [deg. C x days] or duration of the MHW
-#' or MCS [days], respectively. The default is \code{cum_sum}.
+#' @param metric One of the following options: \code{int_mean}, \code{int_max}, \code{int_var},
+#' \code{int_cum}, \code{int_mean_rel_thresh}, \code{int_max_rel_thresh}, \code{int_var_rel_thresh},
+#' \code{int_cum_rel_thresh}, \code{int_mean_abs}, \code{int_max_abs}, \code{int_var_abs},
+#' \code{int_cum_abs}, \code{int_mean_norm}, \code{int_max_norm}, \code{rate_onset}, \code{rate_decline}.
+#' The default is \code{int_cum}.
 #' @param start_date The start date of a period of time within which the largest
 #' event (as per \code{metric}) is retrieved and plotted. This may not necessarily
 #' correspond to the biggest event of the specified metric within the entire
@@ -64,38 +65,22 @@
 #' file_name = "WA_event.pdf")
 #' }
 event_line <- function(data,
-                      spread = 150,
-                      metric = "cumulative",
-                      start_date = "1999-06-30",
-                      end_date = "2000-05-30",
-                      file_name = "eventPlot.pdf") {
-# The start and end dates are intentionally switched to allow for events that
-# end or begin within the designated time to be scanned for the size of their metrics.
-  date_stop <- date_start <- int_max <- int_mean <- int_cum <- duration <- NULL # avoids annoying notes during check...
-  event <- dplyr::filter(data$event, date_stop >= start_date & date_start <= end_date)
-  if (nrow(event) == 0) stop("No events detected!")
-  if (metric == "maximum") {
-    event <- dplyr::arrange(event, abs(int_max))
-  } else if (metric == "mean") {
-    event <- dplyr::arrange(event, abs(int_mean))
-  } else if (metric == "cumulative") {
-    event <- dplyr::arrange(event, abs(int_cum))
-  } else if (metric == "duration") {
-    event <- dplyr::arrange(event, abs(duration))
-  }
-# TODO: Must insert a bit of logic here if there is a tie for largest value
-  eventTop <- event[nrow(event), ]
+                       spread = 150,
+                       metric = "int_cum",
+                       start_date = "1999-06-30",
+                       end_date = "2000-05-30",
+                       file_name = "eventPlot.pdf") {
+  date_stop <- date_start <- int_max <- int_mean <- int_cum <- duration <- NULL
 
-# Create index of dates by which to plot as determined by eventTop
+  event <- data$event %>%
+    dplyr::filter(date_stop >= start_date & date_start <= end_date)
+  if (nrow(event) == 0) stop("No events detected!")
+  event <- event[order(-abs(event[colnames(event) == metric])),]
+  eventTop <- event[1, ]
+
   date_spread <- seq((eventTop$date_start - spread), (eventTop$date_stop + spread), by = 1)
 
-# Subset only the given range of dates as discerned by the "spread" variable
   clim <- dplyr::filter(data$clim, date %in% date_spread)
-
-# Create closed pathways for each event so they plot correctly.
-#
-# TODO: Rob, this bit here which results in 'dat3' does not work for MCSs
-# detected in the sst_NW_Atl data set...
 
   temp <- event_no <- thresh_clim_year <- seas_clim_year <- NULL # avoids annoying notes during check...
   dat3 <- data.frame()
@@ -119,7 +104,6 @@ event_line <- function(data,
     dat3 <- rbind(dat3, z)
   }
 
-# Plot and save
   lineCol <- c(
     "temperature" = "black",
     "climatology" = "blue",
@@ -147,7 +131,6 @@ event_line <- function(data,
     scale_fill_manual(name = NULL, values = fillCol) +
     scale_x_date(expand = c(0, 0), date_labels = "%b %Y") +
     ylab(expression(paste("[", degree, "C]"))) + xlab(NULL) +
-    # put theme here for reasons to do with building the package... will fix later
     theme(
       axis.text = element_text(colour = "black"),
       legend.position = c(0, 1),

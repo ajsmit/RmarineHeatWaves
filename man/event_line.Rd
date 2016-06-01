@@ -4,7 +4,7 @@
 \alias{event_line}
 \title{Create a Line Plot of Marine Heat Waves or Cold Spells.}
 \usage{
-event_line(data, spread = 150, metric = "cumulative",
+event_line(data, spread = 150, metric = "int_cum",
   start_date = "1999-06-30", end_date = "2000-05-30",
   file_name = "eventPlot.pdf")
 }
@@ -15,10 +15,11 @@ event_line(data, spread = 150, metric = "cumulative",
 (as per \code{metric}) detected within the time period specified by
 \code{start_date} and \code{end_date}. The default is 150 days.}
 
-\item{metric}{One of the following options: \code{mean}, \code{maximum}, \code{cumulative} or
-\code{duration}. These refer to the mean intensity [deg. C], maximum (peak)
-intensity [deg. C], cumulative intensity [deg. C x days] or duration of the MHW
-or MCS [days], respectively. The default is \code{cum_sum}.}
+\item{metric}{One of the following options: \code{int_mean}, \code{int_max}, \code{int_var},
+\code{int_cum}, \code{int_mean_rel_thresh}, \code{int_max_rel_thresh}, \code{int_var_rel_thresh},
+\code{int_cum_rel_thresh}, \code{int_mean_abs}, \code{int_max_abs}, \code{int_var_abs},
+\code{int_cum_abs}, \code{int_mean_norm}, \code{int_max_norm}, \code{rate_onset}, \code{rate_decline}.
+The default is \code{int_cum}.}
 
 \item{start_date}{The start date of a period of time within which the largest
 event (as per \code{metric}) is retrieved and plotted. This may not necessarily

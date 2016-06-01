@@ -48,15 +48,15 @@ the event metrics can be determined, but also for the number of events that
 can be detected.
 }
 \examples{
-require(dplyr); require(reshape2); require(lubridate)
+require(dplyr); require(tidyr); require(lubridate)
 ts_dat <- make_whole(sst_WA)
 clim_start <- "1983-01-01"
 clim_end <- "2012-12-31"
 ts_dat \%>\%
-   filter(date >= clim_start & date <= clim_end) \%>\%
-   dcast(doy ~ year(date), value.var = "temp", fill = as.numeric(NA)) \%>\%
-   as.data.frame() \%>\%
-   filter(doy >= 55 & doy <= 65)
+filter(date >= clim_start & date <= clim_end) \%>\%
+  mutate(date = year(date)) \%>\%
+  spread(date, temp) \%>\%
+  filter(doy >= 55 & doy <= 65)
 }
 \author{
 Smit, A. J.

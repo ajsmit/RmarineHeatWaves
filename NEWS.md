@@ -1,9 +1,21 @@
 ---
 output: pdf_document
 ---
-# RmarineHeatWaves 0.10.2.
+# RmarineHeatWaves 0.11.1
 
-# VERSION CHANGES:
+# VERSION CHANGES
+## Changes in version 0.11.1 (1-JUNE-2016)
+* Minor edits to event_line as per Robert Schlegel (allows broader selection of
+metrics for plotting.)
+
+## Changes in version 0.11.0 (1-JUNE-2016)
+* block_average() rewritten -- it is now based upon dplyr functions so it is 
+faster and more stream-lined.
+* Completely removed the use of reshape2 in favour of tidyr.
+
+## Changes in version 0.10.3 (1-JUNE-2016)
+* All comments removed inside of functions.
+
 ## Changes in version 0.10.2 (1-JUNE-2016)
 * Minor changes to the version change info provided for v0.10.1. 
 

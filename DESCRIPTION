@@ -1,12 +1,12 @@
 Package: RmarineHeatWaves
-Version: 0.10.2
+Version: 0.11.0
 Date: 2016-06-01
 Title: Detect Marine Heat Waves and Marine Cold Spells
 Type: Package
 Authors@R: c(person("Albertus J.", "Smit", role = c("aut", "cre"),
     email = "ajsmit@uwc.ac.za", comment = "R implementation."),
-    person("Eric C. J.", "Oliver", role = "aut", comment = "The brain. Python
-    implementation."),
+    person("Eric C. J.", "Oliver", role = "aut", comment = "The brain behind
+    the Python implementation."),
     person("Robert W.", "Schlegel", role = "ctb", comment = "Graphical and data
     summaries."))
 Author: Albertus J. Smit [aut, cre],
@@ -17,7 +17,7 @@ Imports:
     ggplot2,
     zoo,
     lubridate,
-    reshape2,
+    tidyr,
     plyr,
     raster,
     dplyr,

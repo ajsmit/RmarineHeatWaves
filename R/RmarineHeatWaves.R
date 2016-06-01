@@ -164,31 +164,18 @@ detect <-
            max_gap = 2,
            max_pad_length = 3,
            cold_spells = FALSE) {
-    #
-    # Sort out the dates.
-    #===========================================================================
+
     clim_start <-
       paste(climatology_period[1], "01", "01", sep = "-")
     clim_end <- paste(climatology_period[2], "12", "31", sep = "-")
 
     t_series <- data
-
-    # Handles missing days.
     t_series$temp <-
       zoo::na.approx(t_series$temp, maxgap = max_pad_length)
-
-    # Flip temperature in time series if detecting cold spells.
     if (cold_spells)
       t_series$temp <- -t_series$temp
 
-    #
-    # Calculate start and end dates if not provided.
-    #===========================================================================
-    # Start and end indices: find first day of the first full year and the last
-    # day of the last full year for climatological period.
     len_clim_year <- 366
-    # Check to see if clim_start and clim_end were provided; if not, calculate
-    # them based on the first and last full year available.
     if (exists("clim_start") & exists("clim_end")) {
       clim_start <- clim_start
       clim_end <- clim_end
@@ -229,19 +216,17 @@ detect <-
         tail(dplyr::filter(t_series, lubridate::year(date) == clim_end), 1)[, "date"]
     }
 
-    # Calculate threshold and seasonal climatology (varying with day-of-year).
-    #===========================================================================
-    # Use a 366-day year.
     tDat <- t_series %>%
       dplyr::filter(date >= clim_start & date <= clim_end) %>%
-      reshape2::dcast(doy ~ lubridate::year(date), value.var = "temp") %>%
-      as.data.frame()
+      dplyr::mutate(date = lubridate::year(date)) %>%
+      tidyr::spread(date, temp)
 
-    # For non-leap years, replace feb29 (doy = 60) with a value interpolated
-    # across Feb 28 and Mar 1, ONLY IF the latter days exist.
-    all_NA <- apply(tDat[59:61,], 2, function(x) !all(is.na(x)))
-    no_NA <- names(all_NA[all_NA > 0])
-    tDat[59:61,no_NA] <- zoo::na.approx(tDat[59:61,no_NA], maxgap = 1, na.rm = TRUE)
+    all_NA <- apply(tDat[59:61, ], 2, function(x)
+      ! all(is.na(x)))
+    no_NA <-
+      names(all_NA[all_NA > 0]) # compatibility with zoo < 1.7.13...
+    tDat[59:61, no_NA] <-
+      zoo::na.approx(tDat[59:61, no_NA], maxgap = 1, na.rm = TRUE)
     tDat <-
       rbind(tail(tDat, window_half_width),
             tDat,
@@ -290,39 +275,21 @@ detect <-
         )
     }
 
-    # Generate climatology and threshold for full time series.
     t_series <- dplyr::inner_join(t_series, clim, by = "doy")
-    # Set all remaining missing temp values equal to the climatology.
     t_series$temp[is.na(t_series$temp)] <-
       t_series$seas_clim_year[is.na(t_series$temp)]
 
-    #
-    # Detect events
-    #===========================================================================
-    # Find 'proto-events' as exceedances above the threshold and find gaps
-    # inbetween these proto-events. Proto-events are regions of the time series
-    # where temperatures exceed the threshold, but where criteria pertaining to
-    # the event duration (min_duration) and gaps between regions of exceedances
-    # (max_gap) are not yet met.
     t_series$thresh_criterion <-
       t_series$temp > t_series$thresh_clim_year
-    # Find lengths of TRUE (stretches where temperature > threshold)
-    # and FALSE (otherwise).
     ex1 <- rle(t_series$thresh_criterion)
     ind1 <- rep(seq_along(ex1$lengths), ex1$lengths)
     s1 <- split(zoo::index(t_series$thresh_criterion), ind1)
-    # Find contiguous regions of thresh_criterion = TRUE.
     proto_events <- s1[ex1$values == TRUE]
-    # Not necessary for the normal functioning of the package, but it suppresses
-    # the notes when checking package build; marked with ###
     index_stop <- index_start <- NULL ###
     proto_events_rng <-
       lapply(proto_events, function(x)
         data.frame(index_start = min(x), index_stop = max(x)))
 
-    # Set mode = TRUE for detecting 'proto-events' (i.e. tresholds exceeded but
-    # not yet meeting the min_duration criterion), and mode = FALSE for
-    # detecting the gaps between protoevents.
     duration <- NULL ###
     protoFunc <- function(data, mode = TRUE)  {
       out <- dplyr::mutate(data, duration = index_stop - index_start + 1)
@@ -338,7 +305,6 @@ detect <-
       return(out)
     }
 
-    # Find proto-events that are >= min_duration.
     proto_events <- do.call(rbind, proto_events_rng) %>%
       dplyr::mutate(event_no = cumsum(ex1$values[ex1$values == TRUE])) %>%
       protoFunc(mode = TRUE)
@@ -348,12 +314,10 @@ detect <-
         rep(TRUE, length = proto_events$duration[i])
     }
 
-    # Find gaps between proto-events that are <= minGap.
     ex2 <- rle(t_series$duration_criterion)
     ind2 <- rep(seq_along(ex2$lengths), ex2$lengths)
     s2 <- split(zoo::index(t_series$thresh_criterion), ind2)
 
-    # Find contiguous regions of proto-events = FALSE.
     proto_gaps <- s2[ex2$values == FALSE]
     proto_gaps_rng <-
       lapply(proto_gaps, function(x)
@@ -362,7 +326,6 @@ detect <-
       dplyr::mutate(event_no = seq(1:length(ex2$values[ex2$values == FALSE]))) %>%
       protoFunc(mode = FALSE)
 
-    # Link proto-events that occur before and after gaps <= max_gap.
     if (join_across_gaps) {
       t_series$event <- t_series$duration_criterion
       for (i in 1:nrow(proto_gaps)) {
@@ -373,8 +336,6 @@ detect <-
       print("STOP! The option to not join across gaps is not yet implemented.")
     }
 
-    # Summarise events (i.e. where temperature thresholds are exceeded for
-    # >= min_duration, and without gaps that are <= max_gaps).
     ex3 <- rle(t_series$event)
     ind3 <- rep(seq_along(ex3$lengths), ex3$lengths)
     s3 <- split(zoo::index(t_series$event), ind3)
@@ -393,11 +354,6 @@ detect <-
         rep(i, length = events$duration[i])
     }
 
-    #
-    # Calculate the event metrics.
-    #===========================================================================
-    # Make a list of time series of temperatures, seasonal climatologies and
-    # thresholds for each event from which to calculate the metrics.
     events_list <- plyr::dlply(events, .(event_no), function(x)
       with(
         t_series,
@@ -413,81 +369,55 @@ detect <-
         )
       ))
 
-    # intensity metrics
-    int_mean <-
-      int_max <-
-      int_cum <-
-      int_mean_rel_thresh <-
-      int_max_rel_thresh <-
-      int_cum_rel_thresh <-
-      int_mean_abs <-
-      int_max_abs <-
-      int_cum_abs <- int_mean_norm <- int_max_norm <- temp <- doy <- NULL ###
+    int_mean <- int_max <- int_cum <- int_mean_rel_thresh <-
+      int_max_rel_thresh <- int_cum_rel_thresh <- int_mean_abs <-
+      int_max_abs <- int_cum_abs <- int_mean_norm <- int_max_norm <-
+      temp <- doy <- NULL ###
     events$date_peak <-
       plyr::ldply(events_list, function(x)
         x$date[x$mhw_rel_seas == max(x$mhw_rel_seas)][1])[, 2]
     events$int_mean <-
-      plyr::ldply(events_list, function(x)
-        mean(x$mhw_rel_seas))[, 2]
+      plyr::ldply(events_list, function(x) mean(x$mhw_rel_seas))[, 2]
     events$int_max <-
-      plyr::ldply(events_list, function(x)
-        max(x$mhw_rel_seas))[, 2]
+      plyr::ldply(events_list, function(x) max(x$mhw_rel_seas))[, 2]
     events$int_var <-
-      plyr::ldply(events_list, function(x)
-        sqrt(var(x$mhw_rel_seas)))[, 2]
+      plyr::ldply(events_list, function(x) sqrt(var(x$mhw_rel_seas)))[, 2]
     events$int_cum <-
-      plyr::ldply(events_list, function(x)
-        max(cumsum(x$mhw_rel_seas)))[, 2]
+      plyr::ldply(events_list, function(x) max(cumsum(x$mhw_rel_seas)))[, 2]
     events$int_mean_rel_thresh <-
-      plyr::ldply(events_list, function(x)
-        mean(x$mhw_rel_thresh))[, 2]
+      plyr::ldply(events_list, function(x) mean(x$mhw_rel_thresh))[, 2]
     events$int_max_rel_thresh <-
-      plyr::ldply(events_list, function(x)
-        max(x$mhw_rel_thresh))[, 2]
+      plyr::ldply(events_list, function(x) max(x$mhw_rel_thresh))[, 2]
     events$int_var_rel_thresh <-
-      plyr::ldply(events_list, function(x)
-        sqrt(var(x$mhw_rel_thresh)))[, 2]
+      plyr::ldply(events_list, function(x) sqrt(var(x$mhw_rel_thresh)))[, 2]
     events$int_cum_rel_thresh <-
-      plyr::ldply(events_list, function(x)
-        max(cumsum(x$mhw_rel_thresh)))[, 2]
+      plyr::ldply(events_list, function(x) max(cumsum(x$mhw_rel_thresh)))[, 2]
     events$int_mean_abs <-
-      plyr::ldply(events_list, function(x)
-        mean(x$temp))[, 2]
+      plyr::ldply(events_list, function(x) mean(x$temp))[, 2]
     events$int_max_abs <-
-      plyr::ldply(events_list, function(x)
-        max(x$temp))[, 2]
+      plyr::ldply(events_list, function(x) max(x$temp))[, 2]
     events$int_var_abs <-
-      plyr::ldply(events_list, function(x)
-        sqrt(var(x$temp)))[, 2]
+      plyr::ldply(events_list, function(x) sqrt(var(x$temp)))[, 2]
     events$int_cum_abs <-
-      plyr::ldply(events_list, function(x)
-        max(cumsum(x$temp)))[, 2]
+      plyr::ldply(events_list, function(x) max(cumsum(x$temp)))[, 2]
     events$int_mean_norm <-
-      plyr::ldply(events_list, function(x)
-        mean(x$rel_thresh_norm))[, 2]
+      plyr::ldply(events_list, function(x) mean(x$rel_thresh_norm))[, 2]
     events$int_max_norm <-
-      plyr::ldply(events_list, function(x)
-        max(x$rel_thresh_norm))[, 2]
+      plyr::ldply(events_list, function(x) max(x$rel_thresh_norm))[, 2]
 
-    # rate metrics - requires getting MHW strength at "start" and "end" of
-    # event (continuous: assume start / end half-day before / after first /
-    # last point)
-    # rate of onset
     mhw_rel_seas <- t_series$temp - t_series$seas_clim_year
     A <- mhw_rel_seas[events$index_start]
     B <- t_series$temp[events$index_start - 1]
     C <- t_series$seas_clim_year[events$index_start - 1]
     mhw_rel_seas_start <- 0.5 * (A + B - C)
-    startType <- ifelse(
+    start_type <- ifelse(
       events$index_start > 1,
       "case1",
-      # event not at beginning of time series
       ifelse(
         events$index_start == 1 &
           difftime(events$date_peak, events$date_start, units = "days") > 0,
         "case2",
-        # event starts at beginning of time series
-        "case3" # peak also at begn. of time series, assume onset time = 1 day
+        "case3"
       )
     )[1]
     rateOnset <- function(x, type) {
@@ -500,23 +430,20 @@ detect <-
         case3 = (x$int_max - A) / as.numeric(difftime(x$date_peak, x$date_start, units = "days"))
       )
     }
-    events$rate_onset <- rateOnset(events, startType)
+    events$rate_onset <- rateOnset(events, start_type)
 
-    # rate of decline
     D <- mhw_rel_seas[events$index_stop]
     E <- t_series$temp[events$index_stop + 1]
     F <- t_series$seas_clim_year[events$index_stop + 1]
     mhw_rel_seas_end <- 0.5 * (D + E - F)
-    stopType <- ifelse(
+    stop_type <- ifelse(
       events$index_stop < nrow(t_series),
       "case4",
-      # event does not finish at end of time series
       ifelse(
         events$index_stop == nrow(t_series) &
           difftime(events$date_peak, t_series[nrow(t_series), "date"], units = "days") < 0,
         "case5",
-        # event finishes at end of time series
-        "case6" # peak also at begn of time series, assume onset time = 1 day
+        "case6"
       )
     )[nrow(events)]
 
@@ -530,9 +457,8 @@ detect <-
         case6 = (x$int_max - mhw_rel_seas_end) / as.numeric(difftime(x$date_stop, x$date_peak, units = "days"))
       )
     }
-    events$rate_decline <- rateDecline(events, stopType)
+    events$rate_decline <- rateDecline(events, stop_type)
 
-    # Revert climatology and flip and intensties in case of cold spell detection.
     if (cold_spells) {
       events <- events %>% dplyr::mutate(
         int_mean = -int_mean,
@@ -554,6 +480,6 @@ detect <-
       )
     }
 
-    list(clim = t_series,
-         event = events)
+    list(clim = dplyr::group_by(t_series, event_no),
+         event = dplyr::group_by(events, event_no))
   }

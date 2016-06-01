@@ -75,84 +75,46 @@
 block_average <-
   function(data,
            report = "full") {
-    # block_length not implemented; calculate 'per year' by default
-    temp_yr <- data.frame(
-      year = unique(lubridate::year(data$clim$date)),
-      temp_mean = aggregate(data$clim$temp, list(lubridate::year(data$clim$date)), mean, na.rm = TRUE)[, 2],
-      temp_min = aggregate(data$clim$temp, list(lubridate::year(data$clim$date)), min)[, 2],
-      temp_max = aggregate(data$clim$temp, list(lubridate::year(data$clim$date)), max)[, 2],
-      check.names = FALSE
-    )
 
-    event_block <- data.frame(
-      year = unique(lubridate::year(data$event$date_start)),
-      count = aggregate(data$event$duration, list(lubridate::year(
-        data$event$date_start
-      )), length)[, 2],
-      duration = aggregate(data$event$duration, list(lubridate::year(
-        data$event$date_start
-      )), mean)[, 2],
-      int_mean = aggregate(data$event$int_mean, list(lubridate::year(
-        data$event$date_start
-      )), mean)[, 2],
-      int_max = aggregate(data$event$int_max, list(lubridate::year(
-        data$event$date_start
-      )), mean)[, 2],
-      int_var = aggregate(data$event$int_var, list(lubridate::year(
-        data$event$date_start
-      )), mean)[, 2],
-      int_cum = aggregate(data$event$int_cum, list(lubridate::year(
-        data$event$date_start
-      )), mean)[, 2],
-      int_mean_rel_thresh = aggregate(data$event$int_mean_rel_thresh, list(lubridate::year(
-        data$event$date_start
-      )), mean)[, 2],
-      int_max_rel_thresh = aggregate(data$event$int_max_rel_thresh, list(lubridate::year(
-        data$event$date_start
-      )), mean)[, 2],
-      int_var_rel_thresh = aggregate(data$event$int_var_rel_thresh, list(lubridate::year(
-        data$event$date_start
-      )), mean)[, 2],
-      int_cum_rel_thresh = aggregate(data$event$int_cum_rel_thresh, list(lubridate::year(
-        data$event$date_start
-      )), mean)[, 2],
-      int_mean_abs = aggregate(data$event$int_mean_abs, list(lubridate::year(
-        data$event$date_start
-      )), mean)[, 2],
-      int_max_abs = aggregate(data$event$int_max_abs, list(lubridate::year(
-        data$event$date_start
-      )), mean)[, 2],
-      int_var_abs = aggregate(data$event$int_var_abs, list(lubridate::year(
-        data$event$date_start
-      )), mean)[, 2],
-      int_cum_abs = aggregate(data$event$int_cum_abs, list(lubridate::year(
-        data$event$date_start
-      )), mean)[, 2],
-      int_mean_norm = aggregate(data$event$int_mean_norm, list(lubridate::year(
-        data$event$date_start
-      )), mean)[, 2],
-      int_max_norm = aggregate(data$event$int_max_norm, list(lubridate::year(
-        data$event$date_start
-      )), mean)[, 2],
-      rate_onset = aggregate(data$event$rate_onset, list(lubridate::year(
-        data$event$date_start
-      )), mean)[, 2],
-      rate_decline = aggregate(data$event$rate_decline, list(lubridate::year(
-        data$event$date_start
-      )), mean)[, 2],
-      total_days = aggregate(data$event$duration, list(lubridate::year(
-        data$event$date_start
-      )), sum)[, 2],
-      total_icum = aggregate(data$event$int_cum, list(lubridate::year(
-        data$event$date_start
-      )), sum)[, 2]
-    )
+    year <- temp <- date_start <- temp_mean <- temp_min <- temp_max <- NULL ###
+    temp_yr <- data$clim %>%
+      dplyr::group_by(year = lubridate::year(date)) %>%
+      dplyr::summarise(temp_mean = mean(temp, na.rm = TRUE),
+                temp_min = min(temp),
+                temp_max = max(temp))
+
+    duration <- count <- int_mean <- int_max <- int_var <- int_cum <-
+      int_mean_rel_thresh <- int_max_rel_thresh <- int_var_rel_thresh <-
+      int_cum_rel_thresh <- int_mean_abs <- int_max_abs <- int_var_abs <-
+      int_cum_abs <- int_mean_norm <- int_max_norm <- rate_onset <-
+      rate_decline <- total_days <- total_icum <- NULL ###
+    event_block <- data$event %>%
+      dplyr::group_by(year = lubridate::year(date_start)) %>%
+      dplyr::summarise(count = length(duration),
+                int_mean = mean(int_mean),
+                int_max = mean(int_max),
+                int_var = mean(int_var),
+                int_cum = mean(int_cum),
+                int_mean_rel_thresh = mean(int_mean_rel_thresh),
+                int_max_rel_thresh = mean(int_max_rel_thresh),
+                int_var_rel_thresh = mean(int_var_rel_thresh),
+                int_cum_rel_thresh = mean(int_cum_rel_thresh),
+                int_mean_abs = mean(int_mean_abs),
+                int_max_abs = mean(int_max_abs),
+                int_var_abs = mean(int_var_abs),
+                int_cum_abs = mean(int_cum_abs),
+                int_mean_norm = mean(int_mean_norm),
+                int_max_norm = mean(int_max_norm),
+                rate_onset = mean(rate_onset),
+                rate_decline = mean(rate_decline),
+                total_days = sum(duration),
+                total_icum = sum(int_cum))
 
     if (report == "full") {
       event_block <- dplyr::left_join(temp_yr, event_block, by = "year")
     } else if (report == "partial") {
       event_block <-
-      dplyr::inner_join(temp_yr, event_block, by = "year") # omit years with missing events
+      dplyr::inner_join(temp_yr, event_block, by = "year")
     } else stop("Oops, 'report' must be either 'full' or 'partial'!")
 
     event_block$count[is.na(event_block$count)] <- 0
