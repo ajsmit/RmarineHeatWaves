@@ -49,6 +49,7 @@ Hobday et al. (2016).
 \examples{
 t_dat <- make_whole(sst_WA)
 res <- detect(t_dat) # using default values
+
 \dontrun{
 event_line(res, spread = 200, metric = "int_cum",
 start_date = "2010-10-01", end_date = "2011-08-30",

@@ -56,7 +56,6 @@
 #' suitable for use with \code{detect}, although this may also be accomplished
 #' 'by hand' as long as the criteria are met as discussed in the documentation
 #' to \code{\link{make_whole}}.
-#' documentation.
 #' \item This function supports leap years. This is done by ignoring Feb 29s
 #' for the initial calculation of the climatology and threshold. The value of
 #' these for Feb 29 is then linearly interpolated from the values for Feb 28
@@ -240,7 +239,9 @@ detect <-
 
     # For non-leap years, replace feb29 (doy = 60) with a value interpolated
     # across Feb 28 and Mar 1, ONLY IF the latter days exist.
-    tDat[59:61,] <- zoo::na.approx(tDat[59:61,], maxgap = 1)
+    all_NA <- apply(tDat[59:61,], 2, function(x) !all(is.na(x)))
+    no_NA <- names(all_NA[all_NA > 0])
+    tDat[59:61,no_NA] <- zoo::na.approx(tDat[59:61,no_NA], maxgap = 1, na.rm = TRUE)
     tDat <-
       rbind(tail(tDat, window_half_width),
             tDat,

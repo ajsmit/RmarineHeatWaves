@@ -33,7 +33,8 @@ specified as either \code{POSIXct} (e.g. "1982-01-01 02:00:00") or class
 \code{date} (e.g. "1982-01-01"). The data may be an irregular time series,
 but date must be ordered. The function constructs a complete time series
 from the start date to the end date, and fills in the regions in the time
-series where data are missing with NAs. Leap years are automatically
+series where data are missing with NAs. There must only be one temperature
+value per day otherwise the function will fail. Leap years are automatically
 accommodated by 'zoo'.
 
 This function can handle any amount of missing days, but this is not a
@@ -43,7 +44,7 @@ may be adjusted by setting the \code{max_pad_length} argument of the
 \code{\link{detect}} function. The longer and more frequent the gaps become
 the lower the fidelity of the annual climatology and threshold that can be
 calculated, which will not only have repercussions for the accuracy at which
-the event metrics can be calculated, but also for the number of events that
+the event metrics can be determined, but also for the number of events that
 can be detected.
 }
 \examples{

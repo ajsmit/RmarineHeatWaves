@@ -57,6 +57,7 @@
 #' @examples
 #' t_dat <- make_whole(sst_WA)
 #' res <- detect(t_dat) # using default values
+#'
 #' \dontrun{
 #' event_line(res, spread = 200, metric = "int_cum",
 #' start_date = "2010-10-01", end_date = "2011-08-30",
@@ -67,19 +68,19 @@ event_line <- function(data,
                       metric = "cumulative",
                       start_date = "1999-06-30",
                       end_date = "2000-05-30",
-                      file_name = "eventPlot.pdf"){
+                      file_name = "eventPlot.pdf") {
 # The start and end dates are intentionally switched to allow for events that
 # end or begin within the designated time to be scanned for the size of their metrics.
   date_stop <- date_start <- int_max <- int_mean <- int_cum <- duration <- NULL # avoids annoying notes during check...
   event <- dplyr::filter(data$event, date_stop >= start_date & date_start <= end_date)
-  if(nrow(event) == 0) stop("No events detected!")
-  if(metric == "maximum"){
+  if (nrow(event) == 0) stop("No events detected!")
+  if (metric == "maximum") {
     event <- dplyr::arrange(event, abs(int_max))
-  } else if(metric == "mean"){
+  } else if (metric == "mean") {
     event <- dplyr::arrange(event, abs(int_mean))
-  } else if(metric == "cumulative"){
+  } else if (metric == "cumulative") {
     event <- dplyr::arrange(event, abs(int_cum))
-  } else if(metric == "duration"){
+  } else if (metric == "duration") {
     event <- dplyr::arrange(event, abs(duration))
   }
 # TODO: Must insert a bit of logic here if there is a tie for largest value
@@ -125,7 +126,7 @@ event_line <- function(data,
     "threshold" = "darkgreen"
   )
 
-  if(eventTop$int_mean > 0){
+  if (eventTop$int_mean > 0) {
     fillCol <- c("events" = "salmon", "peak event" = "red")
   } else {
     fillCol <- c("events" = "steelblue3", "peak event" = "royalblue4")

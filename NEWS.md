@@ -1,14 +1,27 @@
 ---
 output: pdf_document
 ---
-# RmarineHeatWaves 0.9.3.
+# RmarineHeatWaves 0.10.2.
 
 # VERSION CHANGES:
+## Changes in version 0.10.2 (1-JUNE-2016)
+* Minor changes to the version change info provided for v0.10.1. 
+
+## Changes in version 0.10.1 (31-MAY-2016)
+* Fixed a bug that caused detect() to fail whenever it encountered fewer than two 
+non-NAs in the period doy 59 to doy 61 when it was asked to interpolate over 
+the non-existent day-60 during non-leap years. This is specific to versions of
+'zoo' (required for na.approx()) up to 1.7-12; from 1.7-13 it works fine. A few 
+extra lines of code were added to fix this.
+
+## Changes in version 0.10.0 (30-MAY-2016)
+* Added the block_average() function.
+
 ## Changes in version 0.9.3 (29-MAY-2016)
 * Expanded documentation.
 
 ## Changes in version 0.9.2 (29-MAY-2016)
-* Changes to 'event_line' documentation.
+* Changes to event_line() documentation.
 * Renamed 'metric' options to function as 'mean', 'maximum', 'cumulative'.
 * Added more TODOs at the bottom of this file.
 
@@ -18,7 +31,7 @@ output: pdf_document
 ## Changes in version 0.9.0 (28-MAY-2016)
 * Replace 'mhw' with 'event'.
 * Add basic plotting functionality a-la Robert Schlegel in the form of the 
-'event_line' function (plus edits to make Rob's code produce a clean build 
+event_line() function (plus edits to make Rob's code produce a clean build 
 process, thereby avoiding throwing 'notes' that might be frowned upon by the 
 CRAN people.)
 * Renamed some things: 'make_whole.R' -> 'makeWhole.R'; 'marineHeatWaves-package.r' 
@@ -44,8 +57,8 @@ acceptance to CRAN, apparently.
 
 ## Changes in version 0.6.0 (19-MAY-2016)
 * Internal variable name changes (replace camelCase).
-* Split out 'make_whole' function.
-* Add 'make_whole' example.
+* Split out make_whole() function.
+* Add make_whole() example.
 
 ## Changes in version 0.5.0 (18-MAY-2016)
 * Added data and a functional example.
@@ -68,7 +81,7 @@ fascilitate plotting of filled polygons using 'geom_polygon' in ggplot2, as per
 Robert Schlegel's suggestion.
 
 # TODO:
-* Allow 'make_whole' function to provide helpful output, such as % NAs per year,
+* Allow make_whole() function to provide helpful output, such as % NAs per year,
 the number of missing dates filled in, and the start and end dates of the time
 series.
 * Test if specified years in 'climatology_period' are full years.
@@ -78,10 +91,10 @@ retruned - possibly something helpful such as start and end dates of the first
 and last full years.
 * Enable 'smooth_percentile' = TRUE / FALSE.
 * Enable 'join_across_gaps' = TRUE / FALSE.
-* 'event_line' function: if 'start_date' and 'end_date' are not provided, make
+* event_line() function: if 'start_date' and 'end_date' are not provided, make
 the function automatically select the beginning and end dates of the whole time
 series.
-* 'event_line' function: Windows computers do not easily produce pdf files as 
+* event_line() function: Windows computers do not easily produce pdf files as 
 output. Provide the option to output png and jpg files, and maybe have a jpg as
 default.
 
