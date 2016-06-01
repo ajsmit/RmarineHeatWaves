@@ -51,9 +51,6 @@
 #'    dcast(doy ~ year(date), value.var = "temp", fill = as.numeric(NA)) %>%
 #'    as.data.frame() %>%
 #'    filter(doy >= 55 & doy <= 65)
-# TODO: cause function to provide helpful output, such as % NAs per year, the
-# number of missing dates filled in, and the start and end dates of the time
-# series.
 make_whole <- function(data) {
   # data <- aggregate(data$temp, by = list(data$t), FUN = mean, na.rm = TRUE)
   # colnames(data) <- c("t", "temp")
@@ -71,7 +68,6 @@ make_whole <- function(data) {
   ser <- zoo::zoo(rep(NA, length(ser$t)), order.by = ser$t)
   tSeries <- merge(ser, tSeries)[, 2] # fills gaps with NAs
 
-  # Modify day-of-year vector so that non-leap-years run 1...59 then 61...366.
   feb28 <- 59
   doy <- NULL ###
   tSeries <-

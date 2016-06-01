@@ -69,9 +69,7 @@ event_line <- function(data,
                       start_date = "1999-06-30",
                       end_date = "2000-05-30",
                       file_name = "eventPlot.pdf") {
-# The start and end dates are intentionally switched to allow for events that
-# end or begin within the designated time to be scanned for the size of their metrics.
-  date_stop <- date_start <- int_max <- int_mean <- int_cum <- duration <- NULL # avoids annoying notes during check...
+  date_stop <- date_start <- int_max <- int_mean <- int_cum <- duration <- NULL
   event <- dplyr::filter(data$event, date_stop >= start_date & date_start <= end_date)
   if (nrow(event) == 0) stop("No events detected!")
   if (metric == "maximum") {
@@ -83,19 +81,12 @@ event_line <- function(data,
   } else if (metric == "duration") {
     event <- dplyr::arrange(event, abs(duration))
   }
-# TODO: Must insert a bit of logic here if there is a tie for largest value
+
   eventTop <- event[nrow(event), ]
 
-# Create index of dates by which to plot as determined by eventTop
   date_spread <- seq((eventTop$date_start - spread), (eventTop$date_stop + spread), by = 1)
 
-# Subset only the given range of dates as discerned by the "spread" variable
   clim <- dplyr::filter(data$clim, date %in% date_spread)
-
-# Create closed pathways for each event so they plot correctly.
-#
-# TODO: Rob, this bit here which results in 'dat3' does not work for MCSs
-# detected in the sst_NW_Atl data set...
 
   temp <- event_no <- thresh_clim_year <- seas_clim_year <- NULL # avoids annoying notes during check...
   dat3 <- data.frame()
@@ -119,7 +110,6 @@ event_line <- function(data,
     dat3 <- rbind(dat3, z)
   }
 
-# Plot and save
   lineCol <- c(
     "temperature" = "black",
     "climatology" = "blue",
@@ -147,7 +137,6 @@ event_line <- function(data,
     scale_fill_manual(name = NULL, values = fillCol) +
     scale_x_date(expand = c(0, 0), date_labels = "%b %Y") +
     ylab(expression(paste("[", degree, "C]"))) + xlab(NULL) +
-    # put theme here for reasons to do with building the package... will fix later
     theme(
       axis.text = element_text(colour = "black"),
       legend.position = c(0, 1),

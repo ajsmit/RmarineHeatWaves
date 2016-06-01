@@ -75,7 +75,6 @@
 block_average <-
   function(data,
            report = "full") {
-    # block_length not implemented; calculate 'per year' by default
     temp_yr <- data.frame(
       year = unique(lubridate::year(data$clim$date)),
       temp_mean = aggregate(data$clim$temp, list(lubridate::year(data$clim$date)), mean, na.rm = TRUE)[, 2],
@@ -152,7 +151,7 @@ block_average <-
       event_block <- dplyr::left_join(temp_yr, event_block, by = "year")
     } else if (report == "partial") {
       event_block <-
-      dplyr::inner_join(temp_yr, event_block, by = "year") # omit years with missing events
+      dplyr::inner_join(temp_yr, event_block, by = "year")
     } else stop("Oops, 'report' must be either 'full' or 'partial'!")
 
     event_block$count[is.na(event_block$count)] <- 0

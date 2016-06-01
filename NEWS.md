@@ -1,9 +1,12 @@
 ---
 output: pdf_document
 ---
-# RmarineHeatWaves 0.10.2.
+# RmarineHeatWaves 0.10.3
 
-# VERSION CHANGES:
+# VERSION CHANGES
+## Changes in version 0.10.3 (1-JUNE-2016)
+* All comments removed inside of functions.
+
 ## Changes in version 0.10.2 (1-JUNE-2016)
 * Minor changes to the version change info provided for v0.10.1. 
 
