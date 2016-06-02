@@ -5,8 +5,7 @@
 \title{Create a Line Plot of Marine Heat Waves or Cold Spells.}
 \usage{
 event_line(data, spread = 150, metric = "int_cum",
-  start_date = "1999-06-30", end_date = "2000-05-30",
-  file_name = "eventPlot.pdf")
+  start_date = "1999-06-30", end_date = "2000-05-30")
 }
 \arguments{
 \item{data}{The function receives the output from the \code{\link{detect}} function.}
@@ -31,10 +30,6 @@ the start and end dates of the full time series given to \code{\link{detect}}.}
 \item{end_date}{The end date of a period of time within which the largest
 event (as per \code{metric}) is retrieved and plotted. See \code{start_date}
 for additional information.}
-
-\item{file_name}{The name of the file to be saved. By default a file named
-'eventPlot.pdf' will be saved in the working directory. Specify the path
-and file name to change.}
 }
 \value{
 The function will return a line plot indicating the climatology,

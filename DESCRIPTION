@@ -1,6 +1,6 @@
 Package: RmarineHeatWaves
-Version: 0.11.1
-Date: 2016-06-01
+Version: 0.12.0
+Date: 2016-06-02
 Title: Detect Marine Heat Waves and Marine Cold Spells
 Type: Package
 Authors@R: c(person("Albertus J.", "Smit", role = c("aut", "cre"),
@@ -13,15 +13,18 @@ Author: Albertus J. Smit [aut, cre],
     Eric C. J. Oliver [aut],
     Robert W. Schlegel [ctb]
 Maintainer: Albertus J. Smit <ajsmit@uwc.ac.za>
+Depends: R (>= 2.10)
 Imports:
-    ggplot2,
+    ggplot2 (>= 2.0.0),
     zoo,
     lubridate,
     tidyr,
     plyr,
     raster,
     dplyr,
-    grid
+    magrittr,
+    grid,
+    lazyeval
 Description: Applies the Hobday et al. (2016) marine heat wave definition to
     an input time series of daily temperature. It outputs properties of all
     detected marine heat waves (and marine cold spells sensu Schlegel et al.,

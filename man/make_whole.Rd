@@ -29,15 +29,14 @@ missing dates and fills correpsonding temperatures with NAs.
 \details{
 Upon import, the package uses `zoo` and `lubridate` to process the input
 date and temperature data. It reads in daily data with the time vector
-specified as either \code{POSIXct} (e.g. "1982-01-01 02:00:00") or class
-\code{date} (e.g. "1982-01-01"). The data may be an irregular time series,
-but date must be ordered. The function constructs a complete time series
-from the start date to the end date, and fills in the regions in the time
-series where data are missing with NAs. There must only be one temperature
-value per day otherwise the function will fail. Leap years are automatically
-accommodated by 'zoo'.
+specified as either \code{POSIXct} (e.g. "1982-01-01 02:00:00" or
+"1982-01-01"). The data may be an irregular time series, but date must be
+ordered. The function constructs a complete time series from the start date
+to the end date, and fills in the regions in the time series where data are
+missing with NAs. There must only be one temperature value per day otherwise
+the function will fail. Leap years are automatically accommodated by 'zoo'.
 
-This function can handle any amount of missing days, but this is not a
+This function can handle some of missing days, but this is not a
 licence to actually use these data for the detection of anomalous thermal
 events. Hobday et al. (2016) recommend gaps of no more than 3 days, which
 may be adjusted by setting the \code{max_pad_length} argument of the

@@ -37,9 +37,6 @@
 #' @param end_date The end date of a period of time within which the largest
 #' event (as per \code{metric}) is retrieved and plotted. See \code{start_date}
 #' for additional information.
-#' @param file_name The name of the file to be saved. By default a file named
-#' 'eventPlot.pdf' will be saved in the working directory. Specify the path
-#' and file name to change.
 #'
 #' @return The function will return a line plot indicating the climatology,
 #' threshold and temperature, with the hot or cold events that meet the
@@ -68,17 +65,16 @@ event_line <- function(data,
                        spread = 150,
                        metric = "int_cum",
                        start_date = "1999-06-30",
-                       end_date = "2000-05-30",
-                       file_name = "eventPlot.pdf") {
+                       end_date = "2000-05-30") {
   date_stop <- date_start <- int_max <- int_mean <- int_cum <- duration <- NULL
 
   event <- data$event %>%
     dplyr::filter(date_stop >= start_date & date_start <= end_date)
   if (nrow(event) == 0) stop("No events detected!")
   event <- event[order(-abs(event[colnames(event) == metric])),]
-  eventTop <- event[1, ]
+  event_top <- event[1, ]
 
-  date_spread <- seq((eventTop$date_start - spread), (eventTop$date_stop + spread), by = 1)
+  date_spread <- seq((event_top$date_start - spread), (event_top$date_stop + spread), by = 1)
 
   clim <- dplyr::filter(data$clim, date %in% date_spread)
 
@@ -110,7 +106,7 @@ event_line <- function(data,
     "threshold" = "darkgreen"
   )
 
-  if (eventTop$int_mean > 0) {
+  if (event_top$int_mean > 0) {
     fillCol <- c("events" = "salmon", "peak event" = "red")
   } else {
     fillCol <- c("events" = "steelblue3", "peak event" = "royalblue4")
@@ -119,7 +115,7 @@ event_line <- function(data,
   ggplot(data = clim, aes(x = date, y = temp)) +
     geom_polygon(data = dat3,
                  aes(x = date, y = temp, group = event_no, fill = "events"), size = 0.5) +
-    geom_polygon(data = dat3[dat3$event_no == eventTop$event_no[1],],
+    geom_polygon(data = dat3[dat3$event_no == event_top$event_no[1],],
                  aes(x = date, y = temp, group = event_no, fill = "peak event"),
                  size = 0.5) +
     geom_line(aes(y = seas_clim_year, col = "climatology"),
@@ -142,5 +138,104 @@ event_line <- function(data,
       legend.key.size = unit(0.4, "cm"),
       panel.grid.minor = element_blank()
     )
-  ggsave(file_name, width = 8.0, height = 3.0, pointsize = 16)
+}
+
+#' Create a timeline of event metrics.
+#'
+#' Visualise a timeline of several event metrics as 'lollipop' graphs.
+#'
+#' @importFrom magrittr %<>%
+#' @importFrom ggplot2 aes_string
+#' @importFrom ggplot2 geom_segment
+#' @importFrom ggplot2 geom_point
+#' @importFrom ggplot2 scale_x_continuous
+#'
+#' @param data Output from the \code{\link{detect}} function.
+#' @param metric One of \code{int_mean}, \code{int_max}, \code{int_cum} and \code{duation}.
+#' Default is \code{int_cum}.
+#' @param event_count The number of top events to highlight. Default is 3.
+#' @param xaxis One of \code{event_no}, \code{date_start} or \code{date_peak}.
+#' Default is \code{date_start}.
+#'
+#' @return The function will return a graph of the intensity if the selected
+#' metric along the y-axis versus either \code{date} or \code{event_no}.
+#'
+#' @author Albertus J. Smit and Robert W. Schlegel
+#'
+#' @export
+#'
+#' @examples
+#' t_dat <- make_whole(sst_NW_Atl)
+#' res <- detect(t_dat) # using default values
+#'
+#' \dontrun{
+#' lolli_plot(res, metric = "int_cum", event_count = 3, xaxis = "date_peak")
+#' }
+lolli_plot <- function(data,
+                       metric = "int_max",
+                       event_count = 4,
+                       xaxis = "date_start") {
+
+  event <- data$event
+  if(nrow(event) == 0) stop("No events detected!")
+
+  peak_sort <- NULL
+  expr <- lazyeval::interp(~abs(x), x = as.name(metric))
+  event %<>%
+    dplyr::select_("event_no", "date_start", "date_peak", metric) %>%
+    dplyr::ungroup() %>%
+    dplyr::mutate_(.dots = setNames(list(expr), "peak_sort")) %>%
+    dplyr::arrange(dplyr::desc(peak_sort))
+
+    event$col <- "event"
+    event[1:event_count, 6] <- "peak event"
+
+  if(event[1, 4] < 0){
+    lolli_col <- c("steelblue3", "royalblue4")
+  } else {
+    lolli_col <- c("salmon", "red")
+  }
+
+  # Create y and x axis labels
+  # xaxis = "event_no" xaxis = "date_start" xaxis = "date_peak"
+  if(xaxis == "event_no") xlabel <- "Event number"
+  if(xaxis == "date_start") xlabel <- "Start date"
+  if(xaxis == "date_peak") xlabel <- "Peak date"
+  # yaxis = "int_max" yaxis = "int_mean" yaxis = "int_cum" yaxis = "duration"
+  if(metric == "int_max") ylabel <- expression(paste("Maximum intensity [", degree, "C]"))
+  if(metric == "int_mean") ylabel <- expression(paste("Mean intensity [", degree, "C]"))
+  if(metric == "int_cum") ylabel <- expression(paste("Cumulative intensity [", degree, "C x days]"))
+  if(metric == "duration") ylabel <- "Duration [days]"
+  if(!exists("ylabel")) ylabel <- metric
+
+  # Create the figure
+  lolli <- ggplot(data = event, aes_string(x = xaxis, y = metric)) +
+    geom_segment(aes_string(xend = xaxis, yend = 0, colour = "col"),
+                 size = 0.5, lineend = "butt", show.legend = F) +
+    geom_point(aes_string(colour = "col", fill = "col"), shape = 21, size = 2.2) +
+    # geom_text(data = event_top, aes_string(label = index, x = xaxis, y = yaxis), size = 2.0) +
+    scale_colour_manual(name = NULL, values = lolli_col) +
+    scale_fill_manual(name = NULL, values = c("white", "grey20")) +
+    xlab(xlabel) +
+    ylab(ylabel) +
+    theme(
+      axis.text = element_text(colour = "black"),
+      legend.position = c(0, 1),
+      legend.box = "vertical",
+      legend.box.just = "left",
+      legend.justification = c(0, 1),
+      legend.direction = "horizontal",
+      legend.text = element_text(size = 8),
+      legend.key.size = unit(0.4, "cm"),
+      panel.grid.minor = element_blank()
+    )
+  if(xaxis == "event_no"){
+    lolli <- lolli +
+      scale_x_continuous(breaks = seq(from = 0, to = nrow(data$event), by = 5))
+  }
+  if(event[1, 4] < 0 & metric != "duration"){
+    lolli <- lolli +
+      theme(legend.justification = c(0, 4.85))
+  }
+  lolli
 }

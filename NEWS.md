@@ -1,9 +1,18 @@
 ---
 output: pdf_document
 ---
-# RmarineHeatWaves 0.11.1
+# RmarineHeatWaves 0.12.0
 
 # VERSION CHANGES
+## Changes in version 0.12.0 (2-JUNE-2016)
+* Added lolliplot functionality.
+
+## Changes in version 0.11.2 (2-JUNE-2016)
+* Simplify make_whole() -- it should accept dates as class POSIXct or Date 
+without the need for unneccesary if logic options.
+* All example data dates (t) changed to class Date.
+* Some minor rewording to documentation.
+
 ## Changes in version 0.11.1 (1-JUNE-2016)
 * Minor edits to event_line as per Robert Schlegel (allows broader selection of
 metrics for plotting.)
