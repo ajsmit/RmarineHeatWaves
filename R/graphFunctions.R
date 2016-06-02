@@ -191,9 +191,9 @@ lolli_plot <- function(data,
     event[1:event_count, 6] <- "peak event"
 
   if(event[1, 4] < 0){
-    lolli_col <- c("steelblue3", "royalblue4")
+    lolli_col <- c("steelblue3", "navy")
   } else {
-    lolli_col <- c("salmon", "red")
+    lolli_col <- c("salmon", "firebrick")
   }
 
   # Create y and x axis labels
@@ -211,11 +211,11 @@ lolli_plot <- function(data,
   # Create the figure
   lolli <- ggplot(data = event, aes_string(x = xaxis, y = metric)) +
     geom_segment(aes_string(xend = xaxis, yend = 0, colour = "col"),
-                 size = 0.5, lineend = "butt", show.legend = F) +
+                 size = 0.6, lineend = "butt", show.legend = F) +
     geom_point(aes_string(colour = "col", fill = "col"), shape = 21, size = 2.2) +
     # geom_text(data = event_top, aes_string(label = index, x = xaxis, y = yaxis), size = 2.0) +
     scale_colour_manual(name = NULL, values = lolli_col) +
-    scale_fill_manual(name = NULL, values = c("white", "grey20")) +
+    scale_fill_manual(name = NULL, values = c("ivory1", "wheat1")) +
     xlab(xlabel) +
     ylab(ylabel) +
     theme(
