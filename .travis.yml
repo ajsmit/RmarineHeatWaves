@@ -1,7 +1,8 @@
-# Sample .travis.yml for R projects
-
 language: r
-  - release
-  - devel
-warnings_are_errors: true
-sudo: required
+sudo: false
+cache: packages
+
+r:
+ - oldrel
+ - release
+ - devel
