@@ -5,4 +5,3 @@ language: r
   - release
   - devel
 warnings_are_errors: true
-sudo: false
