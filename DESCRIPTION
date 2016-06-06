@@ -9,9 +9,6 @@ Authors@R: c(person("Albertus J.", "Smit", role = c("aut", "cre"),
     the Python implementation."),
     person("Robert W.", "Schlegel", role = "ctb", comment = "Graphical and data
     summaries."))
-Author: Albertus J. Smit [aut, cre],
-    Eric C. J. Oliver [aut],
-    Robert W. Schlegel [ctb]
 Maintainer: Albertus J. Smit <ajsmit@uwc.ac.za>
 Depends: R (>= 2.10)
 Imports:
