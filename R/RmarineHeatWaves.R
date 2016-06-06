@@ -149,7 +149,7 @@
 #' t_dat <- make_whole(sst_WA)
 #' res <- detect(t_dat, climatology_period = c(1983, 2012))
 #' # show a portion of the climatology:
-#' head(res$clim)
+#' res$clim[1:10, ]
 #' # show some of the heat waves:
 #' res$event[1:5, 1:10]
 detect <-
@@ -181,13 +181,13 @@ detect <-
       clim_end <- clim_end
     } else {
       t1 <-
-        head(plyr::ddply(
+        utils::head(plyr::ddply(
           data.frame(yr = lubridate::year(t_series$date)),
           .(lubridate::year(t_series$date)),
           nrow
         ), 2)
       t2 <-
-        tail(plyr::ddply(
+        utils::tail(plyr::ddply(
           data.frame(yr = lubridate::year(t_series$date)),
           .(lubridate::year(t_series$date)),
           nrow
@@ -202,7 +202,7 @@ detect <-
         t1[2, 1]
         )
       clim_start <-
-        head(dplyr::filter(t_series, lubridate::year(date) == clim_start), 1)[, "date"]
+        utils::head(dplyr::filter(t_series, lubridate::year(date) == clim_start), 1)[, "date"]
       clim_end <-
         ifelse((
           lubridate::leap_year(t2[2, 1]) && max(t2[2, 2]) == len_clim_year ||
@@ -213,7 +213,7 @@ detect <-
         t2[1, 1]
         )
       clim_end <-
-        tail(dplyr::filter(t_series, lubridate::year(date) == clim_end), 1)[, "date"]
+        utils::tail(dplyr::filter(t_series, lubridate::year(date) == clim_end), 1)[, "date"]
     }
 
     tDat <- t_series %>%
@@ -228,15 +228,15 @@ detect <-
     tDat[59:61, no_NA] <-
       zoo::na.approx(tDat[59:61, no_NA], maxgap = 1, na.rm = TRUE)
     tDat <-
-      rbind(tail(tDat, window_half_width),
+      rbind(utils::tail(tDat, window_half_width),
             tDat,
-            head(tDat, window_half_width)) # allows 'wrap-around' window
+            utils::head(tDat, window_half_width)) # allows 'wrap-around' window
     seas_clim_year <- thresh_clim_year <- rep(NA, nrow(tDat))
     for (i in (window_half_width + 1):((nrow(tDat) - window_half_width))) {
       seas_clim_year[i] <-
         mean(c(t(tDat[(i - (window_half_width)):(i + window_half_width), 2:ncol(tDat)])), na.rm = TRUE)
       thresh_clim_year[i] <-
-        quantile(
+        raster::quantile(
           c(t(tDat[(i - (window_half_width)):(i + window_half_width), 2:ncol(tDat)])),
           probs = 0.9,
           type = 7,
@@ -381,7 +381,7 @@ detect <-
     events$int_max <-
       plyr::ldply(events_list, function(x) max(x$mhw_rel_seas))[, 2]
     events$int_var <-
-      plyr::ldply(events_list, function(x) sqrt(var(x$mhw_rel_seas)))[, 2]
+      plyr::ldply(events_list, function(x) sqrt(stats::var(x$mhw_rel_seas)))[, 2]
     events$int_cum <-
       plyr::ldply(events_list, function(x) max(cumsum(x$mhw_rel_seas)))[, 2]
     events$int_mean_rel_thresh <-
@@ -389,7 +389,7 @@ detect <-
     events$int_max_rel_thresh <-
       plyr::ldply(events_list, function(x) max(x$mhw_rel_thresh))[, 2]
     events$int_var_rel_thresh <-
-      plyr::ldply(events_list, function(x) sqrt(var(x$mhw_rel_thresh)))[, 2]
+      plyr::ldply(events_list, function(x) sqrt(stats::var(x$mhw_rel_thresh)))[, 2]
     events$int_cum_rel_thresh <-
       plyr::ldply(events_list, function(x) max(cumsum(x$mhw_rel_thresh)))[, 2]
     events$int_mean_abs <-
@@ -397,7 +397,7 @@ detect <-
     events$int_max_abs <-
       plyr::ldply(events_list, function(x) max(x$temp))[, 2]
     events$int_var_abs <-
-      plyr::ldply(events_list, function(x) sqrt(var(x$temp)))[, 2]
+      plyr::ldply(events_list, function(x) sqrt(stats::var(x$temp)))[, 2]
     events$int_cum_abs <-
       plyr::ldply(events_list, function(x) max(cumsum(x$temp)))[, 2]
     events$int_mean_norm <-

@@ -157,7 +157,7 @@ receive a brief overview.
 t_dat <- make_whole(sst_WA)
 res <- detect(t_dat, climatology_period = c(1983, 2012))
 # show a portion of the climatology:
-head(res$clim)
+res$clim[1:10, ]
 # show some of the heat waves:
 res$event[1:5, 1:10]
 }

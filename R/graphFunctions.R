@@ -3,20 +3,9 @@
 #' Creates a graph of warm or cold events as per the second row of Figure 3 in
 #' Hobday et al. (2016).
 #'
-#' @importFrom ggplot2 ggplot
-#' @importFrom ggplot2 aes
-#' @importFrom ggplot2 geom_polygon
-#' @importFrom ggplot2 geom_line
-#' @importFrom ggplot2 scale_colour_manual
-#' @importFrom ggplot2 scale_fill_manual
-#' @importFrom ggplot2 scale_x_date
-#' @importFrom ggplot2 xlab
-#' @importFrom ggplot2 ylab
-#' @importFrom ggplot2 ggsave
-#' @importFrom ggplot2 theme
-#' @importFrom ggplot2 theme_grey
-#' @importFrom ggplot2 element_text
-#' @importFrom ggplot2 element_blank
+#' @importFrom ggplot2 ggplot aes geom_polygon geom_line scale_colour_manual
+#' scale_fill_manual scale_x_date xlab ylab theme theme_grey element_text
+#' element_blank
 #' @importFrom grid unit
 #'
 #' @param data The function receives the output from the \code{\link{detect}} function.
@@ -81,7 +70,7 @@ event_line <- function(data,
   temp <- event_no <- thresh_clim_year <- seas_clim_year <- NULL # avoids annoying notes during check...
   dat3 <- data.frame()
   for (i in min(clim$event_no, na.rm = TRUE):max(clim$event_no, na.rm = TRUE)) {
-    x <- clim[complete.cases(clim$event_no) & clim$event_no == i,]
+    x <- clim[stats::complete.cases(clim$event_no) & clim$event_no == i,]
     grid.df <-
       data.frame(date = seq(x$date[1], x$date[nrow(x)], by = "day"))
     x <- merge(x, grid.df, by = "date", all.y = TRUE)
@@ -145,10 +134,7 @@ event_line <- function(data,
 #' Visualise a timeline of several event metrics as 'lollipop' graphs.
 #'
 #' @importFrom magrittr %<>%
-#' @importFrom ggplot2 aes_string
-#' @importFrom ggplot2 geom_segment
-#' @importFrom ggplot2 geom_point
-#' @importFrom ggplot2 scale_x_continuous
+#' @importFrom ggplot2 aes_string geom_segment geom_point scale_x_continuous
 #'
 #' @param data Output from the \code{\link{detect}} function.
 #' @param metric One of \code{int_mean}, \code{int_max}, \code{int_cum} and \code{duation}.
@@ -184,7 +170,7 @@ lolli_plot <- function(data,
   event %<>%
     dplyr::select_("event_no", "date_start", "date_peak", metric) %>%
     dplyr::ungroup() %>%
-    dplyr::mutate_(.dots = setNames(list(expr), "peak_sort")) %>%
+    dplyr::mutate_(.dots = stats::setNames(list(expr), "peak_sort")) %>%
     dplyr::arrange(dplyr::desc(peak_sort))
 
     event$col <- "event"

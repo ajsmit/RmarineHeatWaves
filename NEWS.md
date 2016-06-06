@@ -1,9 +1,12 @@
 ---
 output: pdf_document
 ---
-# RmarineHeatWaves 0.12.0
+# RmarineHeatWaves 0.12.1
 
 # VERSION CHANGES
+## Changes in version 0.12.1 (6 June 2016)
+* Fix Windows build dependency warnings.
+
 ## Changes in version 0.12.0 (2 June 2016)
 * Added lolliplot functionality -- lolli_plot().
 
