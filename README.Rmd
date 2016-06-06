@@ -18,9 +18,9 @@ knitr::opts_chunk$set(
 
 The RmarineHeatWaves R package contains a number of functions which calculate 
 and display marine heat waves according to the definition of Hobday et al. (2016). 
-The marine cold spell option was implemented in version 0.13 (21 Nov 2015) in the 
-Python module as a result of the preparation of our Schlegel et al. (submitted),
-manuscript, wherein the cold events are introduced and receive a brief overview.
+The marine cold spell option was implemented in version 0.13 (21 Nov 2015) of the 
+Python module as a result of the preparation of Schlegel et al. (submitted), wherein
+the cold events are introduced and receive a brief overview.
 
 The RmarineHeatWaves package is a translation of the original Python code written 
 by Eric C. J. Oliver that can be found on [GitHub](https://github.com/ecjoliver/marineHeatWaves).
@@ -56,11 +56,6 @@ The translation from Python to R was done by A. J. Smit and the graphing functio
 # Contact
 
 A. J. Smit
-Department for Biodiversity & Conservation Biology
-University of the Western Cape
-Private Bag X17
-Bellville 7535
-South Africa
-E-mail: ajsmit@uwc.ac.za
+Department for Biodiversity & Conservation Biology, University of the Western Cape,
+Private Bag X17,  Bellville 7535, South Africa,  E-mail: ajsmit@uwc.ac.za,
 Work tel.: +27 (0)21 959 3783
-Fax.: +27 (0)21 959 2312

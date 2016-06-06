@@ -77,7 +77,7 @@
 #' The original python algorithm was written by Eric Oliver, Institue for
 #' Marine and Antarctic Studies, University of Tasmania, Feb 2015, and is
 #' documented by Hobday et al. (2016). The marine cold spell option was
-#' implemented in version 0.13 (21 Nov 2015) in the python module as a result
+#' implemented in version 0.13 (21 Nov 2015) of the python module as a result
 #' of our the preparation of Schlegel et al. (submitted), wherein the cold events
 #' receive a brief overview.
 #'
