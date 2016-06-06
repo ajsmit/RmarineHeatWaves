@@ -1,9 +1,13 @@
 ---
 output: pdf_document
 ---
-# RmarineHeatWaves 0.12.1
+# RmarineHeatWaves 0.12.2
 
 # VERSION CHANGES
+## Changes in version 0.12.2 (6 June 2016)
+* Add README.md file.
+* Various minor changes to documentation of several functions.
+
 ## Changes in version 0.12.1 (6 June 2016)
 * Fix Windows build dependency warnings.
 

@@ -18,7 +18,7 @@
 #' various helper functions to fascilitate developing an uninterrupted time
 #' series of temperatures (e.g. \code{\link{make_whole}}) and some options to produce
 #' graphical summaries and representations of the detected events such as
-#' \code{\link{event_line}}.
+#' \code{\link{event_line}} and \code{\link{lolli_plot}}.
 #'
 #' This package is demonstrated by applying the MHW definition to observed SST
 #' records and showing how it identifies three historical MHWs: the 2011

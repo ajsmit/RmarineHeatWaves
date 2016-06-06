@@ -129,7 +129,7 @@ event_line <- function(data,
     )
 }
 
-#' Create a timeline of event metrics.
+#' Create a timeline of selected event metrics.
 #'
 #' Visualise a timeline of several event metrics as 'lollipop' graphs.
 #'

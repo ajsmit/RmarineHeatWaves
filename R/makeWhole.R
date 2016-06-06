@@ -1,6 +1,6 @@
 #' Constructs a Continuous, Uninterrupted Time Series of Temperatures.
 #'
-#' Takes a series of dates and times, and if irregular (but ordered), inserts
+#' Takes a series of dates and temperatures, and if irregular (but ordered), inserts
 #' missing dates and fills correpsonding temperatures with NAs.
 #'
 #' @param data A data frame with columns headed \code{t} and \code{temp} for
