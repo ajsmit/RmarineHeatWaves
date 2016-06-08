@@ -44,7 +44,7 @@ which are also discussed by Hobday et al. (2016):
 ```{r detect-example, fig.height = 3, fig.width = 8, message = FALSE, warning = FALSE}
 library(RmarineHeatWaves); library(dplyr)
 ts <- make_whole(sst_WA)
-res <- detect(ts , climatology_start = 1983, climatology_end = 2012)
+res <- detect(ts, climatology_start = 1983, climatology_end = 2012)
 res$event %>% 
   ungroup() %>%
   dplyr::arrange(-int_cum)
