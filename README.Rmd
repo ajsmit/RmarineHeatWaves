@@ -41,7 +41,7 @@ the 2011 Western Australia event, the 2012 Northwest Atlantic event and the
 
 For example, here is the `detect()` function applied applied to the Western Australian test data,
 which are also discussed by Hobday et al. (2016):
-```{r detect-example, fig.height = 3, fig.width = 8}
+```{r detect-example, fig.height = 3, fig.width = 8, message = FALSE, warning = FALSE}
 library(RmarineHeatWaves); library(dplyr)
 ts <- make_whole(sst_WA)
 res <- detect(ts , climatology_start = 1983, climatology_end = 2012)

@@ -50,20 +50,6 @@ For example, here is the `detect()` function applied applied to the Western Aust
 
 ``` r
 library(RmarineHeatWaves); library(dplyr)
-#> 
-#> Attaching package: 'dplyr'
-#> The following object is masked _by_ '.GlobalEnv':
-#> 
-#>     arrange
-#> The following objects are masked from 'package:stats':
-#> 
-#>     filter, lag
-#> The following object is masked from '.env':
-#> 
-#>     n
-#> The following objects are masked from 'package:base':
-#> 
-#>     intersect, setdiff, setequal, union
 ts <- make_whole(sst_WA)
 res <- detect(ts , climatology_start = 1983, climatology_end = 2012)
 res$event %>% 
