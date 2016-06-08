@@ -3,7 +3,7 @@
 #'Applies the Hobday et al. (2016) marine heat wave definition to an input time
 #'series of temperature along with a time vector.
 #'
-#' @importFrom dplyr %>%
+#' @importFrom magrittr %>%
 #' @importFrom plyr .
 #' @param data A data frame with three columns. They are headed \code{doy},
 #' which is the Julian day running from 1 to 366, but modified so that the
@@ -13,12 +13,13 @@
 #' temperatures. Data of the appropriate format are created by the function
 #' \code{\link{make_whole}}, but your own data can be supplied if they meet the
 #' criteria specified by \code{\link{make_whole}}.
-#' @param climatology_period Period over which the (varying by day-of-year)
-#' seasonal cycle and extremes threshold are calculated. It is recommended
-#' that a climatology period of at least 30 years is specified in order to capture
-#' decadal thermal periodicities. Default is \code{c(1983, 2012)}. If omitted, the
-#' function checks if the years are full years (either 365 or 366 days), and if
-#' not, will automatically find the first and last full years for the climatology.
+#' @param climatology_start The first full year from which the (varying by
+#' day-of-year) seasonal cycle and extremes threshold are calculated (full being
+#' 366 days if leap year, else 365 days). Note that a default value is provided
+#' but that it may not be suitable for your own data. Default is \code{1983}.
+#' @param climatology_end The last full year up to which the  seasonal cycle
+#' and extremes threshold are calculated. Default is \code{2012} (but see comment
+#' above).
 #' @param pctile Threshold percentile (\%) for detection of extreme values.
 #' Default is \code{90}th percentile for marine heat waves and \code{10}th
 #' percentile for marine cold spells.
@@ -56,6 +57,14 @@
 #' suitable for use with \code{detect}, although this may also be accomplished
 #' 'by hand' as long as the criteria are met as discussed in the documentation
 #' to \code{\link{make_whole}}.
+#' \item It is recommended that a climatology period of at least 30 years is
+#' specified in order to capture decadal thermal periodicities. Currently the
+#' function will only compute climatologies starting from 1 January of the
+#' specified \code{climatology_start} and ending on 31 December of the specified
+#' \code{climatology_end}. Even one day short of a full (i.e. 365 day during
+#' non-leap years and 366 days during leap years) at the beginning/end of the
+#' climatology period will cause the function to fail. This may be changed in
+#' future versions of the function.
 #' \item This function supports leap years. This is done by ignoring Feb 29s
 #' for the initial calculation of the climatology and threshold. The value of
 #' these for Feb 29 is then linearly interpolated from the values for Feb 28
@@ -147,14 +156,15 @@
 #'
 #' @examples
 #' t_dat <- make_whole(sst_WA)
-#' res <- detect(t_dat, climatology_period = c(1983, 2012))
+#' res <- detect(t_dat, climatology_start = 1983, climatology_end = 2012)
 #' # show a portion of the climatology:
 #' res$clim[1:10, ]
 #' # show some of the heat waves:
 #' res$event[1:5, 1:10]
 detect <-
   function(data,
-           climatology_period = c(1983, 2012),
+           climatology_start = 1983,
+           climatology_end = 2012,
            pctile = 90,
            window_half_width = 5,
            smooth_percentile = TRUE,
@@ -165,73 +175,39 @@ detect <-
            max_pad_length = 3,
            cold_spells = FALSE) {
 
-    clim_start <-
-      paste(climatology_period[1], "01", "01", sep = "-")
-    clim_end <- paste(climatology_period[2], "12", "31", sep = "-")
-
     t_series <- data
-    t_series$temp <-
-      zoo::na.approx(t_series$temp, maxgap = max_pad_length)
+    t_series$temp <- zoo::na.approx(t_series$temp, maxgap = max_pad_length)
+
+    if (missing(climatology_start))
+      stop("Oops! Please provide a complete year for the start of the climatology.")
+
+    if (missing(climatology_end))
+      stop("Bummer! Please provide a complete year for the end of the climatology.")
+
+    clim_start <- paste(climatology_start, "01", "01", sep = "-")
+    if (t_series$date[1] > clim_start) {
+      stop(paste("The specified start date precedes the first day of series, which is", t_series$date[1]))
+    }
+
+    clim_end <- paste(climatology_end, "12", "31", sep = "-")
+    if (clim_end > t_series$date[nrow(t_series)])
+      stop(paste("The specified end date follows the last day of series, which is", t_series$date[nrow(t_series)]))
+
     if (cold_spells)
       t_series$temp <- -t_series$temp
-
-    len_clim_year <- 366
-    if (exists("clim_start") & exists("clim_end")) {
-      clim_start <- clim_start
-      clim_end <- clim_end
-    } else {
-      t1 <-
-        utils::head(plyr::ddply(
-          data.frame(yr = lubridate::year(t_series$date)),
-          .(lubridate::year(t_series$date)),
-          nrow
-        ), 2)
-      t2 <-
-        utils::tail(plyr::ddply(
-          data.frame(yr = lubridate::year(t_series$date)),
-          .(lubridate::year(t_series$date)),
-          nrow
-        ), 2)
-      clim_start <-
-        ifelse((
-          lubridate::leap_year(t1[1, 1]) && max(t1[1, 2]) == len_clim_year ||
-            !lubridate::leap_year(t1[1, 1]) &&
-            max(t1[1, 2]) == 365
-        ),
-        t1[1, 1],
-        t1[2, 1]
-        )
-      clim_start <-
-        utils::head(dplyr::filter(t_series, lubridate::year(date) == clim_start), 1)[, "date"]
-      clim_end <-
-        ifelse((
-          lubridate::leap_year(t2[2, 1]) && max(t2[2, 2]) == len_clim_year ||
-            !lubridate::leap_year(t2[2, 1]) &&
-            max(t2[2, 2]) == 365
-        ),
-        t2[2, 1],
-        t2[1, 1]
-        )
-      clim_end <-
-        utils::tail(dplyr::filter(t_series, lubridate::year(date) == clim_end), 1)[, "date"]
-    }
 
     tDat <- t_series %>%
       dplyr::filter(date >= clim_start & date <= clim_end) %>%
       dplyr::mutate(date = lubridate::year(date)) %>%
       tidyr::spread(date, temp)
 
-    all_NA <- apply(tDat[59:61, ], 2, function(x)
-      ! all(is.na(x)))
-    no_NA <-
-      names(all_NA[all_NA > 0]) # compatibility with zoo < 1.7.13...
-    tDat[59:61, no_NA] <-
-      zoo::na.approx(tDat[59:61, no_NA], maxgap = 1, na.rm = TRUE)
-    tDat <-
-      rbind(utils::tail(tDat, window_half_width),
-            tDat,
-            utils::head(tDat, window_half_width)) # allows 'wrap-around' window
+    all_NA <- apply(tDat[59:61, ], 2, function(x) !all(is.na(x)))
+    no_NA <- names(all_NA[all_NA > 0]) # compatibility with zoo < 1.7.13...
+    tDat[59:61, no_NA] <- zoo::na.approx(tDat[59:61, no_NA], maxgap = 1, na.rm = TRUE)
+    tDat <- rbind(utils::tail(tDat, window_half_width),
+                  tDat, utils::head(tDat, window_half_width))
     seas_clim_year <- thresh_clim_year <- rep(NA, nrow(tDat))
+
     for (i in (window_half_width + 1):((nrow(tDat) - window_half_width))) {
       seas_clim_year[i] <-
         mean(c(t(tDat[(i - (window_half_width)):(i + window_half_width), 2:ncol(tDat)])), na.rm = TRUE)
@@ -245,14 +221,16 @@ detect <-
         )
     }
 
+    len_clim_year <- 366
     clim <-
       data.frame(
         doy = tDat[(window_half_width + 1):((window_half_width) + len_clim_year), 1],
         seas_clim_year = seas_clim_year[(window_half_width + 1):((window_half_width) + len_clim_year)],
         thresh_clim_year = thresh_clim_year[(window_half_width + 1):((window_half_width) + len_clim_year)]
       )
+
     if (smooth_percentile) {
-      clim <- clim %>%
+      clim %<>%
         dplyr::mutate(
           seas_clim_year = raster::movingFun(
             seas_clim_year,
@@ -275,12 +253,10 @@ detect <-
         )
     }
 
-    t_series <- dplyr::inner_join(t_series, clim, by = "doy")
-    t_series$temp[is.na(t_series$temp)] <-
-      t_series$seas_clim_year[is.na(t_series$temp)]
+    t_series %<>% dplyr::inner_join(clim, by = "doy")
+    t_series$temp[is.na(t_series$temp)] <- t_series$seas_clim_year[is.na(t_series$temp)]
 
-    t_series$thresh_criterion <-
-      t_series$temp > t_series$thresh_clim_year
+    t_series$thresh_criterion <- t_series$temp > t_series$thresh_clim_year
     ex1 <- rle(t_series$thresh_criterion)
     ind1 <- rep(seq_along(ex1$lengths), ex1$lengths)
     s1 <- split(zoo::index(t_series$thresh_criterion), ind1)
@@ -291,24 +267,21 @@ detect <-
         data.frame(index_start = min(x), index_stop = max(x)))
 
     duration <- NULL ###
-    protoFunc <- function(data, mode = TRUE)  {
-      out <- dplyr::mutate(data, duration = index_stop - index_start + 1)
-      if (mode)
-        out <- dplyr::filter(out, duration >= min_duration)
-      else
-        out <-
-          dplyr::filter(out, duration >= 1 & duration <= max_gap)
-      out <-
-        dplyr::mutate(out, date_start = t_series[index_start, "date"])
-      out <-
-        dplyr::mutate(out, date_stop = t_series[index_stop, "date"])
-      return(out)
+
+    protoFunc <- function(proto_data) {
+      out <- proto_data %>%
+        dplyr::mutate(duration = index_stop - index_start + 1) %>%
+        dplyr::filter(duration >= min_duration) %>%
+        dplyr::mutate(date_start = t_series[index_start, "date"]) %>%
+        dplyr::mutate(date_stop = t_series[index_stop, "date"])
     }
 
     proto_events <- do.call(rbind, proto_events_rng) %>%
       dplyr::mutate(event_no = cumsum(ex1$values[ex1$values == TRUE])) %>%
-      protoFunc(mode = TRUE)
+      protoFunc()
+
     t_series$duration_criterion <- rep(FALSE, nrow(t_series))
+
     for (i in 1:nrow(proto_events)) {
       t_series$duration_criterion[proto_events$index_start[i]:proto_events$index_stop[i]] <-
         rep(TRUE, length = proto_events$duration[i])
@@ -317,14 +290,22 @@ detect <-
     ex2 <- rle(t_series$duration_criterion)
     ind2 <- rep(seq_along(ex2$lengths), ex2$lengths)
     s2 <- split(zoo::index(t_series$thresh_criterion), ind2)
-
     proto_gaps <- s2[ex2$values == FALSE]
     proto_gaps_rng <-
-      lapply(proto_gaps, function(x)
-        data.frame(index_start = min(x), index_stop = max(x)))
+      lapply(proto_gaps, function(x) data.frame(index_start = min(x), index_stop = max(x)))
+
     proto_gaps <- do.call(rbind, proto_gaps_rng) %>%
-      dplyr::mutate(event_no = seq(1:length(ex2$values[ex2$values == FALSE]))) %>%
-      protoFunc(mode = FALSE)
+      dplyr::mutate(event_no = c(1:length(ex2$values[ex2$values == FALSE]))) %>%
+      dplyr::mutate(duration = index_stop - index_start + 1)
+
+    if (any(proto_gaps$duration >= 1 & proto_gaps$duration <= max_gap)) {
+    proto_gaps %<>%
+        dplyr::mutate(date_start = t_series[index_start, "date"]) %>%
+        dplyr::mutate(date_stop = t_series[index_stop, "date"]) %>%
+        dplyr::filter(duration >= 1 & duration <= max_gap)
+    } else {
+        join_across_gaps <- FALSE
+      }
 
     if (join_across_gaps) {
       t_series$event <- t_series$duration_criterion
@@ -333,8 +314,8 @@ detect <-
           rep(TRUE, length = proto_gaps$duration[i])
       }
     } else {
-      print("STOP! The option to not join across gaps is not yet implemented.")
-    }
+      t_series$event <- t_series$duration_criterion
+      }
 
     ex3 <- rle(t_series$event)
     ind3 <- rep(seq_along(ex3$lengths), ex3$lengths)
@@ -344,9 +325,10 @@ detect <-
     events_rng <-
       lapply(events, function(x)
         data.frame(index_start = min(x), index_stop = max(x)))
+
     events <- do.call(rbind, events_rng) %>%
       dplyr::mutate(event_no = cumsum(ex3$values[ex3$values == TRUE])) %>%
-      protoFunc(mode = TRUE)
+      protoFunc()
 
     t_series$event_no <- rep(NA, nrow(t_series))
     for (i in 1:nrow(events)) {

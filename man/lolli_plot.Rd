@@ -2,7 +2,7 @@
 % Please edit documentation in R/graphFunctions.R
 \name{lolli_plot}
 \alias{lolli_plot}
-\title{Create a timeline of event metrics.}
+\title{Create a timeline of selected event metrics.}
 \usage{
 lolli_plot(data, metric = "int_max", event_count = 4,
   xaxis = "date_start")
@@ -10,7 +10,7 @@ lolli_plot(data, metric = "int_max", event_count = 4,
 \arguments{
 \item{data}{Output from the \code{\link{detect}} function.}
 
-\item{metric}{One of \code{int_mean}, \code{int_max}, \code{int_cum} and \code{duation}.
+\item{metric}{One of \code{int_mean}, \code{int_max}, \code{int_cum} and \code{duration}.
 Default is \code{int_cum}.}
 
 \item{event_count}{The number of top events to highlight. Default is 3.}
@@ -27,7 +27,7 @@ Visualise a timeline of several event metrics as 'lollipop' graphs.
 }
 \examples{
 t_dat <- make_whole(sst_NW_Atl)
-res <- detect(t_dat) # using default values
+res <- detect(t_dat, climatology_start = 1983, climatology_end = 2012) # using default values
 
 \dontrun{
 lolli_plot(res, metric = "int_cum", event_count = 3, xaxis = "date_peak")

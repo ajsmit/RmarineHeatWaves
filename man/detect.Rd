@@ -4,8 +4,8 @@
 \alias{detect}
 \title{Detect Marine Heat Waves and Marine Cold Spells.}
 \usage{
-detect(data, climatology_period = c(1983, 2012), pctile = 90,
-  window_half_width = 5, smooth_percentile = TRUE,
+detect(data, climatology_start = 1983, climatology_end = 2012,
+  pctile = 90, window_half_width = 5, smooth_percentile = TRUE,
   smooth_percentile_width = 31, min_duration = 5, join_across_gaps = TRUE,
   max_gap = 2, max_pad_length = 3, cold_spells = FALSE)
 }
@@ -19,12 +19,14 @@ temperatures. Data of the appropriate format are created by the function
 \code{\link{make_whole}}, but your own data can be supplied if they meet the
 criteria specified by \code{\link{make_whole}}.}
 
-\item{climatology_period}{Period over which the (varying by day-of-year)
-seasonal cycle and extremes threshold are calculated. It is recommended
-that a climatology period of at least 30 years is specified in order to capture
-decadal thermal periodicities. Default is \code{c(1983, 2012)}. If omitted, the
-function checks if the years are full years (either 365 or 366 days), and if
-not, will automatically find the first and last full years for the climatology.}
+\item{climatology_start}{The first full year from which the (varying by
+day-of-year) seasonal cycle and extremes threshold are calculated (full being
+366 days if leap year, else 365 days). Note that a default value is provided
+but that it may not be suitable for your own data. Default is \code{1983}.}
+
+\item{climatology_end}{The last full year up to which the  seasonal cycle
+and extremes threshold are calculated. Default is \code{2012} (but see comment
+above).}
 
 \item{pctile}{Threshold percentile (\%) for detection of extreme values.
 Default is \code{90}th percentile for marine heat waves and \code{10}th
@@ -128,6 +130,14 @@ part-way through the calendar year are supported. The accompanying function
 suitable for use with \code{detect}, although this may also be accomplished
 'by hand' as long as the criteria are met as discussed in the documentation
 to \code{\link{make_whole}}.
+\item It is recommended that a climatology period of at least 30 years is
+specified in order to capture decadal thermal periodicities. Currently the
+function will only compute climatologies starting from 1 January of the
+specified \code{climatology_start} and ending on 31 December of the specified
+\code{climatology_end}. Even one day short of a full (i.e. 365 day during
+non-leap years and 366 days during leap years) at the beginning/end of the
+climatology period will cause the function to fail. This may be changed in
+future versions of the function.
 \item This function supports leap years. This is done by ignoring Feb 29s
 for the initial calculation of the climatology and threshold. The value of
 these for Feb 29 is then linearly interpolated from the values for Feb 28
@@ -149,13 +159,13 @@ represent the temperature anomaly below climatology.
 The original python algorithm was written by Eric Oliver, Institue for
 Marine and Antarctic Studies, University of Tasmania, Feb 2015, and is
 documented by Hobday et al. (2016). The marine cold spell option was
-implemented in version 0.13 (21 Nov 2015) in the python module as a result
+implemented in version 0.13 (21 Nov 2015) of the python module as a result
 of our the preparation of Schlegel et al. (submitted), wherein the cold events
 receive a brief overview.
 }
 \examples{
 t_dat <- make_whole(sst_WA)
-res <- detect(t_dat, climatology_period = c(1983, 2012))
+res <- detect(t_dat, climatology_start = 1983, climatology_end = 2012)
 # show a portion of the climatology:
 res$clim[1:10, ]
 # show some of the heat waves:

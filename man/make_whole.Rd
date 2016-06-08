@@ -23,7 +23,7 @@ while \code{temp} is temperature. This time series will be uninterrupted and
 continuous between the first and last dates of the input data.
 }
 \description{
-Takes a series of dates and times, and if irregular (but ordered), inserts
+Takes a series of dates and temperatures, and if irregular (but ordered), inserts
 missing dates and fills correpsonding temperatures with NAs.
 }
 \details{

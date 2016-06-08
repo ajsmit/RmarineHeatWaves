@@ -43,7 +43,7 @@
 #'
 #' @examples
 #' t_dat <- make_whole(sst_WA)
-#' res <- detect(t_dat) # using default values
+#' res <- detect(t_dat, climatology_start = 1983, climatology_end = 2012) # using default values
 #'
 #' \dontrun{
 #' event_line(res, spread = 200, metric = "int_cum",
@@ -137,7 +137,7 @@ event_line <- function(data,
 #' @importFrom ggplot2 aes_string geom_segment geom_point scale_x_continuous
 #'
 #' @param data Output from the \code{\link{detect}} function.
-#' @param metric One of \code{int_mean}, \code{int_max}, \code{int_cum} and \code{duation}.
+#' @param metric One of \code{int_mean}, \code{int_max}, \code{int_cum} and \code{duration}.
 #' Default is \code{int_cum}.
 #' @param event_count The number of top events to highlight. Default is 3.
 #' @param xaxis One of \code{event_no}, \code{date_start} or \code{date_peak}.
@@ -152,7 +152,7 @@ event_line <- function(data,
 #'
 #' @examples
 #' t_dat <- make_whole(sst_NW_Atl)
-#' res <- detect(t_dat) # using default values
+#' res <- detect(t_dat, climatology_start = 1983, climatology_end = 2012) # using default values
 #'
 #' \dontrun{
 #' lolli_plot(res, metric = "int_cum", event_count = 3, xaxis = "date_peak")

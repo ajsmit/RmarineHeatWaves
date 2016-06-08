@@ -1,9 +1,20 @@
 ---
 output: pdf_document
 ---
-# RmarineHeatWaves 0.12.2
+# RmarineHeatWaves 0.13.0
 
 # VERSION CHANGES
+## Changes in version 0.13.0 (8 June 2016)
+* Significant changes to detection algorithm:
+  - ... more extensive use of magrittr pipe operators %>% and %<>%
+  - ... simplification of protoFunc helper function
+  - ... removal of automatic start/end day calculation if these are not provided
+  - ... climatology start/end dates must now always be explicitely set
+  - ... finally enabled join_across_gaps option
+  - ... fixed a bug that caused the function to fail when none of the gaps between
+  events (i.e. proto_gaps) were less than max_gap
+* Update examples to accommodate these changes.
+
 ## Changes in version 0.12.2 (6 June 2016)
 * Add README.md file.
 * Various minor changes to documentation of several functions.

@@ -67,7 +67,7 @@ arbitrary (integer) block sizes.
 }
 \examples{
 t_dat <- make_whole(sst_Med)
-res <- detect(t_dat) # using default values
+res <- detect(t_dat, climatology_start = 1983, climatology_end = 2012) # using default values
 out <- block_average(res)
 summary(glm(count ~ year, out, family = "poisson"))
 
