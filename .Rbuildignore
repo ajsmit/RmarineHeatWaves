@@ -5,4 +5,4 @@
 ^NEWS\.md$
 ^\.travis\.yml$
 ^\.DS_Store$
-^testCase$
+^example$
