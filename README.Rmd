@@ -39,6 +39,16 @@ The package also provides data of observed SST records for three historical MHWs
 the 2011 Western Australia event, the 2012 Northwest Atlantic event and the 
 2003 Mediterranean event.
 
+For example, here is the `detect()` function applied applied to the Western Australian test data:
+```{r example, fig.height = 3, fig.width = 8}
+library(RmarineHeatWaves)
+ts <- make_whole(sst_WA)
+res <- detect(ts , climatology_start = 1983, climatology_end = 2012)
+head(res, 3)
+event_line(res, metric = "int_max")
+lolli_plot(res)
+```
+
 # References
 
 Hobday, A.J. et al. (2016), A hierarchical approach to defining marine heatwaves, Progress in Oceanography, 141, pp. 227-238, doi: 10.1016/j.pocean.2015.12.014 [pdf](http://passage.phys.ocean.dal.ca/~olivere/docs/Hobdayetal_2016_PO_HierarchMHWDefn.pdf)
