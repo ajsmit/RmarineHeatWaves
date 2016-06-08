@@ -46,48 +46,43 @@ The functions
 
 The package also provides data of observed SST records for three historical MHWs: the 2011 Western Australia event, the 2012 Northwest Atlantic event and the 2003 Mediterranean event.
 
-For example, here is the `detect()` function applied applied to the Western Australian test data:
+For example, here is the `detect()` function applied applied to the Western Australian test data, which are also discussed by Hobday et al. (2016):
 
 ``` r
-library(RmarineHeatWaves)
+library(RmarineHeatWaves); library(dplyr)
+#> 
+#> Attaching package: 'dplyr'
+#> The following object is masked _by_ '.GlobalEnv':
+#> 
+#>     arrange
+#> The following objects are masked from 'package:stats':
+#> 
+#>     filter, lag
+#> The following object is masked from '.env':
+#> 
+#>     n
+#> The following objects are masked from 'package:base':
+#> 
+#>     intersect, setdiff, setequal, union
 ts <- make_whole(sst_WA)
 res <- detect(ts , climatology_start = 1983, climatology_end = 2012)
-head(res, 3)
-#> $clim
-#> Source: local data frame [12,053 x 9]
-#> Groups: event_no [61]
-#> 
-#>      doy       date  temp seas_clim_year thresh_clim_year thresh_criterion
-#>    (dbl)     (date) (dbl)          (dbl)            (dbl)            (lgl)
-#> 1      1 1982-01-01 20.94       21.60802         22.96048            FALSE
-#> 2      2 1982-01-02 21.25       21.63485         22.99871            FALSE
-#> 3      3 1982-01-03 21.38       21.66207         23.03758            FALSE
-#> 4      4 1982-01-04 21.16       21.68951         23.07713            FALSE
-#> 5      5 1982-01-05 21.26       21.71686         23.11297            FALSE
-#> 6      6 1982-01-06 21.61       21.74365         23.14603            FALSE
-#> 7      7 1982-01-07 21.74       21.76988         23.17748            FALSE
-#> 8      8 1982-01-08 21.50       21.79576         23.20800            FALSE
-#> 9      9 1982-01-09 21.40       21.82165         23.23658            FALSE
-#> 10    10 1982-01-10 21.36       21.84782         23.26493            FALSE
-#> ..   ...        ...   ...            ...              ...              ...
-#> Variables not shown: duration_criterion (lgl), event (lgl), event_no (int)
-#> 
-#> $event
+res$event %>% 
+  ungroup() %>%
+  dplyr::arrange(-int_cum)
 #> Source: local data frame [60 x 23]
-#> Groups: event_no [60]
 #> 
 #>    index_start index_stop event_no duration date_start  date_stop
 #>          (int)      (int)    (int)    (dbl)     (date)     (date)
-#> 1          885        889        1        5 1984-06-03 1984-06-07
-#> 2          899        904        2        6 1984-06-17 1984-06-22
-#> 3          908        926        3       19 1984-06-26 1984-07-14
-#> 4         1023       1029        4        7 1984-10-19 1984-10-25
-#> 5         1033       1037        5        5 1984-10-29 1984-11-02
-#> 6         1048       1052        6        5 1984-11-13 1984-11-17
-#> 7         1291       1297        7        7 1985-07-14 1985-07-20
-#> 8         2100       2104        8        5 1987-10-01 1987-10-05
-#> 9         2370       2375        9        6 1988-06-27 1988-07-02
-#> 10        2488       2498       10       11 1988-10-23 1988-11-02
+#> 1         6342       6436       22       95 1999-05-13 1999-08-15
+#> 2        10629      10688       42       60 2011-02-06 2011-04-06
+#> 3        10968      11014       49       47 2012-01-11 2012-02-26
+#> 4        11018      11063       50       46 2012-03-01 2012-04-15
+#> 5        10585      10624       41       40 2010-12-24 2011-02-01
+#> 6         9582       9615       31       34 2008-03-26 2008-04-28
+#> 7         5435       5472       18       38 1996-11-17 1996-12-24
+#> 8         6686       6714       23       29 2000-04-21 2000-05-19
+#> 9        10926      10954       48       29 2011-11-30 2011-12-28
+#> 10       10530      10553       39       24 2010-10-30 2010-11-22
 #> ..         ...        ...      ...      ...        ...        ...
 #> Variables not shown: date_peak (date), int_mean (dbl), int_max (dbl),
 #>   int_var (dbl), int_cum (dbl), int_mean_rel_thresh (dbl),
@@ -95,16 +90,22 @@ head(res, 3)
 #>   (dbl), int_mean_abs (dbl), int_max_abs (dbl), int_var_abs (dbl),
 #>   int_cum_abs (dbl), int_mean_norm (dbl), int_max_norm (dbl), rate_onset
 #>   (dbl), rate_decline (dbl)
-event_line(res, metric = "int_max")
 ```
 
-![](README-example-1.png)
+The corresponding `event_line()` and `lolli_plot()` look like this:
+
+``` r
+event_line(res, spread = 200, metric = "int_cum",
+           start_date = "2010-10-01", end_date = "2011-08-30")
+```
+
+![](README-fig-example-1.png)
 
 ``` r
 lolli_plot(res)
 ```
 
-![](README-example-2.png)
+![](README-fig-example-2.png)
 
 References
 ==========

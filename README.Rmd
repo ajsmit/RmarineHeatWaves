@@ -39,13 +39,22 @@ The package also provides data of observed SST records for three historical MHWs
 the 2011 Western Australia event, the 2012 Northwest Atlantic event and the 
 2003 Mediterranean event.
 
-For example, here is the `detect()` function applied applied to the Western Australian test data:
-```{r example, fig.height = 3, fig.width = 8}
-library(RmarineHeatWaves)
+For example, here is the `detect()` function applied applied to the Western Australian test data,
+which are also discussed by Hobday et al. (2016):
+```{r detect-example, fig.height = 3, fig.width = 8}
+library(RmarineHeatWaves); library(dplyr)
 ts <- make_whole(sst_WA)
 res <- detect(ts , climatology_start = 1983, climatology_end = 2012)
-head(res, 3)
-event_line(res, metric = "int_max")
+res$event %>% 
+  ungroup() %>%
+  dplyr::arrange(-int_cum)
+```
+
+The corresponding `event_line()` and `lolli_plot()` look like this:
+
+```{r fig-example, fig.height = 3, fig.width = 8}
+event_line(res, spread = 200, metric = "int_cum",
+           start_date = "2010-10-01", end_date = "2011-08-30")
 lolli_plot(res)
 ```
 
