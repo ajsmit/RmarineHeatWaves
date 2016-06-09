@@ -22,15 +22,15 @@
 #'
 #' This package is demonstrated by applying the MHW definition to observed SST
 #' records and showing how it identifies three historical MHWs: the 2011
-#' Western Australia event, the 2012 Northwest Atlantic event, and the 2003
+#' Western Australia event, the 2012 Northwest Atlantic event and the 2003
 #' Mediterranean event. These data are included herewith.
 #'
-#' @author Albertus J. Smit <\email{ajsmit@@uwc.ac.za}>, Robert W. Schlegel,
+#' @author Albertus J. Smit <\email{albertus.smit@gmail.com}>, Robert W. Schlegel,
 #' Eric C. J. Oliver
 #'
 #' @references Hobday, A. J. et al. (2016), A hierarchical approach to defining
 #' marine heatwaves. Progress in Oceanography, 141, pp. 227-238,
-#' doi:10.1016/j.pocean.2015.12.014 (official citation for this package).
+#' <DOI:10.1016/j.pocean.2015.12.014> (official citation for this package).
 #'
 #' Schlegel, R. W., Oliver, E. C. J., Wernberg, T. W., Smit, A. J. (submitted)
 #' Coastal and offshore co-occurrences of marine heatwaves and cold-spells.

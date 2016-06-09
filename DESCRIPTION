@@ -31,6 +31,6 @@ Description: Applies the Hobday et al. (2016) <DOI:10.1016/j.pocean.2015.12.014>
     historical MHWs: the 2011 Western Australia event, the 2012 Northwest
     Atlantic event and the 2003 Mediterranean event.
 License: MIT + file LICENSE
-URL: https://github.com/ecjoliver/marineHeatWaves
+URL: https://github.com/ajsmit/RmarineHeatWaves
 LazyData: TRUE
 RoxygenNote: 5.0.1
