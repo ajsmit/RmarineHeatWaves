@@ -1,9 +1,12 @@
 ---
 output: pdf_document
 ---
-# RmarineHeatWaves 0.13.0
+# RmarineHeatWaves 0.13.1
 
 # VERSION CHANGES
+## Changes in version 0.13.1 (9 June 2016)
+* Edit to README.md file.
+
 ## Changes in version 0.13.0 (8 June 2016)
 * Significant changes to detection algorithm:
   - ... more extensive use of magrittr pipe operators %>% and %<>%
