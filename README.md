@@ -52,7 +52,7 @@ The functions
 
 The package also provides data of observed SST records for three historical MHWs: the 2011 Western Australia event, the 2012 Northwest Atlantic event and the 2003 Mediterranean event.
 
-For example, here is the `detect()` function applied applied to the Western Australian test data, which are also discussed by Hobday et al. (2016):
+For example, here is the `detect()` function applied to the Western Australian test data, which are also discussed by Hobday et al. (2016):
 
 ``` r
 library(RmarineHeatWaves); library(dplyr)
