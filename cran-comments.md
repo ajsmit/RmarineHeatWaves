@@ -1,4 +1,9 @@
 # Resubmission:
+
+## Attempt 2:
+* <DOI:doi:10.1016/j.pocean.2015.12.014> changed to <DOI:10.1016/j.pocean.2015.12.014>
+
+## Attempt 1:
 The resubmission attends to a problem raised by a CRAN maintainer. I have added 
 a DOI for the reference mentioned in the Description field of the DESCRIPTION 
 file as follows:
