@@ -8,7 +8,7 @@ make_whole(data)
 }
 \arguments{
 \item{data}{A data frame with columns headed \code{t} and \code{temp} for
-date and temperature data, respectively. Daily data are expected, and
+date and temperature data, respectively. Ordered daily data are expected, and
 although missing values (NA) can be accommodated, the function is only
 recommended when NAs occur infrequently, preferably at no more than 3
 consequtive days.}
@@ -20,7 +20,7 @@ modified so that the day-of-year series for non-leap-years runs 1...59 and
 then 61...366. For leap years the 60th day is February 29. See the example,
 below. The \code{date} column is a series of dates of class \code{Date},
 while \code{temp} is temperature. This time series will be uninterrupted and
-continuous between the first and last dates of the input data.
+continuous daily values between the first and last dates of the input data.
 }
 \description{
 Takes a series of dates and temperatures, and if irregular (but ordered), inserts
@@ -29,12 +29,14 @@ missing dates and fills correpsonding temperatures with NAs.
 \details{
 Upon import, the package uses `zoo` and `lubridate` to process the input
 date and temperature data. It reads in daily data with the time vector
-specified as either \code{POSIXct} (e.g. "1982-01-01 02:00:00" or
+specified as either \code{POSIXct} or \code{Date}  (e.g. "1982-01-01 02:00:00" or
 "1982-01-01"). The data may be an irregular time series, but date must be
 ordered. The function constructs a complete time series from the start date
-to the end date, and fills in the regions in the time series where data are
-missing with NAs. There must only be one temperature value per day otherwise
-the function will fail. Leap years are automatically accommodated by 'zoo'.
+to the end date, and fills in the regions in the time series where temperature
+data are missing with NAs in the temperature vector. There must only be one
+temperature value per day otherwise the function will fail. It is up to the
+user to calculate daily data from sub-daily measurements. Leap years are
+automatically accommodated by 'zoo'.
 
 This function can handle some of missing days, but this is not a
 licence to actually use these data for the detection of anomalous thermal
@@ -45,6 +47,9 @@ the lower the fidelity of the annual climatology and threshold that can be
 calculated, which will not only have repercussions for the accuracy at which
 the event metrics can be determined, but also for the number of events that
 can be detected.
+
+It is recommended that a climatology period of at least 30 years is specified
+in order to capture any decadal thermal periodicities.
 }
 \examples{
 require(dplyr); require(tidyr); require(lubridate)

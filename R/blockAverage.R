@@ -1,14 +1,14 @@
 #' Calculate Yearly Means for Event Metrics.
 #'
 #' @param data Accepts the data returned by the \code{\link{detect}} function.
-#' @param report Specify either 'full' or 'partial'. Selecting 'full' causes
+#' @param report Specify either \code{full} or \code{partial}. Selecting \code{full} causes
 #' the report to contain NAs for any years in which no events were detected
-#' (except for \code{count}, which will be zero in those years), while 'partial'
-#' reports only the years wherein events were detected. The default is 'full'.
+#' (except for \code{count}, which will be zero in those years), while \code{partial}
+#' reports only the years wherein events were detected. The default is \code{full}.
 #'
 #' @details
 #' This function needs to be provided with the full output from the \code{detect}
-#' function. Note that the yearly averages are calculted only for "full" years
+#' function. Note that the yearly averages are calculted only for complete years
 #' (i.e. years that start/end part-way through the year at the beginning or end
 #' of the original time series are removed from the calculations).
 #'

@@ -16,7 +16,8 @@
 #' \code{int_cum}, \code{int_mean_rel_thresh}, \code{int_max_rel_thresh}, \code{int_var_rel_thresh},
 #' \code{int_cum_rel_thresh}, \code{int_mean_abs}, \code{int_max_abs}, \code{int_var_abs},
 #' \code{int_cum_abs}, \code{int_mean_norm}, \code{int_max_norm}, \code{rate_onset}, \code{rate_decline}.
-#' The default is \code{int_cum}.
+#' Partial name matching is currently not supported so please specify the matric
+#' name precisely. The default is \code{int_cum}.
 #' @param start_date The start date of a period of time within which the largest
 #' event (as per \code{metric}) is retrieved and plotted. This may not necessarily
 #' correspond to the biggest event of the specified metric within the entire
@@ -30,8 +31,7 @@
 #' @return The function will return a line plot indicating the climatology,
 #' threshold and temperature, with the hot or cold events that meet the
 #' specifications of Hobday et al. (2016) shaded in as appropriate. The plotting
-#' of hot or cold events depends on which option is specified in \code{\link{detect}}. The graph
-#' will be saved to disk.
+#' of hot or cold events depends on which option is specified in \code{\link{detect}}.
 #'
 #' @author Robert W. Schlegel
 #'
@@ -129,7 +129,7 @@ event_line <- function(data,
     )
 }
 
-#' Create a timeline of selected event metrics.
+#' Create a Timeline of Selected Event Metrics.
 #'
 #' Visualise a timeline of several event metrics as 'lollipop' graphs.
 #'
@@ -143,7 +143,7 @@ event_line <- function(data,
 #' @param xaxis One of \code{event_no}, \code{date_start} or \code{date_peak}.
 #' Default is \code{date_start}.
 #'
-#' @return The function will return a graph of the intensity if the selected
+#' @return The function will return a graph of the intensity of the selected
 #' metric along the y-axis versus either \code{date} or \code{event_no}.
 #'
 #' @author Albertus J. Smit and Robert W. Schlegel
@@ -159,7 +159,7 @@ event_line <- function(data,
 #' }
 lolli_plot <- function(data,
                        metric = "int_max",
-                       event_count = 4,
+                       event_count = 3,
                        xaxis = "date_start") {
 
   event <- data$event

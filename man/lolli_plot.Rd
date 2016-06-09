@@ -2,9 +2,9 @@
 % Please edit documentation in R/graphFunctions.R
 \name{lolli_plot}
 \alias{lolli_plot}
-\title{Create a timeline of selected event metrics.}
+\title{Create a Timeline of Selected Event Metrics.}
 \usage{
-lolli_plot(data, metric = "int_max", event_count = 4,
+lolli_plot(data, metric = "int_max", event_count = 3,
   xaxis = "date_start")
 }
 \arguments{
@@ -19,7 +19,7 @@ Default is \code{int_cum}.}
 Default is \code{date_start}.}
 }
 \value{
-The function will return a graph of the intensity if the selected
+The function will return a graph of the intensity of the selected
 metric along the y-axis versus either \code{date} or \code{event_no}.
 }
 \description{
