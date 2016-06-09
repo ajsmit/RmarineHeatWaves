@@ -24,10 +24,10 @@ Imports:
     magrittr,
     grid,
     lazyeval
-Description: Applies the Hobday et al. (2016) marine heat wave definition to
-    an input time series of daily temperature. It outputs properties of all
-    detected marine heat waves (and marine cold spells sensu Schlegel et al.,
-    submitted). The package provides data of observed SST records for three
+Description: Applies the Hobday et al. (2016) <DOI:doi:10.1016/j.pocean.2015.12.014>
+    marine heat wave definition to an input time series of daily temperature.
+    It outputs properties of all detected marine heat waves (and marine cold
+    spells). The package provides data of observed SST records for three
     historical MHWs: the 2011 Western Australia event, the 2012 Northwest
     Atlantic event and the 2003 Mediterranean event.
 License: MIT + file LICENSE
