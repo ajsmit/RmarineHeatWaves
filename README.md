@@ -100,7 +100,7 @@ lolli_plot(res)
 References
 ==========
 
-Hobday, A.J. et al. (2016). A hierarchical approach to defining marine heatwaves, Progress in Oceanography, 141, pp. 227-238, doi: 10.1016/j.pocean.2015.12.014 [pdf](http://passage.phys.ocean.dal.ca/~olivere/docs/Hobdayetal_2016_PO_HierarchMHWDefn.pdf)
+Hobday, A.J. et al. (2016). A hierarchical approach to defining marine heatwaves, Progress in Oceanography, 141, pp. 227-238. <DOI:10.1016/j.pocean.2015.12.014>. [PDF.](http://passage.phys.ocean.dal.ca/~olivere/docs/Hobdayetal_2016_PO_HierarchMHWDefn.pdf)
 
 Schlegel, R. W., Oliver, E. C. J., Wernberg, T. W., Smit, A. J. (submitted). Coastal and offshore co-occurrences of marine heatwaves and cold-spells. Progress in Oceanography.
 

@@ -66,27 +66,26 @@
 #' climatology period will cause the function to fail. This may be changed in
 #' future versions of the function.
 #' \item This function supports leap years. This is done by ignoring Feb 29s
-#' for the initial calculation of the climatology and threshold. The value of
-#' these for Feb 29 is then linearly interpolated from the values for Feb 28
-#' and Mar 1.
-#' \item The calculation of onset and decline rates assumes that the heat wave
+#' for the initial calculation of the climatology and threshold. The values for
+#' Feb 29 are then linearly interpolated from the values for Feb 28 and Mar 1.
+#' \item The calculation of onset and decline rates assumes that the events
 #' started a half-day before the start day and ended a half-day after the
-#' end-day. (This is consistent with the duration definition as implemented,
-#' which assumes duration = end day - start day + 1.)
-#' \item For the purposes of MHW detection, any missing temp values not
+#' end-day. This is consistent with the duration definition as implemented,
+#' which assumes duration = end day - start day + 1.
+#' \item For the purposes of event detection, any missing temperature values not
 #' interpolated over (through optional \code{maxPadLLength}) will be set equal
 #' to the seasonal climatology. This means they will trigger the end/start of
-#' any adjacent temp values which satisfy the MHW criteria.
+#' any adjacent temperature values which satisfy the event definition criteria.
 #' \item If the code is used to detect cold events (\code{coldSpells} = TRUE),
 #' then it works just as for heat waves except that events are detected as
 #' deviations below the (100 - pctile)th percentile  (e.g., the 10th instead of
 #' 90th) for at least 5 days. Intensities are reported as negative values and
 #' represent the temperature anomaly below climatology.
 #' }
-#' The original python algorithm was written by Eric Oliver, Institue for
+#' The original Python algorithm was written by Eric Oliver, Institute for
 #' Marine and Antarctic Studies, University of Tasmania, Feb 2015, and is
 #' documented by Hobday et al. (2016). The marine cold spell option was
-#' implemented in version 0.13 (21 Nov 2015) of the python module as a result
+#' implemented in version 0.13 (21 Nov 2015) of the Python module as a result
 #' of our the preparation of Schlegel et al. (submitted), wherein the cold events
 #' receive a brief overview.
 #'
@@ -144,11 +143,11 @@
 #'
 #' @author Albertus J. Smit, Robert W. Schlegel, Eric C. J. Oliver
 #'
-#' @references Hobday, A.J. et al. (2016), A hierarchical approach to defining
+#' @references Hobday, A.J. et al. (2016). A hierarchical approach to defining
 #' marine heatwaves, Progress in Oceanography, 141, pp. 227-238,
-#' doi: 10.1016/j.pocean.2015.12.014
+#' doi:10.1016/j.pocean.2015.12.014
 #'
-#' Schlegel, R. W., Oliver, C. J., Wernberg, T. W., Smit, A. J. (submitted)
+#' Schlegel, R. W., Oliver, C. J., Wernberg, T. W., Smit, A. J. (submitted).
 #' Coastal and offshore co-occurrences of marine heatwaves and cold-spells.
 #' Progress in Oceanography.
 #'
