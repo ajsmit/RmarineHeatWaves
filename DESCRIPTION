@@ -24,7 +24,7 @@ Imports:
     magrittr,
     grid,
     lazyeval
-Description: Applies the Hobday et al. (2016) <DOI:doi:10.1016/j.pocean.2015.12.014>
+Description: Applies the Hobday et al. (2016) <DOI:10.1016/j.pocean.2015.12.014>
     marine heat wave definition to an input time series of daily temperature.
     It outputs properties of all detected marine heat waves (and marine cold
     spells). The package provides data of observed SST records for three
