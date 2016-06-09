@@ -6,3 +6,10 @@ r:
  - oldrel
  - release
  - devel
+
+notifications:
+  email:
+    recipients:
+      - albertus.smit@gmail.com
+    on_success: always
+    on_failure: always

@@ -4,12 +4,12 @@ Date: 2016-08-02
 Title: Detect Marine Heat Waves and Marine Cold Spells
 Type: Package
 Authors@R: c(person("Albertus J.", "Smit", role = c("aut", "cre"),
-    email = "ajsmit@uwc.ac.za", comment = "R implementation."),
+    email = "albertus.smit@gmail.com", comment = "R implementation."),
     person("Eric C. J.", "Oliver", role = "aut", comment = "The brain behind
     the Python implementation."),
     person("Robert W.", "Schlegel", role = "ctb", comment = "Graphical and data
     summaries."))
-Maintainer: Albertus J. Smit <ajsmit@uwc.ac.za>
+Maintainer: Albertus J. Smit <albertus.smit@gmail.com>
 Depends: R (>= 2.10)
 Imports:
     stats,

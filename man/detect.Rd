@@ -15,7 +15,7 @@ which is the Julian day running from 1 to 366, but modified so that the
 day-of-year (doy) vector for non-leap-years runs 1...59 and then
 61...366. For leap years the 60th day is February 29. The \code{date} column
 is a vector of dates of class \code{Date}, while \code{temp} is the
-temperatures. Data of the appropriate format are created by the function
+temperature. Data of the appropriate format are created by the function
 \code{\link{make_whole}}, but your own data can be supplied if they meet the
 criteria specified by \code{\link{make_whole}}.}
 
@@ -53,7 +53,7 @@ occur before/after a short gap as specified by \code{max_gap}. Default
 is \code{TRUE}.}
 
 \item{max_gap}{Maximum length of gap allowed for the joining of MHWs. Default
-is \code{1} day.}
+is \code{2} days.}
 
 \item{max_pad_length}{Specifies the maximum length of days over which to
 interpolate (pad) missing data (specified as \code{NA}) in the input
@@ -83,13 +83,13 @@ events that were detected:
   \code{thresh_criterion} are >= \code{min_duration}.}
   \item{event}{Boolean indicting if all criteria that define a MHW or MCS are
   met.}
-  \item{event_no}{A sequential number indicating the number and order of
+  \item{event_no}{A sequential number indicating the ID and order of
   occurence of the MHWs or MCSs.}
 
 The events are summarised using a range of event metrics:
   \item{index_start}{Start index of event.}
   \item{index_stop}{Stop index of event.}
-  \item{event_no}{A sequential ID number indicating the identity and order of
+  \item{event_no}{A sequential number indicating the ID and order of
   the events.}
   \item{duration}{Duration of event [days].}
   \item{date_start}{Start date of event [date].}
