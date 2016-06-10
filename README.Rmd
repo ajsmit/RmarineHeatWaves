@@ -16,6 +16,9 @@ knitr::opts_chunk$set(
 
 # RmarineHeatWaves
 
+[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/RmarineHeatWaves)](http://cran.r-project.org/package=RmarineHeatWaves)
+[![Travis-CI Build Status](https://travis-ci.org/ajsmit/RmarineHeatWaves.svg?branch=master)](https://travis-ci.org/ajsmit/RmarineHeatWaves)
+
 The RmarineHeatWaves package is a translation of the original Python code written 
 by Eric C. J. Oliver that can be found on [GitHub](https://github.com/ecjoliver/marineHeatWaves).
 
