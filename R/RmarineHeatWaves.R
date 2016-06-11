@@ -61,7 +61,7 @@
 #' specified in order to capture decadal thermal periodicities. Currently the
 #' function will only compute climatologies starting from 1 January of the
 #' specified \code{climatology_start} and ending on 31 December of the specified
-#' \code{climatology_end}. Even one day short of a full (i.e. 365 day during
+#' \code{climatology_end}. Even one day short of a full year (i.e. 365 day during
 #' non-leap years and 366 days during leap years) at the beginning/end of the
 #' climatology period will cause the function to fail. This may be changed in
 #' future versions of the function.
