@@ -1,7 +1,7 @@
 #' Detect Marine Heat Waves and Marine Cold Spells.
 #'
 #' Applies the Hobday et al. (2016) marine heat wave definition to an input time
-#' series of temperature along with a time vector.
+#' series of temperature along with a daily date vector.
 #'
 #' @importFrom magrittr %>%
 #' @importFrom plyr .
