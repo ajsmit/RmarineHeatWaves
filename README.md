@@ -2,7 +2,7 @@
 RmarineHeatWaves
 ================
 
-[![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/RmarineHeatWaves)](http://cran.r-project.org/package=RmarineHeatWaves) [![Travis-CI Build Status](https://travis-ci.org/ajsmit/RmarineHeatWaves.svg?branch=master)](https://travis-ci.org/ajsmit/RmarineHeatWaves)
+[![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/RmarineHeatWaves)](http://cran.r-project.org/package=RmarineHeatWaves) [![Travis-CI Build Status](https://travis-ci.org/ajsmit/RmarineHeatWaves.svg?branch=master)](https://travis-ci.org/ajsmit/RmarineHeatWaves) ![](http://cranlogs.r-pkg.org/badges/grand-total/RmarineHeatWaves)
 
 The RmarineHeatWaves package is a translation of the original Python code written by Eric C. J. Oliver that can be found on [GitHub](https://github.com/ecjoliver/marineHeatWaves).
 
@@ -64,7 +64,7 @@ res$event %>%
 #> Source: local data frame [60 x 23]
 #> 
 #>    index_start index_stop event_no duration date_start  date_stop
-#>          (int)      (int)    (int)    (dbl)     (date)     (date)
+#>          <int>      <int>    <int>    <dbl>     <date>     <date>
 #> 1         6342       6436       22       95 1999-05-13 1999-08-15
 #> 2        10629      10688       42       60 2011-02-06 2011-04-06
 #> 3        10968      11014       49       47 2012-01-11 2012-02-26
@@ -76,12 +76,12 @@ res$event %>%
 #> 9        10926      10954       48       29 2011-11-30 2011-12-28
 #> 10       10530      10553       39       24 2010-10-30 2010-11-22
 #> ..         ...        ...      ...      ...        ...        ...
-#> Variables not shown: date_peak (date), int_mean (dbl), int_max (dbl),
-#>   int_var (dbl), int_cum (dbl), int_mean_rel_thresh (dbl),
-#>   int_max_rel_thresh (dbl), int_var_rel_thresh (dbl), int_cum_rel_thresh
-#>   (dbl), int_mean_abs (dbl), int_max_abs (dbl), int_var_abs (dbl),
-#>   int_cum_abs (dbl), int_mean_norm (dbl), int_max_norm (dbl), rate_onset
-#>   (dbl), rate_decline (dbl)
+#> Variables not shown: date_peak <date>, int_mean <dbl>, int_max <dbl>,
+#>   int_var <dbl>, int_cum <dbl>, int_mean_rel_thresh <dbl>,
+#>   int_max_rel_thresh <dbl>, int_var_rel_thresh <dbl>, int_cum_rel_thresh
+#>   <dbl>, int_mean_abs <dbl>, int_max_abs <dbl>, int_var_abs <dbl>,
+#>   int_cum_abs <dbl>, int_mean_norm <dbl>, int_max_norm <dbl>, rate_onset
+#>   <dbl>, rate_decline <dbl>.
 ```
 
 The corresponding `event_line()` and `lolli_plot()` look like this:
