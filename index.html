@@ -1,0 +1,155 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>RmarineHeatWaves by ajsmit</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-dark.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>RmarineHeatWaves</h1>
+        <p>R Translation of the Python Marine Heat Waves Scripts (see Hobday et al., 2016).</p>
+        <p class="view"><a href="https://github.com/ajsmit/RmarineHeatWaves">View the Project on GitHub <small>ajsmit/RmarineHeatWaves</small></a></p>
+        <ul>
+          <li><a href="https://github.com/ajsmit/RmarineHeatWaves/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/ajsmit/RmarineHeatWaves/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/ajsmit/RmarineHeatWaves">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        
+
+<h1>
+<a id="rmarineheatwaves" class="anchor" href="#rmarineheatwaves" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>RmarineHeatWaves</h1>
+
+<p><a href="http://cran.r-project.org/package=RmarineHeatWaves"><img src="http://www.r-pkg.org/badges/version/RmarineHeatWaves" alt="CRAN\_Status\_Badge"></a> <a href="https://travis-ci.org/ajsmit/RmarineHeatWaves"><img src="https://travis-ci.org/ajsmit/RmarineHeatWaves.svg?branch=master" alt="Travis-CI Build Status"></a> <img src="http://cranlogs.r-pkg.org/badges/grand-total/RmarineHeatWaves" alt=""></p>
+
+<p>The RmarineHeatWaves package is a translation of the original Python code written by Eric C. J. Oliver that can be found on <a href="https://github.com/ecjoliver/marineHeatWaves">GitHub</a>.</p>
+
+<p>The RmarineHeatWaves R package contains a number of functions which calculate and display marine heat waves according to the definition of Hobday et al. (2016). The marine cold spell option was implemented in version 0.13 (21 Nov 2015) of the Python module as a result of the preparation of Schlegel et al. (submitted), wherein the cold events are introduced and briefly discussed.</p>
+
+<p>This package may be found on <a href="https://cran.r-project.org/web/packages/RmarineHeatWaves/index.html">CRAN</a>. Alternatively, you may install it from GitHub by issuing the following command:</p>
+
+<p><code>devtools::install_github("ajsmit/RmarineHeatWaves")</code></p>
+
+<h1>
+<a id="the-functions" class="anchor" href="#the-functions" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>The functions</h1>
+
+<table>
+
+
+
+
+<thead>
+<tr>
+<th>Function</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>detect()</code></td>
+<td>The main function which detects the events as per the definition of Hobday et al. (2016).</td>
+</tr>
+<tr>
+<td><code>make_whole()</code></td>
+<td>Constructs a continuous, uninterrupted time series of temperatures.</td>
+</tr>
+<tr>
+<td><code>block_average()</code></td>
+<td>Calculates annual means for event metrics.</td>
+</tr>
+<tr>
+<td><code>event_line()</code></td>
+<td>Creates a line plot of marine heat waves or cold spells.</td>
+</tr>
+<tr>
+<td><code>lolli_plot()</code></td>
+<td>Creates a timeline of selected event metrics.</td>
+</tr>
+</tbody>
+</table>
+
+<p>The package also provides data of observed SST records for three historical MHWs: the 2011 Western Australia event, the 2012 Northwest Atlantic event and the 2003 Mediterranean event.</p>
+
+<p>For example, here is the <code>detect()</code> function applied to the Western Australian test data, which are also discussed by Hobday et al. (2016):</p>
+
+<div class="highlight highlight-source-r"><pre>library(<span class="pl-smi">RmarineHeatWaves</span>); library(<span class="pl-smi">dplyr</span>)
+<span class="pl-smi">ts</span> <span class="pl-k">&lt;-</span> make_whole(<span class="pl-smi">sst_WA</span>)
+<span class="pl-smi">res</span> <span class="pl-k">&lt;-</span> detect(<span class="pl-smi">ts</span>, <span class="pl-v">climatology_start</span> <span class="pl-k">=</span> <span class="pl-c1">1983</span>, <span class="pl-v">climatology_end</span> <span class="pl-k">=</span> <span class="pl-c1">2012</span>)
+<span class="pl-smi">res</span><span class="pl-k">$</span><span class="pl-smi">event</span> %<span class="pl-k">&gt;</span>% 
+  ungroup() %<span class="pl-k">&gt;</span>%
+  <span class="pl-e">dplyr</span><span class="pl-k">::</span>arrange(<span class="pl-k">-</span><span class="pl-smi">int_cum</span>)
+<span class="pl-c">#&gt; Source: local data frame [60 x 23]</span>
+<span class="pl-c">#&gt; </span>
+<span class="pl-c">#&gt;    index_start index_stop event_no duration date_start  date_stop</span>
+<span class="pl-c">#&gt;          &lt;int&gt;      &lt;int&gt;    &lt;int&gt;    &lt;dbl&gt;     &lt;date&gt;     &lt;date&gt;</span>
+<span class="pl-c">#&gt; 1         6342       6436       22       95 1999-05-13 1999-08-15</span>
+<span class="pl-c">#&gt; 2        10629      10688       42       60 2011-02-06 2011-04-06</span>
+<span class="pl-c">#&gt; 3        10968      11014       49       47 2012-01-11 2012-02-26</span>
+<span class="pl-c">#&gt; 4        11018      11063       50       46 2012-03-01 2012-04-15</span>
+<span class="pl-c">#&gt; 5        10585      10624       41       40 2010-12-24 2011-02-01</span>
+<span class="pl-c">#&gt; 6         9582       9615       31       34 2008-03-26 2008-04-28</span>
+<span class="pl-c">#&gt; 7         5435       5472       18       38 1996-11-17 1996-12-24</span>
+<span class="pl-c">#&gt; 8         6686       6714       23       29 2000-04-21 2000-05-19</span>
+<span class="pl-c">#&gt; 9        10926      10954       48       29 2011-11-30 2011-12-28</span>
+<span class="pl-c">#&gt; 10       10530      10553       39       24 2010-10-30 2010-11-22</span>
+<span class="pl-c">#&gt; ..         ...        ...      ...      ...        ...        ...</span>
+<span class="pl-c">#&gt; Variables not shown: date_peak &lt;date&gt;, int_mean &lt;dbl&gt;, int_max &lt;dbl&gt;,</span>
+<span class="pl-c">#&gt;   int_var &lt;dbl&gt;, int_cum &lt;dbl&gt;, int_mean_rel_thresh &lt;dbl&gt;,</span>
+<span class="pl-c">#&gt;   int_max_rel_thresh &lt;dbl&gt;, int_var_rel_thresh &lt;dbl&gt;, int_cum_rel_thresh</span>
+<span class="pl-c">#&gt;   &lt;dbl&gt;, int_mean_abs &lt;dbl&gt;, int_max_abs &lt;dbl&gt;, int_var_abs &lt;dbl&gt;,</span>
+<span class="pl-c">#&gt;   int_cum_abs &lt;dbl&gt;, int_mean_norm &lt;dbl&gt;, int_max_norm &lt;dbl&gt;, rate_onset</span>
+<span class="pl-c">#&gt;   &lt;dbl&gt;, rate_decline &lt;dbl&gt;.</span></pre></div>
+
+<p>The corresponding <code>event_line()</code> and <code>lolli_plot()</code> look like this:</p>
+
+<div class="highlight highlight-source-r"><pre>event_line(<span class="pl-smi">res</span>, <span class="pl-v">spread</span> <span class="pl-k">=</span> <span class="pl-c1">200</span>, <span class="pl-v">metric</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>int_cum<span class="pl-pds">"</span></span>,
+           <span class="pl-v">start_date</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>2010-10-01<span class="pl-pds">"</span></span>, <span class="pl-v">end_date</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>2011-08-30<span class="pl-pds">"</span></span>)</pre></div>
+
+<p><img src="README-fig-example-1.png" alt=""></p>
+
+<div class="highlight highlight-source-r"><pre>lolli_plot(<span class="pl-smi">res</span>)</pre></div>
+
+<p><img src="README-fig-example-2.png" alt=""></p>
+
+<h1>
+<a id="references" class="anchor" href="#references" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>References</h1>
+
+<p>Hobday, A.J. et al. (2016). A hierarchical approach to defining marine heatwaves, Progress in Oceanography, 141, pp. 227-238. DOI:10.1016/j.pocean.2015.12.014. <a href="http://passage.phys.ocean.dal.ca/%7Eolivere/docs/Hobdayetal_2016_PO_HierarchMHWDefn.pdf">PDF.</a></p>
+
+<p>Schlegel, R. W., Oliver, E. C. J., Wernberg, T. W., Smit, A. J. (submitted). Coastal and offshore co-occurrences of marine heatwaves and cold-spells. Progress in Oceanography.</p>
+
+<h1>
+<a id="acknowledgements" class="anchor" href="#acknowledgements" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Acknowledgements</h1>
+
+<p>The Python code was written by Eric C. J. Oliver.</p>
+
+<p>Contributors to the Marine Heatwaves definition and its numerical implementation include Alistair J. Hobday, Lisa V. Alexander, Sarah E. Perkins, Dan A. Smale, Sandra C. Straub, Jessica Benthuysen, Michael T. Burrows, Markus G. Donat, Ming Feng, Neil J. Holbrook, Pippa J. Moore, Hillary A. Scannell, Alex Sen Gupta, and Thomas Wernberg.</p>
+
+<p>The translation from Python to R was done by A. J. Smit and the graphing functions were contributed to by Robert. W. Schlegel.</p>
+
+<h1>
+<a id="contact" class="anchor" href="#contact" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Contact</h1>
+
+<p>A. J. Smit Department for Biodiversity &amp; Conservation Biology, University of the Western Cape, Private Bag X17, Bellville 7535, South Africa, E-mail: <a href="mailto:ajsmit@uwc.ac.za">ajsmit@uwc.ac.za</a>, Work tel.: +27 (0)21 959 3783</p>
+      </section>
+    </div>
+    <footer>
+      <p>Project maintained by <a href="https://github.com/ajsmit">ajsmit</a></p>
+      <p>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></p>
+    </footer>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>
