@@ -86,7 +86,7 @@
 #' Marine and Antarctic Studies, University of Tasmania, Feb 2015, and is
 #' documented by Hobday et al. (2016). The marine cold spell option was
 #' implemented in version 0.13 (21 Nov 2015) of the Python module as a result
-#' of our the preparation of Schlegel et al. (submitted), wherein the cold events
+#' of our preparation of Schlegel et al. (submitted), wherein the cold events
 #' receive a brief overview.
 #'
 #' @return The function will return a list of two components, \code{clim} and
