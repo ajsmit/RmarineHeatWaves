@@ -16,7 +16,7 @@
 #' \code{int_cum}, \code{int_mean_rel_thresh}, \code{int_max_rel_thresh}, \code{int_var_rel_thresh},
 #' \code{int_cum_rel_thresh}, \code{int_mean_abs}, \code{int_max_abs}, \code{int_var_abs},
 #' \code{int_cum_abs}, \code{int_mean_norm}, \code{int_max_norm}, \code{rate_onset}, \code{rate_decline}.
-#' Partial name matching is currently not supported so please specify the matric
+#' Partial name matching is currently not supported so please specify the metric
 #' name precisely. The default is \code{int_cum}.
 #' @param start_date The start date of a period of time within which the largest
 #' event (as per \code{metric}) is retrieved and plotted. This may not necessarily
