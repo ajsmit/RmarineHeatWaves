@@ -51,22 +51,45 @@ the 2011 Western Australia event, the 2012 Northwest Atlantic event and the
 
 For example, here is the `detect()` function applied to the Western Australian test data,
 which are also discussed by Hobday et al. (2016):
-```{r detect-example, fig.height = 3, fig.width = 8, message = FALSE, warning = FALSE}
+```{r detect-example1, fig.height = 3, fig.width = 8, message = FALSE, warning = FALSE}
 library(RmarineHeatWaves); library(dplyr)
 ts <- make_whole(sst_WA)
-res <- detect(ts, climatology_start = 1983, climatology_end = 2012)
-res$event %>% 
+mhw <- detect(ts, climatology_start = 1983, climatology_end = 2012)
+mhw$event %>% 
   ungroup() %>%
+  select(event_no, duration, date_start, date_stop, date_peak, int_mean, int_max, int_cum) %>% 
   dplyr::arrange(-int_cum)
 ```
 
-The corresponding `event_line()` and `lolli_plot()` look like this:
+The corresponding `event_line()` and `lolli_plot()`, which represent the massive Western Australian heatwave of 2011, look like this:
 
-```{r fig-example, fig.height = 3, fig.width = 8}
-event_line(res, spread = 200, metric = "int_cum",
+```{r fig-example1, fig.height = 3, fig.width = 8}
+event_line(mhw, spread = 200, metric = "int_cum",
            start_date = "2010-10-01", end_date = "2011-08-30")
-lolli_plot(res)
+lolli_plot(mhw)
 ```
+
+Marine cold spells are also accommodated. Here is a cold spell detected in the Western Australian OISST data:
+
+```{r detect-example2, fig.height = 3, fig.width = 8, message = FALSE, warning = FALSE}
+mcs <- detect(ts, climatology_start = 1983, climatology_end = 2012, cold_spells = TRUE)
+mcs$event %>% 
+  ungroup() %>%
+  select(event_no, duration, date_start, date_stop, date_peak, int_mean, int_max, int_cum) %>% 
+  dplyr::arrange(int_cum)
+```
+
+The plots showing the marine cold spells look like this:
+
+```{r fig-example2, fig.height = 3, fig.width = 8}
+event_line(mcs, spread = 200, metric = "int_cum",
+           start_date = "1990-01-01", end_date = "1990-08-30")
+lolli_plot(mcs)
+```
+
+In the development version of ggplot2 (2.1.0.9001), Hadley has again fiddled with some of the plot defaults and this has resulted in the legend position in the above plots being affected. I will make sure that the next release of RmarineHeatWaves fixes this problems. The next version of this package will also include some major updates to the plotting functions. An update will be released in the next month or two.
+
+
 
 # References
 

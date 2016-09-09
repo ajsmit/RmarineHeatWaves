@@ -57,47 +57,82 @@ For example, here is the `detect()` function applied to the Western Australian t
 ``` r
 library(RmarineHeatWaves); library(dplyr)
 ts <- make_whole(sst_WA)
-res <- detect(ts, climatology_start = 1983, climatology_end = 2012)
-res$event %>% 
+mhw <- detect(ts, climatology_start = 1983, climatology_end = 2012)
+mhw$event %>% 
   ungroup() %>%
+  select(event_no, duration, date_start, date_stop, date_peak, int_mean, int_max, int_cum) %>% 
   dplyr::arrange(-int_cum)
-#> Source: local data frame [60 x 23]
-#> 
-#>    index_start index_stop event_no duration date_start  date_stop
-#>          <int>      <int>    <int>    <dbl>     <date>     <date>
-#> 1         6342       6436       22       95 1999-05-13 1999-08-15
-#> 2        10629      10688       42       60 2011-02-06 2011-04-06
-#> 3        10968      11014       49       47 2012-01-11 2012-02-26
-#> 4        11018      11063       50       46 2012-03-01 2012-04-15
-#> 5        10585      10624       41       40 2010-12-24 2011-02-01
-#> 6         9582       9615       31       34 2008-03-26 2008-04-28
-#> 7         5435       5472       18       38 1996-11-17 1996-12-24
-#> 8         6686       6714       23       29 2000-04-21 2000-05-19
-#> 9        10926      10954       48       29 2011-11-30 2011-12-28
-#> 10       10530      10553       39       24 2010-10-30 2010-11-22
-#> ..         ...        ...      ...      ...        ...        ...
-#> Variables not shown: date_peak <date>, int_mean <dbl>, int_max <dbl>,
-#>   int_var <dbl>, int_cum <dbl>, int_mean_rel_thresh <dbl>,
-#>   int_max_rel_thresh <dbl>, int_var_rel_thresh <dbl>, int_cum_rel_thresh
-#>   <dbl>, int_mean_abs <dbl>, int_max_abs <dbl>, int_var_abs <dbl>,
-#>   int_cum_abs <dbl>, int_mean_norm <dbl>, int_max_norm <dbl>, rate_onset
-#>   <dbl>, rate_decline <dbl>.
+#> # A tibble: 60 × 8
+#>    event_no duration date_start  date_stop  date_peak int_mean  int_max
+#>       <int>    <dbl>     <date>     <date>     <date>    <dbl>    <dbl>
+#> 1        22       95 1999-05-13 1999-08-15 1999-05-22 2.498305 3.601700
+#> 2        42       60 2011-02-06 2011-04-06 2011-02-28 3.211903 6.505969
+#> 3        49       47 2012-01-11 2012-02-26 2012-01-27 2.225734 3.300112
+#> 4        50       46 2012-03-01 2012-04-15 2012-04-10 1.993709 2.957609
+#> 5        41       40 2010-12-24 2011-02-01 2011-01-28 2.157016 3.274803
+#> 6        31       34 2008-03-26 2008-04-28 2008-04-14 2.236577 3.769274
+#> 7        18       38 1996-11-17 1996-12-24 1996-12-21 1.820192 2.467469
+#> 8        23       29 2000-04-21 2000-05-19 2000-05-04 1.949836 2.741701
+#> 9        48       29 2011-11-30 2011-12-28 2011-12-19 1.760314 2.281731
+#> 10       39       24 2010-10-30 2010-11-22 2010-11-03 1.623114 2.585006
+#> # ... with 50 more rows, and 1 more variables: int_cum <dbl>
 ```
 
-The corresponding `event_line()` and `lolli_plot()` look like this:
+The corresponding `event_line()` and `lolli_plot()`, which represent the massive Western Australian heatwave of 2011, look like this:
 
 ``` r
-event_line(res, spread = 200, metric = "int_cum",
+event_line(mhw, spread = 200, metric = "int_cum",
            start_date = "2010-10-01", end_date = "2011-08-30")
 ```
 
-![](README-fig-example-1.png)
+![](README-fig-example1-1.png)
 
 ``` r
-lolli_plot(res)
+lolli_plot(mhw)
 ```
 
-![](README-fig-example-2.png)
+![](README-fig-example1-2.png)
+
+Marine cold spells are also accommodated. Here is a cold spell detected in the Western Australian OISST data:
+
+``` r
+mcs <- detect(ts, climatology_start = 1983, climatology_end = 2012, cold_spells = TRUE)
+mcs$event %>% 
+  ungroup() %>%
+  select(event_no, duration, date_start, date_stop, date_peak, int_mean, int_max, int_cum) %>% 
+  dplyr::arrange(int_cum)
+#> # A tibble: 71 × 8
+#>    event_no duration date_start  date_stop  date_peak  int_mean   int_max
+#>       <int>    <dbl>     <date>     <date>     <date>     <dbl>     <dbl>
+#> 1        16       76 1990-04-13 1990-06-27 1990-05-11 -2.538017 -3.218054
+#> 2        54       58 2003-12-19 2004-02-14 2004-01-23 -1.798455 -2.662320
+#> 3        71       52 2014-04-14 2014-06-04 2014-05-05 -1.818984 -2.565533
+#> 4         8       38 1986-06-24 1986-07-31 1986-07-17 -2.009802 -2.950536
+#> 5        51       32 2003-09-08 2003-10-09 2003-09-16 -1.560817 -2.116583
+#> 6        31       28 1993-03-18 1993-04-14 1993-04-11 -1.710159 -2.494210
+#> 7        47       27 2002-09-11 2002-10-07 2002-09-25 -1.714935 -2.618133
+#> 8        40       22 1997-08-09 1997-08-30 1997-08-22 -1.688167 -2.290205
+#> 9        29       18 1992-06-20 1992-07-07 1992-07-05 -1.934667 -2.329971
+#> 10       41       18 1997-09-08 1997-09-25 1997-09-15 -1.735893 -2.273214
+#> # ... with 61 more rows, and 1 more variables: int_cum <dbl>
+```
+
+The plots showing the marine cold spells look like this:
+
+``` r
+event_line(mcs, spread = 200, metric = "int_cum",
+           start_date = "1990-01-01", end_date = "1990-08-30")
+```
+
+![](README-fig-example2-1.png)
+
+``` r
+lolli_plot(mcs)
+```
+
+![](README-fig-example2-2.png)
+
+In the development version of ggplot2 (2.1.0.9001), Hadley has again fiddled with some of the plot defaults and this has resulted in the legend position in the above plots being affected. I will make sure that the next release of RmarineHeatWaves fixes this problems. The next version of this package will also include some major updates to the plotting functions. An update will be released in the next month or two.
 
 References
 ==========

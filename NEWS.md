@@ -1,9 +1,15 @@
 ---
 output: pdf_document
 ---
-# RmarineHeatWaves 0.13.1.9000
+# RmarineHeatWaves 0.13.4.9000
 
 # VERSION CHANGES
+## Changes in version 0.13.4.9000 (8 October 2016)
+* Added a marine cold spell example.
+
+## Changes in version 0.13.3.9000 (9 September 2016)
+* Correcting a few typos.
+
 ## Changes in version 0.13.1.9000 (9 June 2016)
 * The new development version.
 
