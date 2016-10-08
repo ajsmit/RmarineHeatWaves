@@ -2,27 +2,13 @@
 output: pdf_document
 ---
 <<<<<<< HEAD
-# RmarineHeatWaves 0.13.4.9000
-||||||| merged common ancestors
-# RmarineHeatWaves 0.13.1.9000
-=======
-# RmarineHeatWaves 0.13.3.9000
->>>>>>> d8a981c4c6b189e0d09fa5865b47b5f9a4b6718d
-
 # VERSION CHANGES
-<<<<<<< HEAD
 ## Changes in version 0.13.4.9000 (8 October 2016)
 * Added a marine cold spell example.
 
 ## Changes in version 0.13.3.9000 (9 September 2016)
 * Correcting a few typos.
 
-||||||| merged common ancestors
-=======
-## Changes in version 0.13.3.9000 (9 September 2016)
-* Correcting a few typos.
-
->>>>>>> d8a981c4c6b189e0d09fa5865b47b5f9a4b6718d
 ## Changes in version 0.13.1.9000 (9 June 2016)
 * The new development version.
 
