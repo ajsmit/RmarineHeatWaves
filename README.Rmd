@@ -57,7 +57,7 @@ ts <- make_whole(sst_WA)
 mhw <- detect(ts, climatology_start = 1983, climatology_end = 2012)
 mhw$event %>% 
   ungroup() %>%
-  select(event_no, duration, date_start, date_stop, date_peak, int_mean, int_max, int_cum) %>% 
+  select(event_no, duration, date_start, date_peak, int_mean, int_max, int_cum) %>% 
   dplyr::arrange(-int_cum)
 ```
 
@@ -75,7 +75,7 @@ Marine cold spells are also accommodated. Here is a cold spell detected in the W
 mcs <- detect(ts, climatology_start = 1983, climatology_end = 2012, cold_spells = TRUE)
 mcs$event %>% 
   ungroup() %>%
-  select(event_no, duration, date_start, date_stop, date_peak, int_mean, int_max, int_cum) %>% 
+  select(event_no, duration, date_start, date_peak, int_mean, int_max, int_cum) %>% 
   dplyr::arrange(int_cum)
 ```
 
