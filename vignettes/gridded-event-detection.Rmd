@@ -140,7 +140,7 @@ ggplot(OISST_nTrend, aes(lon, lat)) +
                size = 0.5, colour = "black", fill = NA) +
   coord_fixed(ratio = 1, xlim = c(12.12, 35.12), ylim = c(-26.88, -37.38), expand = TRUE) +
   theme_bw()
-# ggsave(file = "the-figure-1.png", width = 12, height = 8)
+ggsave(file = "../README-fig-example3.png", width = 12, height = 6)
 ```
 
 ![**Figure 1.** Plot of 0.25 degree Reynold's OISST around South Africa showing especially the increase in frequency of marine heat waves (trend per decade) within the Agulhas Current.](the-figure-1.png)
