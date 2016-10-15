@@ -132,14 +132,14 @@ lolli_plot(mcs)
 
 ![](README-fig-example2-2.png)
 
-In the development version of ggplot2 (2.1.0.9001), Hadley has again fiddled with some of the plot defaults and this has resulted in the legend position in the above plots being affected. I will make sure that the next release of RmarineHeatWaves fixes this problems. The next version of this package will also include some major updates to the plotting functions. An update will be released in the next month or two.
+In the development version of ggplot2 (2.1.0.9001), Hadley has *again* fiddled with some of the plot defaults and this has resulted in the legend position in the above plots being affected. I will make sure that the next release of RmarineHeatWaves fixes this problem. The next version of this package will also include some major updates to the plotting functions. An update will be released in the next month or two.
 
 References
 ==========
 
 Hobday, A.J. et al. (2016). A hierarchical approach to defining marine heatwaves, Progress in Oceanography, 141, pp. 227-238. <DOI:10.1016/j.pocean.2015.12.014>. [PDF.](http://passage.phys.ocean.dal.ca/~olivere/docs/Hobdayetal_2016_PO_HierarchMHWDefn.pdf)
 
-Schlegel, R. W., Oliver, E. C. J., Wernberg, T. W., Smit, A. J. (submitted). Coastal and offshore co-occurrences of marine heatwaves and cold-spells. Progress in Oceanography.
+Schlegel, R. W., Oliver, E. C. J., Wernberg, T. W., Smit, A. J. (in review). Coastal and offshore co-occurrences of marine heatwaves and cold-spells. Progress in Oceanography.
 
 Acknowledgements
 ================

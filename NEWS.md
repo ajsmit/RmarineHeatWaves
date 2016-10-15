@@ -1,8 +1,11 @@
 ---
 output: pdf_document
 ---
-<<<<<<< HEAD
+
 # VERSION CHANGES
+## Changes in version 0.13.5.9000 (8 October 2016)
+* Expanded example included as package vignette.
+
 ## Changes in version 0.13.4.9000 (8 October 2016)
 * Added a marine cold spell example.
 
