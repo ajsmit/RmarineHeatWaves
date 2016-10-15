@@ -1,9 +1,10 @@
 ---
 title: "Extreme event detection in gridded data"
 author: "AJ Smit"
-date: "15 October 2016"
+date: "`r Sys.Date()`"
 output: 
-  rmarkdown::html_vignette:
+  html_document:
+    keep_md: yes
     fig_caption: yes
 vignette: >
   %\VignetteIndexEntry{Extreme event detection in gridded data}
@@ -12,7 +13,7 @@ vignette: >
 ---
 
 ```{r global_options, include = FALSE}
-knitr::opts_chunk$set(fig.width = 3.5, fig.path = 'Figs/', fig.align = 'center',
+knitr::opts_chunk$set(fig.width = 3.5, fig.path = '/man/figures', fig.align = 'center',
                       echo = FALSE, warning = FALSE, message = FALSE, tidy = FALSE)
 ```
 
@@ -141,4 +142,10 @@ ggplot(OISST_nTrend, aes(lon, lat)) +
   theme_bw()
 ```
 
-![**Figure 1.** Plot of 0.25 degree Reynold's OISST around South Africa showing especially the increase in frequency of marine heat waves (trend per decade) within the Agulhas Current.](/Users/ajsmit/Dropbox/repos/packages/RmarineHeatWaves/vignettes/Figs/the-figure-1.png)
+The above code produces a plot of 0.25 degree Reynold's OISST around South Africa showing especially the increase in frequency of marine heat waves (trend per decade) within the Agulhas Current:
+
+<center>
+<img src="the-figure-1.png" width="45%">
+\center
+
+<!-- ![**Figure 1.** Plot of 0.25 degree Reynold's OISST around South Africa showing especially the increase in frequency of marine heat waves (trend per decade) within the Agulhas Current.](/Users/ajsmit/Dropbox/repos/packages/RmarineHeatWaves/vignettes/Figs/the-figure-1.png) -->
