@@ -25,7 +25,7 @@ library(tibble)
 library(reshape2)
 library(lubridate)
 library(ggplot2)
-# library(doMC); doMC::registerDoMC(cores = 4)
+library(doMC); doMC::registerDoMC(cores = 4)
 ```
 
 First, we read in the netCDF 0.25 degree OISST data; specifically, we save the only variable, `sst`, as a multidimensional array (longitude, latitude and time/date). We then construct a list with names for this SST array. The names for the three dimensions are simply a list of longitudes, latitudes and dates, which we can get directly from this netCDF file (note: not all netCDF files are created equally, and sometimes vectors of lats, lons and dates need to be created based on the start value for lat/lon/date in the netCDF, and the "steps" between subsequent lats/lons/dates).
@@ -89,15 +89,15 @@ Because I saved the results to a file I can load these rather than rerunning the
 ```{r event-tally, echo = TRUE, eval = FALSE}
 # summarise the number of unique longitude, latitude and year combination:
 event_freq <- OISST_events %>% 
-  dplyr::mutate(year = year(date_start)) %>% 
-  dplyr::group_by(lon, lat, year) %>% 
-  dplyr::summarise(n = n())
+  mutate(year = year(date_start)) %>% 
+  group_by(lon, lat, year) %>% 
+  summarise(n = n())
 head(event_freq)
 
 # create complete grid for merging with:
 sst.grid <- sst1 %>% 
-  dplyr::select(lon, lat, t) %>% 
-  dplyr::mutate(t = lubridate::year(t)) %>% 
+  select(lon, lat, t) %>% 
+  mutate(t = lubridate::year(t)) %>% 
   unique() # slow...
 colnames(sst.grid)[colnames(sst.grid) == 't'] <- 'year'
 
