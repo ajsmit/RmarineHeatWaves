@@ -134,7 +134,7 @@ lolli_plot(mcs)
 
 In the development version of ggplot2 (2.1.0.9001), Hadley has *again* fiddled with some of the plot defaults and this has resulted in the legend position in the above plots being affected. I will make sure that the next release of RmarineHeatWaves fixes this problem. The next version of this package will also include some major updates to the plotting functions. An update will be released in the next month or two.
 
-We can also load the 0.25 degree Reynolds [OISST data](http://www.ncdc.noaa.gov/thredds/oisst-catalog.html) and apply the function pixel by pixel for each year. The figure below shows the `detect()` function applied to these data, and then we plot the trend in the marine heat wave count per decade. We can clearly see how the Agulhas Current is exhibiting marine heat waves more frequently in recent decades, and that there are two smaller areas where the frequency of marine heat waves are actually decreasing with time.
+We can also load the 0.25 degree Reynolds [OISST data](http://www.ncdc.noaa.gov/thredds/oisst-catalog.html) and apply the function pixel by pixel for each year. The figure below shows the `detect()` function applied to these data, and then we plot the trend in the marine heat wave count per decade. We can clearly see how the Agulhas Current is exhibiting marine heat waves more frequently in recent decades, and that there are two smaller areas where the frequency of marine heat waves are actually decreasing with time. Please read the package [vignette](https://github.com/ajsmit/RmarineHeatWaves/blob/master/vignettes/gridded-event-detection.Rmd) to see how this is done.
 
 ![](README-fig-example3.png)
 
