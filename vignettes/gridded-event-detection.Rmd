@@ -144,7 +144,8 @@ load("/Users/ajsmit/Dropbox/repos/Trend_Analysis/graph/sa_provinces_new.RData")
 ```{r the-figure, echo = TRUE, eval = FALSE}
 ggplot(OISST_nTrend, aes(lon, lat)) +
   geom_raster(aes(fill = Estimate), interpolate = FALSE) +
-  scale_fill_gradient2(name = "Count\n per\n decade", high = "red", mid = "white", low = "blue", midpoint = 0) +
+  scale_fill_gradient2(name = "Count\n per\n decade", high = "red", mid = "white",
+                       low = "blue", midpoint = 0) +
   geom_polygon(data = south_africa_coast, aes(x = lon, y = lat, group = group), 
                colour = NA, fill = "grey80") +
   geom_path(data = africa_borders, aes(x = lon, y = lat, group = group), 
@@ -157,12 +158,17 @@ ggsave(file = "README-fig-example3.png", width = 12, height = 6)
 
 ggplot(OISST_nTrend, aes(lon, lat)) +
   geom_raster(aes(fill = pval), interpolate = FALSE) +
-  scale_fill_manual(breaks = c("(0,0.001]", "(0.001,0.01]", "(0.01,0.05]", "(0.05,0.1]", "(0.1,0.5]", "(0.5,1]"),
-                    values = c("black", "grey20", "grey40", "grey80", "grey90", "white"),
+  scale_fill_manual(breaks = c("(0,0.001]", "(0.001,0.01]", "(0.01,0.05]",
+                               "(0.05,0.1]", "(0.1,0.5]", "(0.5,1]"),
+                    values = c("black", "grey20", "grey40",
+                               "grey80", "grey90", "white"),
                     name = "p-value") +
-  geom_polygon(data = south_africa_coast, aes(x = lon, y = lat, group = group), colour = NA, fill = "grey80") +
-  geom_path(data = africa_borders, aes(x = lon, y = lat, group = group), size = 0.3, colour = "black") +
-  geom_polygon(data = south_africa_coast, aes(x = lon, y = lat, group = group), size = 0.5, colour = "black", fill = NA) +
+  geom_polygon(data = south_africa_coast, aes(x = lon, y = lat, group = group), 
+               colour = NA, fill = "grey80") +
+  geom_path(data = africa_borders, aes(x = lon, y = lat, group = group), 
+            size = 0.3, colour = "black") +
+  geom_polygon(data = south_africa_coast, aes(x = lon, y = lat, group = group), 
+               size = 0.5, colour = "black", fill = NA) +
   coord_fixed(ratio = 1, xlim = c(12.12, 35.12), ylim = c(-26.88, -37.38), expand = TRUE) +
   theme_bw()
 ggsave(file = "README-fig-example4.png", width = 12, height = 6)
