@@ -129,7 +129,7 @@ lin_fun <- function(ev) {
 
 ```{r apply-trend-fun, echo = TRUE, eval = FALSE}
 OISST_nTrend <- ddply(OISST_n, .(lon, lat), lin_fun)
-OISST_nTrend$pval <- cut(OISST_nTrend[,4], breaks = c(0, 0.001, 0.01, 0.05, 0.1, 0.5, 1))
+OISST_nTrend$pval <- cut(OISST_nTrend[,4], breaks = c(0, 0.001, 0.01, 0.05, 1))
 head(OISST_nTrend)
 ```
 
@@ -142,10 +142,16 @@ load("/Users/ajsmit/Dropbox/repos/Trend_Analysis/graph/sa_provinces_new.RData")
 ```
 
 ```{r the-figure, echo = TRUE, eval = FALSE}
-ggplot(OISST_nTrend, aes(lon, lat)) +
-  geom_raster(aes(fill = Estimate), interpolate = FALSE) +
+ggplot(OISST_nTrend, aes(x = lon, y = lat)) +
+  geom_rect(size = 0.2, fill = NA,
+       aes(xmin = lon - 0.1, xmax = lon + 0.1, ymin = lat - 0.1, ymax = lat + 0.1,
+           colour = OISST_nTrend[,5])) +
+  geom_raster(aes(fill = Estimate), interpolate = FALSE, alpha = 0.9) +
   scale_fill_gradient2(name = "Count\n per\n decade", high = "red", mid = "white",
-                       low = "blue", midpoint = 0) +
+                       low = "darkblue", midpoint = 0) +
+  scale_colour_manual(breaks = c("(0,0.001]", "(0.001,0.01]", "(0.01,0.05]", "(0.05,1]"),
+                      values = c("firebrick1", "firebrick2", "firebrick3", "white"),
+                      name = "p-value", guide = FALSE) +
   geom_polygon(data = south_africa_coast, aes(x = lon, y = lat, group = group), 
                colour = NA, fill = "grey80") +
   geom_path(data = africa_borders, aes(x = lon, y = lat, group = group), 
@@ -154,7 +160,7 @@ ggplot(OISST_nTrend, aes(lon, lat)) +
                size = 0.5, colour = "black", fill = NA) +
   coord_fixed(ratio = 1, xlim = c(12.12, 35.12), ylim = c(-26.88, -37.38), expand = TRUE) +
   theme_bw()
-ggsave(file = "README-fig-example3.png", width = 12, height = 6)
+ggsave(file = "README-fig-example3.png", width = 6, height = 3)
 
 ggplot(OISST_nTrend, aes(lon, lat)) +
   geom_raster(aes(fill = pval), interpolate = FALSE) +
@@ -174,6 +180,6 @@ ggplot(OISST_nTrend, aes(lon, lat)) +
 ggsave(file = "README-fig-example4.png", width = 12, height = 6)
 ```
 
-![**Figure 1.** Plot of marine heat waves detected in the 0.25 degree Reynold's OISST around South Africa, showing the increase in frequency of marine heat waves within the Agulhas Current.](README-fig-example3.png)
+![**Figure 1.** Plot of marine heat waves detected in the 0.25 degree Reynold's OISST around South Africa, showing the increase in frequency of marine heat waves within the Agulhas Current. Outlined pixels indicate that the trend is significant at p < 0.05.](README-fig-example3.png)
 
 ![**Figure 2.** Plot of marine heat waves found in the 0.25 degree Reynold's OISST around South Africa, showing the significance of the detected trend in frequency of marine heat waves within the Agulhas Current.](README-fig-example4.png)
