@@ -134,32 +134,6 @@ lolli_plot(mcs)
 
 In the development version of ggplot2 (2.1.0.9001), Hadley has *again* fiddled with some of the plot defaults and this has resulted in the legend position in the above plots being affected. I will make sure that the next release of RmarineHeatWaves fixes this problem. The next version of this package will also include some major updates to the plotting functions. An update will be released in the next month or two.
 
-The `detect()` function may also be used to detect when temperatures are above (below) a static threshold supplied by the user. Note that the output of this application of the `detect()` function does not produce events, but rather exceedences of the static threshold. Therefore the event component of the list produced by `detect()` is changed to 'threshold' instead, to avoid potential confusion. Note how the output of this example differs from the first example for the `detect()` function given above and that the term used to extract the data has changed from 'event' to 'threshold'.
-
-``` r
-library(RmarineHeatWaves); library(dplyr)
-ts <- make_whole(sst_WA)
-mhw <- detect(ts, climatology_start = 1983, climatology_end = 2012, threshold = 25)
-mhw$threshold %>% 
-  ungroup() %>%
-  select(event_no, duration, date_start, date_peak, int_mean, int_max, int_cum) %>% 
-  dplyr::arrange(-int_cum)
-#> # A tibble: 11 x 7
-#>    event_no duration date_start  date_peak int_mean  int_max   int_cum
-#>       <int>    <dbl>     <date>     <date>    <dbl>    <dbl>     <dbl>
-#> 1         7       52 2011-02-08 2011-02-28 3.457133 6.505969 179.77090
-#> 2        10       41 2012-03-03 2012-04-10 2.062673 2.957609  84.56959
-#> 3         6       25 2008-04-03 2008-04-14 2.563628 3.769274  64.09071
-#> 4         2       17 1999-05-13 1999-05-22 3.034437 3.601700  51.58543
-#> 5         5       10 2000-05-03 2000-05-04 2.509286 2.741701  25.09286
-#> 6         3        7 1999-06-02 1999-06-07 2.899700 3.012919  20.29790
-#> 7        11       10 2013-03-02 2013-03-09 2.012146 2.537570  20.12146
-#> 8         8        9 2011-04-20 2011-04-22 1.938385 2.258341  17.44546
-#> 9         9        6 2012-02-08 2012-02-09 2.719722 3.137086  16.31833
-#> 10        1        5 1989-05-05 1989-05-06 2.086956 2.137756  10.43478
-#> 11        4        6 2000-04-21 2000-04-23 1.731017 1.980609  10.38610
-```
-
 We can also load the gridded 0.25 degree Reynolds [OISST data](http://www.ncdc.noaa.gov/thredds/oisst-catalog.html) and apply the function pixel by pixel over all of the days of data. The example data used here have 93 longitude steps, 43 latitude steps, and cover 12797 days (1981 to 2016). We apply the `detect()` function to these data, fit a generalised linear model (GLM), and then plot the trend per decade of the marine heatwave count. In other words, have marine heatwaves become more or less frequent in recent years? Under climate change we can expect that extreme events would tend to occur more frequently and be of greater intensity. Indeed, we can clearly see in the figure below of the result of the GLM, how the Agulhas Current has been experiencing marine heat waves more frequently in recent decades. But there are two smaller areas, one along the western side of the Cape Peninsula in the Benguela Upwelling system and another around the Eastern Cape Province near Algoa Bay, where the frequency of marine heat waves seems to have actually been decreasing -- although the P-value of the decreasing trend is &gt; 0.05, and therefore not significant.
 
 ![](README-fig-example3.png) ![](README-fig-example4.png)
