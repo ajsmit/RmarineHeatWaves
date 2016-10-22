@@ -47,6 +47,9 @@
 #' integer. Default is \code{3} days.
 #' @param cold_spells Boolean specifying if the code should detect cold events
 #' instead of heat events. Default is \code{FALSE}.
+#' @param threshold Set the temperature threshold for detecting events to a
+#' static value if one does not wish to use the threshold limits produced by
+#' this function. Default is \code{"threshold"}.
 #'
 #' @details
 #' \enumerate{
@@ -81,6 +84,13 @@
 #' deviations below the (100 - pctile)th percentile  (e.g., the 10th instead of
 #' 90th) for at least 5 days. Intensities are reported as negative values and
 #' represent the temperature anomaly below climatology.
+#' \item If one is interested in detecting the occurence of consistent days of  
+#' temperatures relevant to known upper or lower temperature limits for
+#' organisms, change the 'threshold' variable to a static numeric value. Note
+#' that this will rename the \code{event} component of the list output to 
+#' \code{threshold}. This is done to prevent potential confusion over the
+#' results as they are not events, but rather exceedences of a given 
+#' temperature threshold.
 #' }
 #' The original Python algorithm was written by Eric Oliver, Institute for
 #' Marine and Antarctic Studies, University of Tasmania, Feb 2015, and is
@@ -90,17 +100,23 @@
 #' receive a brief overview.
 #'
 #' @return The function will return a list of two components, \code{clim} and
-#' \code{event}, which are the climatology and MHW (or MCS) events, respectively. The
-#' climatology contains the full time series of daily temperatures, as well as
-#' the the seasonal climatology, the threshold and various aspects of the
-#' events that were detected:
+#' \code{event}, which are the climatology and MHW (or MCS) events, respectively. 
+#' The climatology contains the full time series of daily temperatures, as well 
+#' as the the seasonal climatology, the threshold and various aspects of the
+#' events that were detected. If one chosses to set the 'threshold' variable 
+#' to a static value it will rename the \code{event} component of the output to 
+#' \code{threshold}. The remainder of the columns are left unchanged for 
+#' consistency, but it is important to note that if a static threshold is
+#' supplied, the results are not events as per the definiton found in 
+#' Hobday et al. (2016):
 #'   \item{doy}{Julian day (day-of-year). For non-leap years it runs 1...59 and
 #'   61...366, while leap years run 1...366.}
 #'   \item{date}{The date of the temperature measurement.}
 #'   \item{temp}{Seawater temperature on the specified date [deg. C].}
 #'   \item{seas_clim_year}{Climatological seasonal cycle [deg. C].}
 #'   \item{thresh_clim_year}{Seasonally varying threshold (e.g., 90th
-#'   percentile) [deg. C].}
+#'   percentile) [deg. C]. If the 'threshold' variable is set to a numeric value
+#'   it will replace these values with the one static value supplied.}
 #'   \item{thresh_criterion}{Boolean indicating if \code{temp} exceeds
 #'   \code{thresh_clim_year}.}
 #'   \item{duration_criterion}{Boolean indicating whether periods of consecutive
@@ -160,6 +176,15 @@
 #' res$clim[1:10, ]
 #' # show some of the heat waves:
 #' res$event[1:5, 1:10]
+#' 
+#' # or with a set static threshold
+#' t_dat <- make_whole(sst_WA)
+#' res <- detect(t_dat, climatology_start = 1983, climatology_end = 2012, threshold = 25)
+#' # show a portion of the climatology:
+#' # note that the 'thresh_clim_year' column is one static value
+#' res$clim[1:10, ]
+#' # show some of the threshold exceedences:
+#' res$threshold[1:5, 1:10]
 detect <-
   function(data,
            climatology_start = 1983,
@@ -172,7 +197,8 @@ detect <-
            join_across_gaps = TRUE,
            max_gap = 2,
            max_pad_length = 3,
-           cold_spells = FALSE) {
+           cold_spells = FALSE,
+           threshold = "threshold") {
 
     t_series <- data
     t_series$temp <- zoo::na.approx(t_series$temp, maxgap = max_pad_length)
@@ -254,6 +280,13 @@ detect <-
 
     t_series %<>% dplyr::inner_join(clim, by = "doy")
     t_series$temp[is.na(t_series$temp)] <- t_series$seas_clim_year[is.na(t_series$temp)]
+    
+    if(threshold != "threshold" & is.numeric(threshold)){
+      t_series$thresh_clim_year <- threshold
+    } 
+    if(threshold != "threshold" & !(is.numeric(threshold))){
+      stop("The threshold variable must be set to 'treshold' (the default option), or a numeric value.")
+    }
 
     t_series$thresh_criterion <- t_series$temp > t_series$thresh_clim_year
     ex1 <- rle(t_series$thresh_criterion)
@@ -460,7 +493,13 @@ detect <-
         thresh_clim_year = -thresh_clim_year
       )
     }
-
-    list(clim = dplyr::group_by(t_series, event_no),
-         event = dplyr::group_by(events, event_no))
+    
+    if(threshold != "threshold" & is.numeric(threshold)){
+      thresholds <- events
+      list(clim = dplyr::group_by(t_series, event_no),
+           threshold = dplyr::group_by(thresholds, event_no))
+    } else{
+      list(clim = dplyr::group_by(t_series, event_no),
+           event = dplyr::group_by(events, event_no))
+    }
   }

@@ -89,6 +89,17 @@ lolli_plot(mcs)
 
 In the development version of ggplot2 (2.1.0.9001), Hadley has *again* fiddled with some of the plot defaults and this has resulted in the legend position in the above plots being affected. I will make sure that the next release of RmarineHeatWaves fixes this problem. The next version of this package will also include some major updates to the plotting functions. An update will be released in the next month or two.
 
+The `detect()` function may also be used to detect when temperatures are above (below) a static threshold supplied by the user. Note that the output of this application of the `detect()` function does not produce events, but rather exceedences of the static threshold. Therefore the event component of the list produced by `detect()` is changed to 'threshold' instead, to avoid potential confusion. Note how the output of this example differs from the first example for the `detect()` function given above and that the term used to extract the data has changed from 'event' to 'threshold'.
+```{r detect-example3, fig.height = 3, fig.width = 8, message = FALSE, warning = FALSE}
+library(RmarineHeatWaves); library(dplyr)
+ts <- make_whole(sst_WA)
+mhw <- detect(ts, climatology_start = 1983, climatology_end = 2012, threshold = 25)
+mhw$threshold %>% 
+  ungroup() %>%
+  select(event_no, duration, date_start, date_peak, int_mean, int_max, int_cum) %>% 
+  dplyr::arrange(-int_cum)
+```
+
 We can also load the gridded 0.25 degree Reynolds [OISST data](http://www.ncdc.noaa.gov/thredds/oisst-catalog.html) and apply the function pixel by pixel over all of the days of data. The example data used here have 93 longitude steps, 43 latitude steps, and cover 12797 days (1981 to 2016). We apply the `detect()` function to these data, fit a generalised linear model (GLM), and then plot the trend per decade of the marine heatwave count. In other words, have marine heatwaves become more or less frequent in recent years? Under climate change we can expect that extreme events would tend to occur more frequently and be of greater intensity. Indeed, we can clearly see in the figure below of the result of the GLM, how the Agulhas Current has been experiencing marine heat waves more frequently in recent decades. But there are two smaller areas, one along the western side of the Cape Peninsula in the Benguela Upwelling system and another around the Eastern Cape Province near Algoa Bay, where the frequency of marine heat waves seems to have actually been decreasing -- although the P-value of the decreasing trend is > 0.05, and therefore not significant.
 
 ![](README-fig-example3.png)

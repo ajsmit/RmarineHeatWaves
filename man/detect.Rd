@@ -7,7 +7,8 @@
 detect(data, climatology_start = 1983, climatology_end = 2012,
   pctile = 90, window_half_width = 5, smooth_percentile = TRUE,
   smooth_percentile_width = 31, min_duration = 5, join_across_gaps = TRUE,
-  max_gap = 2, max_pad_length = 3, cold_spells = FALSE)
+  max_gap = 2, max_pad_length = 3, cold_spells = FALSE, 
+  threshold = "threshold")
 }
 \arguments{
 \item{data}{A data frame with three columns. They are headed \code{doy},
@@ -63,20 +64,30 @@ integer. Default is \code{3} days.}
 
 \item{cold_spells}{Boolean specifying if the code should detect cold events
 instead of heat events. Default is \code{FALSE}.}
+
+\item{threshold}{Set the temperature threshold for detecting events to a
+static value if one does not wish to use the threshold limits produced by
+this function. Default is \code{"threshold"}}.
 }
 \value{
 The function will return a list of two components, \code{clim} and
-\code{event}, which are the climatology and MHW (or MCS) events, respectively. The
-climatology contains the full time series of daily temperatures, as well as
-the the seasonal climatology, the threshold and various aspects of the
-events that were detected:
+\code{event}, which are the climatology and MHW (or MCS) events, respectively. 
+The climatology contains the full time series of daily temperatures, as well 
+as the the seasonal climatology, the threshold and various aspects of the
+events that were detected. If one chosses to set the 'threshold' variable 
+to a static value it will rename the \code{event} component of the output to 
+\code{threshold}. The remainder of the columns are left unchanged for 
+consistency, but it is important to note that if a static threshold is
+supplied, the results are not events as per the definiton found in 
+Hobday et al. (2016):
   \item{doy}{Julian day (day-of-year). For non-leap years it runs 1...59 and
   61...366, while leap years run 1...366.}
   \item{date}{The date of the temperature measurement.}
   \item{temp}{Seawater temperature on the specified date [deg. C].}
   \item{seas_clim_year}{Climatological seasonal cycle [deg. C].}
   \item{thresh_clim_year}{Seasonally varying threshold (e.g., 90th
-  percentile) [deg. C].}
+  percentile) [deg. C]. If the 'threshold' variable is set to a numeric value
+  it will replace these values with the one static value supplied.}
   \item{thresh_criterion}{Boolean indicating if \code{temp} exceeds
   \code{thresh_clim_year}.}
   \item{duration_criterion}{Boolean indicating whether periods of consecutive
@@ -154,6 +165,13 @@ then it works just as for heat waves except that events are detected as
 deviations below the (100 - pctile)th percentile  (e.g., the 10th instead of
 90th) for at least 5 days. Intensities are reported as negative values and
 represent the temperature anomaly below climatology.
+\item If one is interested in detecting the occurence of consistent days of  
+temperatures relevant to known upper or lower temperature limits for
+organisms, change the 'threshold' variable to a static numeric value. Note
+that this will rename the \code{event} component of the list output to 
+\code{threshold}. This is done to prevent potential confusion over the
+results as they are not events, but rather exceedences of a given 
+temperature threshold.
 }
 The original Python algorithm was written by Eric Oliver, Institute for
 Marine and Antarctic Studies, University of Tasmania, Feb 2015, and is
@@ -169,6 +187,14 @@ res <- detect(t_dat, climatology_start = 1983, climatology_end = 2012)
 res$clim[1:10, ]
 # show some of the heat waves:
 res$event[1:5, 1:10]
+
+# or with a set static threshold
+t_dat <- make_whole(sst_WA)
+res <- detect(t_dat, climatology_start = 1983, climatology_end = 2012, threshold = 25)
+# show a portion of the climatology:
+res$clim[1:10, ]
+# show some of the threshold exceedences:
+res$threshold[1:5, 1:10]
 }
 \author{
 Albertus J. Smit, Robert W. Schlegel, Eric C. J. Oliver
