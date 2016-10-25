@@ -3,6 +3,16 @@ output: pdf_document
 ---
 
 # VERSION CHANGES
+## Changes in version 0.13.6.9100 (22 October 2016)
+* The additions to the detect() function madde in the previous update have been 
+rolled back in favour of creating an independent function to calculate exceedences
+
+## Changes in version 0.13.6.9000 (22 October 2016)
+* Added 'trheshold' variable to detect() function.
+* This now allows the function to detect when temperatures are over (under) a 
+static threshold supplied by the user.
+* An example is given in the README.md file
+
 ## Changes in version 0.13.5.9000 (8 October 2016)
 * Expanded example included as package vignette.
 
