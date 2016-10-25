@@ -147,7 +147,7 @@ ggplot(OISST_nTrend, aes(x = lon, y = lat)) +
        aes(xmin = lon - 0.1, xmax = lon + 0.1, ymin = lat - 0.1, ymax = lat + 0.1,
            colour = OISST_nTrend[,5])) +
   geom_raster(aes(fill = Estimate), interpolate = FALSE, alpha = 0.9) +
-  scale_fill_gradient2(name = "Count\n per\n decade", high = "red", mid = "white",
+  scale_fill_gradient2(name = "Count\n per\n year", high = "red", mid = "white",
                        low = "darkblue", midpoint = 0) +
   scale_colour_manual(breaks = c("(0,0.001]", "(0.001,0.01]", "(0.01,0.05]", "(0.05,1]"),
                       values = c("firebrick1", "firebrick2", "firebrick3", "white"),
