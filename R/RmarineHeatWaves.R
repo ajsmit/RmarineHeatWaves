@@ -73,7 +73,7 @@
 #' end-day. This is consistent with the duration definition as implemented,
 #' which assumes duration = end day - start day + 1.
 #' \item For the purposes of event detection, any missing temperature values not
-#' interpolated over (through optional \code{maxPadLLength}) will be set equal
+#' interpolated over (through optional \code{max_pad_length}) will be set equal
 #' to the seasonal climatology. This means they will trigger the end/start of
 #' any adjacent temperature values which satisfy the event definition criteria.
 #' \item If the code is used to detect cold events (\code{coldSpells} = TRUE),
