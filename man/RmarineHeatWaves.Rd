@@ -31,6 +31,10 @@ This package is demonstrated by applying the MHW definition to observed SST
 records and showing how it identifies three historical MHWs: the 2011
 Western Australia event, the 2012 Northwest Atlantic event and the 2003
 Mediterranean event. These data are included herewith.
+
+One may also use the \code{\link{exceedence}} function to calculate consecutive
+days above or below a given static threshold. The output of this function is
+similar to \code{\link{detect}}.
 }
 \author{
 Albertus J. Smit <\email{albertus.smit@gmail.com}>, Robert W. Schlegel,

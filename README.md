@@ -47,6 +47,10 @@ The functions
 <td align="left"><code>lolli_plot()</code></td>
 <td align="left">Creates a timeline of selected event metrics.</td>
 </tr>
+<tr class="even">
+<td align="left"><code>exceedence()</code></td>
+<td align="left">A function similar to <code>detect()</code> but that detects consecutive days above/ below a given threshold.</td>
+</tr>
 </tbody>
 </table>
 
@@ -62,7 +66,7 @@ mhw$event %>%
   ungroup() %>%
   select(event_no, duration, date_start, date_peak, int_mean, int_max, int_cum) %>% 
   dplyr::arrange(-int_cum)
-#> # A tibble: 60 x 7
+#> # A tibble: 60 × 7
 #>    event_no duration date_start  date_peak int_mean  int_max   int_cum
 #>       <int>    <dbl>     <date>     <date>    <dbl>    <dbl>     <dbl>
 #> 1        22       95 1999-05-13 1999-05-22 2.498305 3.601700 237.33900
@@ -101,7 +105,7 @@ mcs$event %>%
   ungroup() %>%
   select(event_no, duration, date_start, date_peak, int_mean, int_max, int_cum) %>% 
   dplyr::arrange(int_cum)
-#> # A tibble: 71 x 7
+#> # A tibble: 71 × 7
 #>    event_no duration date_start  date_peak  int_mean   int_max    int_cum
 #>       <int>    <dbl>     <date>     <date>     <dbl>     <dbl>      <dbl>
 #> 1        16       76 1990-04-13 1990-05-11 -2.538017 -3.218054 -192.88929
@@ -139,6 +143,55 @@ We can also load the gridded 0.25 degree Reynolds [OISST data](http://www.ncdc.n
 ![](README-fig-example3.png) ![](README-fig-example4.png)
 
 Please read the package [vignette](https://github.com/ajsmit/RmarineHeatWaves/blob/master/vignettes/gridded-event-detection.Rmd) to see how to load a netCDF file with the OISST data, apply the RmarineHeatWaves function to the whole 3D array of data, and then fit the GLM and plot the data.
+
+In addition to the calculation of extreme events, consecutive days over a given static threshold may be calculated with the `exceedence()` function.
+
+``` r
+exc <- exceedence(ts, threshold = 25)
+exc$exceedence %>% 
+  ungroup() %>%
+  select(exceedence_no, duration, date_start, date_peak, int_mean, int_max, int_cum) %>% 
+  dplyr::arrange(-int_cum)
+#> # A tibble: 11 × 7
+#>    exceedence_no duration date_start  date_peak  int_mean   int_max
+#>            <int>    <dbl>     <date>     <date>     <dbl>     <dbl>
+#> 1              7       52 2011-02-08 2011-02-28 1.6740379 4.7399993
+#> 2              6       25 2008-04-03 2008-04-14 0.9799994 2.1899994
+#> 3             10       41 2012-03-03 2012-04-10 0.4385360 1.3699994
+#> 4              2       17 1999-05-13 1999-05-22 0.8558818 1.3999994
+#> 5              5       10 2000-05-03 2000-05-04 0.6969994 1.0099994
+#> 6             11       10 2013-03-02 2013-03-09 0.3439994 0.8999994
+#> 7              8        9 2011-04-20 2011-04-22 0.3555550 0.6899994
+#> 8              9        6 2012-02-08 2012-02-09 0.5266661 0.8999994
+#> 9              3        7 1999-06-02 1999-06-03 0.2071423 0.2699994
+#> 10             1        5 1989-05-05 1989-05-06 0.2859994 0.3599994
+#> 11             4        6 2000-04-21 2000-04-23 0.1549994 0.4099994
+#> # ... with 1 more variables: int_cum <dbl>
+```
+
+The same function may be used to calculate consecutive days below a threshold, too.
+
+``` r
+exc <- exceedence(ts, threshold = 19, below = TRUE)
+exc$exceedence %>% 
+  ungroup() %>%
+  select(exceedence_no, duration, date_start, date_peak, int_mean, int_max, int_cum) %>% 
+  dplyr::arrange(int_cum)
+#> # A tibble: 22 × 7
+#>    exceedence_no duration date_start  date_peak   int_mean    int_max
+#>            <int>    <dbl>     <date>     <date>      <dbl>      <dbl>
+#> 1             17       46 2003-09-06 2003-09-16 -0.6008700 -1.3400004
+#> 2             16       31 2002-09-08 2002-09-25 -0.8480649 -1.8800004
+#> 3             13       24 1997-09-03 1997-09-15 -0.7691671 -1.4900004
+#> 4             20       25 2005-09-26 2005-10-12 -0.5420004 -1.1000004
+#> 5             12       18 1997-08-13 1997-08-22 -0.6944449 -1.2500004
+#> 6              1       20 1982-09-15 1982-09-24 -0.4080004 -0.7600004
+#> 7              2       17 1986-07-14 1986-07-17 -0.4605886 -0.9400004
+#> 8             15       11 2000-08-06 2000-08-13 -0.6890913 -1.0800004
+#> 9              5       26 1990-08-22 1990-09-10 -0.2288466 -0.5200004
+#> 10            21        8 2006-09-05 2006-09-07 -0.6237504 -0.9000004
+#> # ... with 12 more rows, and 1 more variables: int_cum <dbl>
+```
 
 References
 ==========

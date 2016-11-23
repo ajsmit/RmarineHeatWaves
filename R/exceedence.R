@@ -255,7 +255,7 @@ exceedence <-
       )
     )
     
-    int_mean <- int_max <- int_cum <- 
+    thresh <- int_mean <- int_max <- int_cum <- 
       int_mean_abs <- int_max_abs <- int_cum_abs <- temp <- NULL ###
     
     exceedences$date_peak <-

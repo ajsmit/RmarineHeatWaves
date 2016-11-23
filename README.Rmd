@@ -109,7 +109,7 @@ exc$exceedence %>%
 
 The same function may be used to calculate consecutive days below a threshold, too.
 
-```{r exceedence-example1, fig.height = 3, fig.width = 8, message = FALSE, warning = FALSE}
+```{r exceedence-example2, fig.height = 3, fig.width = 8, message = FALSE, warning = FALSE}
 exc <- exceedence(ts, threshold = 19, below = TRUE)
 exc$exceedence %>% 
   ungroup() %>%

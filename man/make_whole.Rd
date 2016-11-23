@@ -33,7 +33,7 @@ specified as either \code{POSIXct} or \code{Date}  (e.g. "1982-01-01 02:00:00" o
 "1982-01-01"). The data may be an irregular time series, but date must be
 ordered. The function constructs a complete time series from the start date
 to the end date, and fills in the regions in the time series where temperature
-data are missing with NAs in the temperature vector. There must only be one
+data are missing, with NAs in the temperature vector. There must only be one
 temperature value per day otherwise the function will fail. It is up to the
 user to calculate daily data from sub-daily measurements. Leap years are
 automatically accommodated by 'zoo'.

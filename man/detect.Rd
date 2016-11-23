@@ -119,7 +119,7 @@ i.e., threshold - climatology.)
 }
 \description{
 Applies the Hobday et al. (2016) marine heat wave definition to an input time
-series of temperature along with a time vector.
+series of temperature along with a daily date vector.
 }
 \details{
 \enumerate{
@@ -134,7 +134,7 @@ to \code{\link{make_whole}}.
 specified in order to capture decadal thermal periodicities. Currently the
 function will only compute climatologies starting from 1 January of the
 specified \code{climatology_start} and ending on 31 December of the specified
-\code{climatology_end}. Even one day short of a full (i.e. 365 day during
+\code{climatology_end}. Even one day short of a full year (i.e. 365 day during
 non-leap years and 366 days during leap years) at the beginning/end of the
 climatology period will cause the function to fail. This may be changed in
 future versions of the function.
@@ -146,7 +146,7 @@ started a half-day before the start day and ended a half-day after the
 end-day. This is consistent with the duration definition as implemented,
 which assumes duration = end day - start day + 1.
 \item For the purposes of event detection, any missing temperature values not
-interpolated over (through optional \code{maxPadLLength}) will be set equal
+interpolated over (through optional \code{max_pad_length}) will be set equal
 to the seasonal climatology. This means they will trigger the end/start of
 any adjacent temperature values which satisfy the event definition criteria.
 \item If the code is used to detect cold events (\code{coldSpells} = TRUE),
@@ -159,7 +159,7 @@ The original Python algorithm was written by Eric Oliver, Institute for
 Marine and Antarctic Studies, University of Tasmania, Feb 2015, and is
 documented by Hobday et al. (2016). The marine cold spell option was
 implemented in version 0.13 (21 Nov 2015) of the Python module as a result
-of our the preparation of Schlegel et al. (submitted), wherein the cold events
+of our preparation of Schlegel et al. (submitted), wherein the cold events
 receive a brief overview.
 }
 \examples{
