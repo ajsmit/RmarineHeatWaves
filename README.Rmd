@@ -44,6 +44,7 @@ Alternatively, you may install it from GitHub by issuing the following command:
 |`block_average()`    |Calculates annual means for event metrics.|
 |`event_line()`       |Creates a line plot of marine heat waves or cold spells.|
 |`lolli_plot()`       |Creates a timeline of selected event metrics.|
+|`exceedence()`       |A function similar to `detect()` but that detects consecutive days above/ below a given threshold.|
 
 The package also provides data of observed SST records for three historical MHWs: 
 the 2011 Western Australia event, the 2012 Northwest Atlantic event and the 
@@ -95,6 +96,26 @@ We can also load the gridded 0.25 degree Reynolds [OISST data](http://www.ncdc.n
 ![](README-fig-example4.png)
 
 Please read the package [vignette](https://github.com/ajsmit/RmarineHeatWaves/blob/master/vignettes/gridded-event-detection.Rmd) to see how to load a netCDF file with the OISST data, apply the RmarineHeatWaves function to the whole 3D array of data, and then fit the GLM and plot the data.
+
+In addition to the calculation of extreme events, consecutive days over a given static threshold may be calculated with the `exceedence()` function.
+
+```{r exceedence-example1, fig.height = 3, fig.width = 8, message = FALSE, warning = FALSE}
+exc <- exceedence(ts, threshold = 25)
+exc$exceedence %>% 
+  ungroup() %>%
+  select(exceedence_no, duration, date_start, date_peak, int_mean, int_max, int_cum) %>% 
+  dplyr::arrange(-int_cum)
+```
+
+The same function may be used to calculate consecutive days below a threshold, too.
+
+```{r exceedence-example1, fig.height = 3, fig.width = 8, message = FALSE, warning = FALSE}
+exc <- exceedence(ts, threshold = 19, below = TRUE)
+exc$exceedence %>% 
+  ungroup() %>%
+  select(exceedence_no, duration, date_start, date_peak, int_mean, int_max, int_cum) %>% 
+  dplyr::arrange(int_cum)
+```
 
 # References
 

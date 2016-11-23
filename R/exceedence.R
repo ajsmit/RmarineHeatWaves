@@ -133,6 +133,16 @@ exceedence <-
     if (missing(threshold))
       stop("Oh no! Please provide a threshold against which to calculate exceedences.")
     
+    if (!below & threshold > max(t_series$temp, na.rm = T)){
+      stop(paste("The given threshold value of ", threshold, " exceeds the maximum temperature of ", 
+                 max(t_series$temp, na.rm = T), " present in this time series.", sep = ""))
+    }
+    
+    if (below & threshold < min(t_series$temp, na.rm = T)){
+      stop(paste("The given threshold value of ", threshold, " is less than the minimum temperature of ", 
+                 min(t_series$temp, na.rm = T), " present in this time series.", sep = ""))
+    }
+    
     if (below){
       t_series$temp <- -t_series$temp
       threshold <- -threshold
