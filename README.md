@@ -8,7 +8,7 @@ The RmarineHeatWaves package is a translation of the original Python code writte
 
 The RmarineHeatWaves R package contains a number of functions which calculate and display marine heat waves according to the definition of Hobday et al. (2016). The marine cold spell option was implemented in version 0.13 (21 Nov 2015) of the Python module as a result of the preparation of Schlegel et al. (in press), wherein the cold events are introduced and briefly discussed.
 
-This package may be found on [CRAN](https://cran.r-project.org/web/packages/RmarineHeatWaves/index.html). Alternatively, you may install it from GitHub by issuing the following command:
+This package may be found on [CRAN](https://cran.r-project.org/package=RmarineHeatWaves). Alternatively, you may install it from GitHub by issuing the following command:
 
 `devtools::install_github("ajsmit/RmarineHeatWaves")`
 
