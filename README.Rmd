@@ -72,7 +72,7 @@ event_line(mhw, spread = 200, metric = "int_cum",
 lolli_plot(mhw)
 ```
 
-Marine cold spells are also accommodated. Here is a cold spell detected in the Western Australian OISST data:
+Marine cold spells are also accommodated. Here is a cold spell detected in the OISST data for Western Australia:
 
 ```{r detect-example2, fig.height = 3, fig.width = 8, message = FALSE, warning = FALSE}
 mcs <- detect(ts, climatology_start = 1983, climatology_end = 2012, cold_spells = TRUE)
