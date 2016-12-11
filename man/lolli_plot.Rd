@@ -21,6 +21,8 @@ Default is \code{date_start}.}
 \value{
 The function will return a graph of the intensity of the selected
 metric along the y-axis versus either \code{date} or \code{event_no}.
+The number of top events as per \code{event_count} will be highlighted
+in a brighter colour.
 }
 \description{
 Visualise a timeline of several event metrics as 'lollipop' graphs.

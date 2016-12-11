@@ -27,7 +27,7 @@ by Eric C. J. Oliver that can be found on [GitHub](https://github.com/ecjoliver/
 The RmarineHeatWaves R package contains a number of functions which calculate 
 and display marine heat waves according to the definition of Hobday et al. (2016). 
 The marine cold spell option was implemented in version 0.13 (21 Nov 2015) of the 
-Python module as a result of the preparation of Schlegel et al. (submitted), wherein
+Python module as a result of the preparation of Schlegel et al. (in press), wherein
 the cold events are introduced and briefly discussed.
 
 This package may be found on [CRAN](https://cran.r-project.org/web/packages/RmarineHeatWaves/index.html). 
@@ -50,7 +50,9 @@ The package also provides data of observed SST records for three historical MHWs
 the 2011 Western Australia event, the 2012 Northwest Atlantic event and the 
 2003 Mediterranean event.
 
-For example, here is the `detect()` function applied to the Western Australian test data,
+## The detect and graphing functions
+
+Here is the `detect()` function applied to the Western Australian test data,
 which are also discussed by Hobday et al. (2016):
 ```{r detect-example1, fig.height = 3, fig.width = 8, message = FALSE, warning = FALSE}
 library(RmarineHeatWaves); library(dplyr)
@@ -97,6 +99,8 @@ We can also load the gridded 0.25 degree Reynolds [OISST data](http://www.ncdc.n
 
 Please read the package [vignette](https://github.com/ajsmit/RmarineHeatWaves/blob/master/vignettes/gridded-event-detection.Rmd) to see how to load a netCDF file with the OISST data, apply the RmarineHeatWaves function to the whole 3D array of data, and then fit the GLM and plot the data.
 
+## The exceedence function
+
 In addition to the calculation of extreme events, consecutive days over a given static threshold may be calculated with the `exceedence()` function.
 
 ```{r exceedence-example1, fig.height = 3, fig.width = 8, message = FALSE, warning = FALSE}
@@ -121,7 +125,7 @@ exc$exceedence %>%
 
 Hobday, A.J. et al. (2016). A hierarchical approach to defining marine heatwaves, Progress in Oceanography, 141, pp. 227-238. DOI:10.1016/j.pocean.2015.12.014. [PDF.](http://passage.phys.ocean.dal.ca/~olivere/docs/Hobdayetal_2016_PO_HierarchMHWDefn.pdf)
 
-Schlegel, R. W., Oliver, E. C. J., Wernberg, T. W., Smit, A. J. (in review). Coastal and offshore co-occurrences of marine heatwaves and cold-spells. Progress in Oceanography.
+Schlegel, R. W., Oliver, E. C. J., Wernberg, T. W., Smit, A. J. (in press). Coastal and offshore co-occurrences of marine heatwaves and cold-spells. Progress in Oceanography.
 
 # Acknowledgements
 

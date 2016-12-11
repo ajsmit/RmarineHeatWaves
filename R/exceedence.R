@@ -2,27 +2,26 @@
 #'
 #' @importFrom magrittr %>%
 #' @importFrom plyr .
-#' @param data A data frame with at least the two following columns.  
-#' A \code{date} column which is a vector of dates of class \code{Date}, 
+#' @param data A data frame with at least the two following columns:
+#' a \code{date} column which is a vector of dates of class \code{Date},
 #' and a \code{temp} column, which is the temperature on those given
-#' dates. The function will not accurately detect consecutive days of 
-#' temperatures in exceedence of the \code{threshold} if missing days of 
-#' data are not filled in with \code{NA}. Data of the appropriate format are created 
-#' by the function \code{\link{make_whole}}, but your own data may be used 
+#' dates. The function will not accurately detect consecutive days of
+#' temperatures in exceedence of the \code{threshold} if missing days of
+#' data are not filled in with \code{NA}. Data of the appropriate format are created
+#' by the function \code{\link{make_whole}}, but your own data may be used
 #' directly if they meet the given criteria.
 #' @param threshold The static threshold used to determine how many consecutive
-#' days are in exceedence of the temperature of interest. Default is 
+#' days are in exceedence of the temperature of interest. Default is
 #' \code{20} degrees.
 #' @param below Default is \code{FALSE}. When set to TRUE, consecutive days of temperature
 #' below the \code{threshold} variable are calculated. When set to FALSE,
 #' consecutive days above the \code{threshold} variable are calculated.
-#' @param min_duration Minimum duration that temperatures must be in exceedence 
+#' @param min_duration Minimum duration that temperatures must be in exceedence
 #' of the \code{threshold} variable. Default is \code{5} days.
-#' @param join_across_gaps A TRUE/ FALSE statement that indicates whether 
+#' @param join_across_gaps A TRUE/ FALSE statement that indicates whether
 #' or not to join consecutive days of temperatures in exceedence of the
-#' \code{threshold} acros a small gap between groups.
-#' occur before/after a short gap as specified by \code{max_gap}. Default
-#' is \code{TRUE}.
+#' \code{threshold} across a small gap between groups before/after a short
+#' gap as specified by \code{max_gap}. Default is \code{TRUE}.
 #' @param max_gap The maximum length of the gap across which to connect
 #' consecutive days in exceedence of the \code{threshold} when
 #' \code{join_across_gaps} is \code{TRUE}.
@@ -42,33 +41,33 @@
 #' to \code{\link{make_whole}}.
 #' \item Future versions seek to accomodate monthly and annual time series, too.
 #' \item The calculation of onset and decline rates assumes that exceedence of the
-#' \code{threshold} started a half-day before the start day and ended a half-day 
+#' \code{threshold} started a half-day before the start day and ended a half-day
 #' after the end-day. This is consistent with the duration definition as implemented,
 #' which assumes duration = end day - start day + 1.
 #' \item For the purposes of exceedence detection, any missing temperature values not
-#' interpolated over (through optional \code{max_pad_length}) will remain as 
+#' interpolated over (through optional \code{max_pad_length}) will remain as
 #' \code{NA}. This means they will trigger the end of an exceedence if the adjacent
 #' temperature values are in exceedence of the \code{threshold}.
 #' \item If the function is used to detect consecutive days of temperature under
-#' the given \code{theshold}, these temperatures are then taken as being in 
-#' exceedence below the \code{threshold} as there is no antonym in the English 
+#' the given \code{theshold}, these temperatures are then taken as being in
+#' exceedence below the \code{threshold} as there is no antonym in the English
 #' language for 'exceedence'.
 #' }
-#' This function is based largely on the \code{detect} function found in this 
-#' package, which was ported from the Python algorithm that was written by Eric 
-#' Oliver, Institute for Marine and Antarctic Studies, University of Tasmania, 
+#' This function is based largely on the \code{detect} function found in this
+#' package, which was ported from the Python algorithm that was written by Eric
+#' Oliver, Institute for Marine and Antarctic Studies, University of Tasmania,
 #' Feb 2015, and is documented by Hobday et al. (2016).
 #'
-#' @return The function will return a list of two components. The first being 
+#' @return The function will return a list of two components. The first being
 #' \code{threshold}, which shows the daily temperatures and on which specific days
-#' the given \code{threshold} was exceeded. The second component of the list is 
-#' \code{exceedence}, which shows a medley of statistics for each discrete group 
+#' the given \code{threshold} was exceeded. The second component of the list is
+#' \code{exceedence}, which shows a medley of statistics for each discrete group
 #' of days in exceedence of the given \code{threshold}. Note that any additional
 #' columns left in the data frame given to this function will be output in the
-#' \code{threshold} component of the output. For example, if one uses 
+#' \code{threshold} component of the output. For example, if one uses
 #' \code{\link{make_whole}} to prepare a time series for analysis and leaves
 #' in the \code{doy} column, this column will appear in the output.
-#' 
+#'
 #' The information shown in the \code{threshold} component is:
 #'   \item{date}{The date of the temperature measurement.}
 #'   \item{temp}{Temperature on the specified date [deg. C].}
@@ -77,7 +76,7 @@
 #'   \code{threshold}.}
 #'   \item{duration_criterion}{Boolean indicating whether periods of consecutive
 #'   \code{thresh_criterion} are >= \code{min_duration}.}
-#'   \item{exceedence}{Boolean indicting if all criteria that define a discrete 
+#'   \item{exceedence}{Boolean indicting if all criteria that define a discrete
 #'   group in exceedence of the \code{threshold} are met.}
 #'   \item{exceedence_no}{A sequential number indicating the ID and order of
 #'   occurence of exceedences.}
@@ -85,8 +84,8 @@
 #' The individual exceedences are summarised using the following metrics:
 #'   \item{index_start}{Row number on which exceedence starts.}
 #'   \item{index_stop}{Row number on which exceedence stops.}
-#'   \item{exceedence_no}{The same sequential number indicating the ID and 
-#'   order of the exceedence as found in the \code{threshold} component of the 
+#'   \item{exceedence_no}{The same sequential number indicating the ID and
+#'   order of the exceedence as found in the \code{threshold} component of the
 #'   output list.}
 #'   \item{duration}{Duration of exceedence [days].}
 #'   \item{date_start}{Start date of exceedence [date].}
@@ -126,30 +125,30 @@ exceedence <-
            join_across_gaps = TRUE,
            max_gap = 2,
            max_pad_length = 3) {
-    
+
     t_series <- data
     t_series$temp <- zoo::na.approx(t_series$temp, maxgap = max_pad_length)
-    
+
     if (missing(threshold))
       stop("Oh no! Please provide a threshold against which to calculate exceedences.")
-    
+
     if (!below & threshold > max(t_series$temp, na.rm = T)){
-      stop(paste("The given threshold value of ", threshold, " exceeds the maximum temperature of ", 
+      stop(paste("The given threshold value of ", threshold, " exceeds the maximum temperature of ",
                  max(t_series$temp, na.rm = T), " present in this time series.", sep = ""))
     }
-    
+
     if (below & threshold < min(t_series$temp, na.rm = T)){
-      stop(paste("The given threshold value of ", threshold, " is less than the minimum temperature of ", 
+      stop(paste("The given threshold value of ", threshold, " is less than the minimum temperature of ",
                  min(t_series$temp, na.rm = T), " present in this time series.", sep = ""))
     }
-    
+
     if (below){
       t_series$temp <- -t_series$temp
       threshold <- -threshold
     }
-    
+
     t_series$thresh <- rep(threshold, nrow(t_series))
-    
+
     t_series$thresh_criterion <- t_series$temp >= t_series$thresh
     ex1 <- rle(t_series$thresh_criterion)
     ind1 <- rep(seq_along(ex1$lengths), ex1$lengths)
@@ -159,9 +158,9 @@ exceedence <-
     proto_exceedences_rng <-
       lapply(proto_exceedences, function(x)
         data.frame(index_start = min(x), index_stop = max(x)))
-    
+
     duration <- NULL ###
-    
+
     protoFunc <- function(proto_data) {
       out <- proto_data %>%
         dplyr::mutate(duration = index_stop - index_start + 1) %>%
@@ -169,36 +168,36 @@ exceedence <-
         dplyr::mutate(date_start = t_series[index_start, "date"]) %>%
         dplyr::mutate(date_stop = t_series[index_stop, "date"])
     }
-    
+
     proto_exceedences <- do.call(rbind, proto_exceedences_rng) %>%
       dplyr::mutate(exceedence_no = cumsum(ex1$values[ex1$values == TRUE])) %>%
       protoFunc()
-    
+
     if(length(proto_exceedences$index_start) == 0 & below == FALSE){
       stop(paste("No temperatures over ", threshold, " degrees detected.", sep =  ""))
     }
     if(length(proto_exceedences$index_start) == 0 & below == TRUE){
       stop(paste("No temperatures under ", threshold, " degrees detected.", sep =  ""))
     }
-    
+
     t_series$duration_criterion <- rep(FALSE, nrow(t_series))
-    
+
     for (i in 1:nrow(proto_exceedences)) {
       t_series$duration_criterion[proto_exceedences$index_start[i]:proto_exceedences$index_stop[i]] <-
         rep(TRUE, length = proto_exceedences$duration[i])
     }
-    
+
     ex2 <- rle(t_series$duration_criterion)
     ind2 <- rep(seq_along(ex2$lengths), ex2$lengths)
     s2 <- split(zoo::index(t_series$thresh_criterion), ind2)
     proto_gaps <- s2[ex2$values == FALSE]
     proto_gaps_rng <-
       lapply(proto_gaps, function(x) data.frame(index_start = min(x), index_stop = max(x)))
-    
+
     proto_gaps <- do.call(rbind, proto_gaps_rng) %>%
       dplyr::mutate(exceedence_no = c(1:length(ex2$values[ex2$values == FALSE]))) %>%
       dplyr::mutate(duration = index_stop - index_start + 1)
-    
+
     if (any(proto_gaps$duration >= 1 & proto_gaps$duration <= max_gap)) {
       proto_gaps %<>%
         dplyr::mutate(date_start = t_series[index_start, "date"]) %>%
@@ -207,13 +206,13 @@ exceedence <-
     } else {
       join_across_gaps <- FALSE
     }
-    
+
     if(length(proto_gaps$index_start) == 0){
-      stop(paste("No temperatures in exceedence of ", threshold, 
-                 " degrees detected for ", min_duration, 
+      stop(paste("No temperatures in exceedence of ", threshold,
+                 " degrees detected for ", min_duration,
                  " or more consecutive days.", sep = ""))
     }
-    
+
     if (join_across_gaps) {
       t_series$exceedence <- t_series$duration_criterion
       for (i in 1:nrow(proto_gaps)) {
@@ -223,7 +222,7 @@ exceedence <-
     } else {
       t_series$exceedence <- t_series$duration_criterion
     }
-    
+
     ex3 <- rle(t_series$exceedence)
     ind3 <- rep(seq_along(ex3$lengths), ex3$lengths)
     s3 <- split(zoo::index(t_series$exceedence), ind3)
@@ -232,17 +231,17 @@ exceedence <-
     exceedences_rng <-
       lapply(exceedences, function(x)
         data.frame(index_start = min(x), index_stop = max(x)))
-    
+
     exceedences <- do.call(rbind, exceedences_rng) %>%
       dplyr::mutate(exceedence_no = cumsum(ex3$values[ex3$values == TRUE])) %>%
       protoFunc()
-    
+
     t_series$exceedence_no <- rep(NA, nrow(t_series))
     for (i in 1:nrow(exceedences)) {
       t_series$exceedence_no[exceedences$index_start[i]:exceedences$index_stop[i]] <-
         rep(i, length = exceedences$duration[i])
     }
-    
+
     exceedences_list <- plyr::dlply(exceedences, .(exceedence_no), function(x)
       with(
         t_series,
@@ -254,10 +253,10 @@ exceedence <-
         )
       )
     )
-    
-    thresh <- int_mean <- int_max <- int_cum <- 
+
+    thresh <- int_mean <- int_max <- int_cum <-
       int_mean_abs <- int_max_abs <- int_cum_abs <- temp <- NULL ###
-    
+
     exceedences$date_peak <-
       plyr::ldply(exceedences_list, function(x) x$date[x$temp == max(x$temp)][1])[, 2]
     exceedences$int_mean <-
@@ -276,7 +275,7 @@ exceedence <-
       plyr::ldply(exceedences_list, function(x) sqrt(stats::var(x$temp)))[, 2]
     exceedences$int_cum_abs <-
       plyr::ldply(exceedences_list, function(x) max(cumsum(x$temp)))[, 2]
-    
+
     exceedence_rel_thresh <- t_series$temp - t_series$thresh
     A <- exceedence_rel_thresh[exceedences$index_start]
     B <- t_series$temp[exceedences$index_start - 1]
@@ -303,7 +302,7 @@ exceedence <-
       )
     }
     exceedences$rate_onset <- rateOnset(exceedences, start_type)
-    
+
     D <- exceedence_rel_thresh[exceedences$index_stop]
     E <- t_series$temp[exceedences$index_stop + 1]
     F <- t_series$thresh[exceedences$index_stop + 1]
@@ -318,7 +317,7 @@ exceedence <-
         "case6"
       )
     )[nrow(exceedences)]
-    
+
     rateDecline <- function(x, type) {
       switch(
         type,
@@ -330,7 +329,7 @@ exceedence <-
       )
     }
     exceedences$rate_decline <- rateDecline(exceedences, stop_type)
-    
+
     if (below) {
       exceedences <- exceedences %>% dplyr::mutate(
         int_mean = -int_mean,
@@ -345,7 +344,7 @@ exceedence <-
         thresh = -thresh
       )
     }
-    
+
     list(threshold = dplyr::group_by(t_series, exceedence_no),
          exceedence = dplyr::group_by(exceedences, exceedence_no))
   }

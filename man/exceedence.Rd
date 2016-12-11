@@ -8,31 +8,30 @@ exceedence(data, threshold = 20, below = FALSE, min_duration = 5,
   join_across_gaps = TRUE, max_gap = 2, max_pad_length = 3)
 }
 \arguments{
-\item{data}{A data frame with at least the two following columns.
-A \code{date} column which is a vector of dates of class \code{Date}, 
+\item{data}{A data frame with at least the two following columns:
+a \code{date} column which is a vector of dates of class \code{Date},
 and a \code{temp} column, which is the temperature on those given
-dates. The function will not accurately detect consecutive days of 
-temperatures in exceedence of the \code{threshold} if missing days of 
-data are not filled in with \code{NA}. Data of the appropriate format are created 
-by the function \code{\link{make_whole}}, but your own data may be used 
+dates. The function will not accurately detect consecutive days of
+temperatures in exceedence of the \code{threshold} if missing days of
+data are not filled in with \code{NA}. Data of the appropriate format are created
+by the function \code{\link{make_whole}}, but your own data may be used
 directly if they meet the given criteria.}
 
 \item{threshold}{The static threshold used to determine how many consecutive
-days are in exceedence of the temperature of interest. Default is 
+days are in exceedence of the temperature of interest. Default is
 \code{20} degrees.}
 
 \item{below}{Default is \code{FALSE}. When set to TRUE, consecutive days of temperature
 below the \code{threshold} variable are calculated. When set to FALSE,
 consecutive days above the \code{threshold} variable are calculated.}
 
-\item{min_duration}{Minimum duration that temperatures must be in exceedence 
+\item{min_duration}{Minimum duration that temperatures must be in exceedence
 of the \code{threshold} variable. Default is \code{5} days.}
 
-\item{join_across_gaps}{A TRUE/ FALSE statement that indicates whether 
+\item{join_across_gaps}{A TRUE/ FALSE statement that indicates whether
 or not to join consecutive days of temperatures in exceedence of the
-\code{threshold} acros a small gap between groups.
-occur before/after a short gap as specified by \code{max_gap}. Default
-is \code{TRUE}.}
+\code{threshold} across a small gap between groups before/after a short
+gap as specified by \code{max_gap}. Default is \code{TRUE}.}
 
 \item{max_gap}{The maximum length of the gap across which to connect
 consecutive days in exceedence of the \code{threshold} when
@@ -45,13 +44,13 @@ greater than \code{max_pad_length} will be left as \code{NA}. Set as an
 integer. Default is \code{3} days.}
 }
 \value{
-The function will return a list of two components. The first being 
+The function will return a list of two components. The first being
 \code{threshold}, which shows the daily temperatures and on which specific days
-the given \code{threshold} was exceeded. The second component of the list is 
-\code{exceedence}, which shows a medley of statistics for each discrete group 
+the given \code{threshold} was exceeded. The second component of the list is
+\code{exceedence}, which shows a medley of statistics for each discrete group
 of days in exceedence of the given \code{threshold}. Note that any additional
 columns left in the data frame given to this function will be output in the
-\code{threshold} component of the output. For example, if one uses 
+\code{threshold} component of the output. For example, if one uses
 \code{\link{make_whole}} to prepare a time series for analysis and leaves
 in the \code{doy} column, this column will appear in the output.
 
@@ -63,7 +62,7 @@ The information shown in the \code{threshold} component is:
   \code{threshold}.}
   \item{duration_criterion}{Boolean indicating whether periods of consecutive
   \code{thresh_criterion} are >= \code{min_duration}.}
-  \item{exceedence}{Boolean indicting if all criteria that define a discrete 
+  \item{exceedence}{Boolean indicting if all criteria that define a discrete
   group in exceedence of the \code{threshold} are met.}
   \item{exceedence_no}{A sequential number indicating the ID and order of
   occurence of exceedences.}
@@ -71,8 +70,8 @@ The information shown in the \code{threshold} component is:
 The individual exceedences are summarised using the following metrics:
   \item{index_start}{Row number on which exceedence starts.}
   \item{index_stop}{Row number on which exceedence stops.}
-  \item{exceedence_no}{The same sequential number indicating the ID and 
-  order of the exceedence as found in the \code{threshold} component of the 
+  \item{exceedence_no}{The same sequential number indicating the ID and
+  order of the exceedence as found in the \code{threshold} component of the
   output list.}
   \item{duration}{Duration of exceedence [days].}
   \item{date_start}{Start date of exceedence [date].}
@@ -102,21 +101,21 @@ suitable for use with \code{exceedence}, although this may also be accomplished
 to \code{\link{make_whole}}.
 \item Future versions seek to accomodate monthly and annual time series, too.
 \item The calculation of onset and decline rates assumes that exceedence of the
-\code{threshold} started a half-day before the start day and ended a half-day 
+\code{threshold} started a half-day before the start day and ended a half-day
 after the end-day. This is consistent with the duration definition as implemented,
 which assumes duration = end day - start day + 1.
 \item For the purposes of exceedence detection, any missing temperature values not
-interpolated over (through optional \code{max_pad_length}) will remain as 
+interpolated over (through optional \code{max_pad_length}) will remain as
 \code{NA}. This means they will trigger the end of an exceedence if the adjacent
 temperature values are in exceedence of the \code{threshold}.
 \item If the function is used to detect consecutive days of temperature under
-the given \code{theshold}, these temperatures are then taken as being in 
-exceedence below the \code{threshold} as there is no antonym in the English 
+the given \code{theshold}, these temperatures are then taken as being in
+exceedence below the \code{threshold} as there is no antonym in the English
 language for 'exceedence'.
 }
-This function is based largely on the \code{detect} function found in this 
-package, which was ported from the Python algorithm that was written by Eric 
-Oliver, Institute for Marine and Antarctic Studies, University of Tasmania, 
+This function is based largely on the \code{detect} function found in this
+package, which was ported from the Python algorithm that was written by Eric
+Oliver, Institute for Marine and Antarctic Studies, University of Tasmania,
 Feb 2015, and is documented by Hobday et al. (2016).
 }
 \examples{
