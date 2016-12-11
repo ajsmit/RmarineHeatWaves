@@ -24,7 +24,6 @@ citEntry(entry = "Article",
     title = "A hierarchical approach to defining marine heatwaves.",
     journal = "Progress in Oceanography", year = 2016,
     volume = 141, pages = "227--238",
-    url = "http://www.sciencedirect.com/science/article/pii/S0079661116000057",
     textVersion = paste("Hobday, A. J., Alexander, L. V., Perkins, S. E., Smale, D. A., Straub, S. C., Oliver, E. C. J., et al. (2016)",
         "A hierarchical approach to defining marine heatwaves.",
         "Progress in Oceanography, 141(C), 227--238"))
