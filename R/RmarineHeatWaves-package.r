@@ -36,7 +36,7 @@
 #' marine heatwaves. Progress in Oceanography, 141, pp. 227-238,
 #' <DOI:10.1016/j.pocean.2015.12.014> (official citation for this package).
 #'
-#' Schlegel, R. W., Oliver, E. C. J., Wernberg, T. W., Smit, A. J. (submitted)
+#' Schlegel, R. W., Oliver, E. C. J., Wernberg, T. W., Smit, A. J. (in press)
 #' Coastal and offshore co-occurrences of marine heatwaves and cold-spells.
 #' Progress in Oceanography.
 #'
