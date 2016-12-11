@@ -130,16 +130,14 @@ event_line <- function(data,
           panel.border = element_rect(colour = "black", fill = NA, size = 0.75),
           panel.grid.minor = element_line(colour = NA),
           panel.grid.major = element_line(colour = "black", size = 0.2, linetype = "dotted"),
-          axis.text = element_text(size = 10),
+          axis.text = element_text(colour = "black"),
           axis.text.x = element_text(margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm")),
           axis.text.y = element_text(margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm")),
-          axis.title = element_text(size = 12),
           axis.ticks.length = unit(-0.25, "cm"),
           legend.background = element_rect(colour = "black"),
           legend.direction = "horizontal",
           legend.justification = c(0, 0),
           legend.position = c(0.005, 0.015),
-          legend.text = element_text(size = 10),
           legend.key = element_blank()
     )
 }
@@ -228,10 +226,9 @@ lolli_plot <- function(data,
       panel.border = element_rect(colour = "black", fill = NA, size = 0.75),
       panel.grid.minor = element_line(colour = NA),
       panel.grid.major = element_line(colour = "black", size = 0.2, linetype = "dotted"),
-      axis.text = element_text(size = 10),
+      axis.text = element_text(colour = "black"),
       axis.text.x = element_text(margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm")),
       axis.text.y = element_text(margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm")),
-      axis.title = element_text(size = 12),
       axis.ticks.length  =unit(-0.25, "cm")
     )
   if(xaxis == "event_no"){
