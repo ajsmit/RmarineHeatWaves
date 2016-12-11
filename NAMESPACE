@@ -3,6 +3,7 @@
 export(block_average)
 export(detect)
 export(event_line)
+export(exceedence)
 export(lolli_plot)
 export(make_whole)
 importFrom(ggplot2,aes)
