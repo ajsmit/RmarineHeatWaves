@@ -37,6 +37,8 @@ The function will return a line plot indicating the climatology,
 threshold and temperature, with the hot or cold events that meet the
 specifications of Hobday et al. (2016) shaded in as appropriate. The plotting
 of hot or cold events depends on which option is specified in \code{\link{detect}}.
+The top event detect during the selected time period will be visible in a
+brighter colour.
 }
 \description{
 Creates a graph of warm or cold events as per the second row of Figure 3 in

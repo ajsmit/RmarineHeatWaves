@@ -5,7 +5,7 @@
 #'
 #' @importFrom ggplot2 ggplot aes geom_polygon geom_line scale_colour_manual
 #' scale_fill_manual scale_x_date xlab ylab theme theme_grey element_text
-#' element_blank
+#' element_blank element_rect element_line
 #' @importFrom grid unit
 #'
 #' @param data The function receives the output from the \code{\link{detect}} function.
@@ -32,6 +32,8 @@
 #' threshold and temperature, with the hot or cold events that meet the
 #' specifications of Hobday et al. (2016) shaded in as appropriate. The plotting
 #' of hot or cold events depends on which option is specified in \code{\link{detect}}.
+#' The top event detect during the selected time period will be visible in a
+#' brighter colour.
 #'
 #' @author Robert W. Schlegel
 #'
@@ -98,8 +100,15 @@ event_line <- function(data,
   if (event_top$int_mean > 0) {
     fillCol <- c("events" = "salmon", "peak event" = "red")
   } else {
-    fillCol <- c("events" = "steelblue3", "peak event" = "royalblue4")
+    fillCol <- c("events" = "steelblue3", "peak event" = "navy")
   }
+
+  # yaxis = "int_max" yaxis = "int_mean" yaxis = "int_cum" yaxis = "duration"
+  if(metric == "int_max") ylabel <- expression(paste("Maximum intensity [", degree, "C]"))
+  if(metric == "int_mean") ylabel <- expression(paste("Mean intensity [", degree, "C]"))
+  if(metric == "int_cum") ylabel <- expression(paste("Cumulative intensity [", degree, "C x days]"))
+  if(metric == "duration") ylabel <- "Duration [days]"
+  if(!exists("ylabel")) ylabel <- metric
 
   ggplot(data = clim, aes(x = date, y = temp)) +
     geom_polygon(data = dat3,
@@ -113,19 +122,23 @@ event_line <- function(data,
               size = 0.7, alpha = 1) +
     geom_line(aes(y = temp, col = "temperature"), size = 0.6) +
     scale_colour_manual(name = NULL, values = lineCol) +
-    scale_fill_manual(name = NULL, values = fillCol) +
+    scale_fill_manual(name = NULL, values = fillCol, guide = FALSE) +
     scale_x_date(expand = c(0, 0), date_labels = "%b %Y") +
-    ylab(expression(paste("[", degree, "C]"))) + xlab(NULL) +
-    theme(
-      axis.text = element_text(colour = "black"),
-      legend.position = c(0, 1),
-      legend.box = "vertical",
-      legend.box.just = "left",
-      legend.justification = c(0, 1),
-      legend.direction = "horizontal",
-      legend.text = element_text(size = 8),
-      legend.key.size = unit(0.4, "cm"),
-      panel.grid.minor = element_blank()
+    ylab(ylabel) +
+    theme(plot.background = element_blank(),
+          panel.background = element_rect(fill = "white"),
+          panel.border = element_rect(colour = "black", fill = NA, size = 0.75),
+          panel.grid.minor = element_line(colour = NA),
+          panel.grid.major = element_line(colour = "black", size = 0.2, linetype = "dotted"),
+          axis.text = element_text(colour = "black"),
+          axis.text.x = element_text(margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm")),
+          axis.text.y = element_text(margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm")),
+          axis.ticks.length = unit(-0.25, "cm"),
+          legend.background = element_rect(colour = "black"),
+          legend.direction = "horizontal",
+          legend.justification = c(0, 0),
+          legend.position = c(0.005, 0.015),
+          legend.key = element_blank()
     )
 }
 
@@ -135,6 +148,7 @@ event_line <- function(data,
 #'
 #' @importFrom magrittr %<>%
 #' @importFrom ggplot2 aes_string geom_segment geom_point scale_x_continuous
+#' element_rect element_line
 #'
 #' @param data Output from the \code{\link{detect}} function.
 #' @param metric One of \code{int_mean}, \code{int_max}, \code{int_cum} and \code{duration}.
@@ -145,6 +159,8 @@ event_line <- function(data,
 #'
 #' @return The function will return a graph of the intensity of the selected
 #' metric along the y-axis versus either \code{date} or \code{event_no}.
+#' The number of top events as per \code{event_count} will be highlighted
+#' in a brighter colour.
 #'
 #' @author Albertus J. Smit and Robert W. Schlegel
 #'
@@ -179,7 +195,7 @@ lolli_plot <- function(data,
   if(event[1, 4] < 0){
     lolli_col <- c("steelblue3", "navy")
   } else {
-    lolli_col <- c("salmon", "firebrick")
+    lolli_col <- c("salmon", "red")
   }
 
   # Create y and x axis labels
@@ -200,20 +216,20 @@ lolli_plot <- function(data,
                  size = 0.6, lineend = "butt", show.legend = F) +
     geom_point(aes_string(colour = "col", fill = "col"), shape = 21, size = 2.2) +
     # geom_text(data = event_top, aes_string(label = index, x = xaxis, y = yaxis), size = 2.0) +
-    scale_colour_manual(name = NULL, values = lolli_col) +
-    scale_fill_manual(name = NULL, values = c("ivory1", "wheat1")) +
+    scale_colour_manual(name = NULL, values = lolli_col, guide = FALSE) +
+    scale_fill_manual(name = NULL, values = c("ivory1", "grey40"), guide = FALSE) +
     xlab(xlabel) +
     ylab(ylabel) +
     theme(
+      plot.background = element_blank(),
+      panel.background = element_rect(fill = "white"),
+      panel.border = element_rect(colour = "black", fill = NA, size = 0.75),
+      panel.grid.minor = element_line(colour = NA),
+      panel.grid.major = element_line(colour = "black", size = 0.2, linetype = "dotted"),
       axis.text = element_text(colour = "black"),
-      legend.position = c(0, 1),
-      legend.box = "vertical",
-      legend.box.just = "left",
-      legend.justification = c(0, 1),
-      legend.direction = "horizontal",
-      legend.text = element_text(size = 8),
-      legend.key.size = unit(0.4, "cm"),
-      panel.grid.minor = element_blank()
+      axis.text.x = element_text(margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm")),
+      axis.text.y = element_text(margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm")),
+      axis.ticks.length  =unit(-0.25, "cm")
     )
   if(xaxis == "event_no"){
     lolli <- lolli +

@@ -3,7 +3,7 @@ title: "Extreme event detection in gridded data"
 author: "AJ Smit"
 date: "`r Sys.Date()`"
 output: 
-  html_vignette:
+  rmarkdown::html_vignette:
     fig_caption: yes
 vignette: >
   %\VignetteIndexEntry{Extreme event detection in gridded data}
@@ -31,7 +31,7 @@ library(doMC); doMC::registerDoMC(cores = 4)
 
 ## Overview
 
-Because of human-induced climate change, we can expect that extreme events would tend to occur more frequently and that they would become greater in intensity. Here I address this question by using some gridded SST data, which is the only way that we can assess if this trend is unfolding across large ocean regions. Using the gridded [0.25 degree Reynolds OISST](http://dx.doi.org/10.1175/2007JCLI1824.1), I will find extreme SST events around South Africa data by applying the `detect()` function pixel-by-pixel. After detecting the events, I will fit a generalised linear model (GLM) to calculate rates of change in some marine heat wave metrics, and then plot the estimated trend. 
+Because of human-induced climate change, we anticipate that extreme events would occur more frequently and that they would become greater in intensity. Here I address this question by using some gridded SST data, which is the only way that we can assess if this trend is unfolding across large ocean regions. Using the gridded [0.25 degree Reynolds OISST](http://dx.doi.org/10.1175/2007JCLI1824.1), I will find extreme SST events around South Africa data by applying the `detect()` function pixel-by-pixel. After detecting the events, I will fit a generalised linear model (GLM) to calculate rates of change in some marine heat wave metrics, and then plot the estimated trend. 
 
 ## Reading in the netCDF
 
@@ -147,7 +147,7 @@ ggplot(OISST_nTrend, aes(x = lon, y = lat)) +
        aes(xmin = lon - 0.1, xmax = lon + 0.1, ymin = lat - 0.1, ymax = lat + 0.1,
            colour = OISST_nTrend[,5])) +
   geom_raster(aes(fill = Estimate), interpolate = FALSE, alpha = 0.9) +
-  scale_fill_gradient2(name = "Count\n per\n decade", high = "red", mid = "white",
+  scale_fill_gradient2(name = "Count\n per\n year", high = "red", mid = "white",
                        low = "darkblue", midpoint = 0) +
   scale_colour_manual(breaks = c("(0,0.001]", "(0.001,0.01]", "(0.01,0.05]", "(0.05,1]"),
                       values = c("firebrick1", "firebrick2", "firebrick3", "white"),

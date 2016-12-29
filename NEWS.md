@@ -3,19 +3,33 @@ output: pdf_document
 ---
 
 # VERSION CHANGES
-## Changes in version 0.13.6.9300 (29 December 2016)
+## Changes in version 0.14.1 (29 December 2016)
 * Improved error messages in exceedence()
 
-## Changes in version 0.13.6.9200 (23 November 2016)
+## Changes in version 0.14.0 (11 December 2016)
+* All changes since version 0.13.1.
+
+## Changes in version 0.13.9.9200 (11 December 2016)
+* Minor edits to documentation.
+* Corrected issue where the event_line graph's y-axis did not reflect the correct units
+for the metric selected for plotting.
+* Updated the theme, i.e. removed the default ggplot2 theme in favour
+of a more conventional white background with nice black axes.
+* Removed the legend that indicated the peak and secondary events from the 
+event_line plot. 
+* Repositioned the legend in the event_line plot: it is now int he bottom right corner
+as here it has less chance of plotting over the peak events when the graph is rescaled.
+
+## Changes in version 0.13.8.9200 (23 November 2016)
 * Minor update to exceedence() function to improve usability.
 * Usage of exceedence() shown in README file
 
-## Changes in version 0.13.6.9100 (22 October 2016)
+## Changes in version 0.13.7.9100 (22 October 2016)
 * The additions to the detect() function madde in the previous update have been 
 rolled back in favour of creating an independent function to calculate exceedences.
 
 ## Changes in version 0.13.6.9000 (22 October 2016)
-* Added 'trheshold' variable to detect() function.
+* Added 'threshold' variable to detect() function.
 * This now allows the function to detect when temperatures are over (under) a 
 static threshold supplied by the user.
 * An example is given in the README.md file
