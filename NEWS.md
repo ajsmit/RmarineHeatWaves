@@ -3,6 +3,9 @@ output: pdf_document
 ---
 
 # VERSION CHANGES
+## Changes in version 0.14.1 (29 December 2016)
+* Improved error messages in exceedence()
+
 ## Changes in version 0.14.0 (11 December 2016)
 * All changes since version 0.13.1.
 
