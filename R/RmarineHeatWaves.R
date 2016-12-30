@@ -90,9 +90,9 @@
 #' receive a brief overview.
 #'
 #' @return The function will return a list of two components, \code{clim} and
-#' \code{event}, which are the climatology and MHW (or MCS) events, respectively. The
-#' climatology contains the full time series of daily temperatures, as well as
-#' the the seasonal climatology, the threshold and various aspects of the
+#' \code{event}, which are the climatology and MHW (or MCS) events, respectively.
+#' The climatology contains the full time series of daily temperatures, as well
+#' as the the seasonal climatology, the threshold and various aspects of the
 #' events that were detected:
 #'   \item{doy}{Julian day (day-of-year). For non-leap years it runs 1...59 and
 #'   61...366, while leap years run 1...366.}
@@ -173,40 +173,40 @@ detect <-
            max_gap = 2,
            max_pad_length = 3,
            cold_spells = FALSE) {
-    
+
     t_series <- data
     t_series$temp <- zoo::na.approx(t_series$temp, maxgap = max_pad_length)
-    
+
     if (missing(climatology_start))
       stop("Oops! Please provide a complete year for the start of the climatology.")
-    
+
     if (missing(climatology_end))
       stop("Bummer! Please provide a complete year for the end of the climatology.")
-    
+
     clim_start <- paste(climatology_start, "01", "01", sep = "-")
     if (t_series$date[1] > clim_start) {
       stop(paste("The specified start date precedes the first day of series, which is", t_series$date[1]))
     }
-    
+
     clim_end <- paste(climatology_end, "12", "31", sep = "-")
     if (clim_end > t_series$date[nrow(t_series)])
       stop(paste("The specified end date follows the last day of series, which is", t_series$date[nrow(t_series)]))
-    
+
     if (cold_spells)
       t_series$temp <- -t_series$temp
-    
+
     tDat <- t_series %>%
       dplyr::filter(date >= clim_start & date <= clim_end) %>%
       dplyr::mutate(date = lubridate::year(date)) %>%
       tidyr::spread(date, temp)
-    
+
     all_NA <- apply(tDat[59:61, ], 2, function(x) !all(is.na(x)))
     no_NA <- names(all_NA[all_NA > 0]) # compatibility with zoo < 1.7.13...
     tDat[59:61, no_NA] <- zoo::na.approx(tDat[59:61, no_NA], maxgap = 1, na.rm = TRUE)
     tDat <- rbind(utils::tail(tDat, window_half_width),
                   tDat, utils::head(tDat, window_half_width))
     seas_clim_year <- thresh_clim_year <- rep(NA, nrow(tDat))
-    
+
     for (i in (window_half_width + 1):((nrow(tDat) - window_half_width))) {
       seas_clim_year[i] <-
         mean(c(t(tDat[(i - (window_half_width)):(i + window_half_width), 2:ncol(tDat)])), na.rm = TRUE)
@@ -219,7 +219,7 @@ detect <-
           names = FALSE
         )
     }
-    
+
     len_clim_year <- 366
     clim <-
       data.frame(
@@ -227,7 +227,7 @@ detect <-
         seas_clim_year = seas_clim_year[(window_half_width + 1):((window_half_width) + len_clim_year)],
         thresh_clim_year = thresh_clim_year[(window_half_width + 1):((window_half_width) + len_clim_year)]
       )
-    
+
     if (smooth_percentile) {
       clim %<>%
         dplyr::mutate(
@@ -251,10 +251,10 @@ detect <-
           )
         )
     }
-    
+
     t_series %<>% dplyr::inner_join(clim, by = "doy")
     t_series$temp[is.na(t_series$temp)] <- t_series$seas_clim_year[is.na(t_series$temp)]
-    
+
     t_series$thresh_criterion <- t_series$temp > t_series$thresh_clim_year
     ex1 <- rle(t_series$thresh_criterion)
     ind1 <- rep(seq_along(ex1$lengths), ex1$lengths)
@@ -264,9 +264,9 @@ detect <-
     proto_events_rng <-
       lapply(proto_events, function(x)
         data.frame(index_start = min(x), index_stop = max(x)))
-    
+
     duration <- NULL ###
-    
+
     protoFunc <- function(proto_data) {
       out <- proto_data %>%
         dplyr::mutate(duration = index_stop - index_start + 1) %>%
@@ -274,29 +274,29 @@ detect <-
         dplyr::mutate(date_start = t_series[index_start, "date"]) %>%
         dplyr::mutate(date_stop = t_series[index_stop, "date"])
     }
-    
+
     proto_events <- do.call(rbind, proto_events_rng) %>%
       dplyr::mutate(event_no = cumsum(ex1$values[ex1$values == TRUE])) %>%
       protoFunc()
-    
+
     t_series$duration_criterion <- rep(FALSE, nrow(t_series))
-    
+
     for (i in 1:nrow(proto_events)) {
       t_series$duration_criterion[proto_events$index_start[i]:proto_events$index_stop[i]] <-
         rep(TRUE, length = proto_events$duration[i])
     }
-    
+
     ex2 <- rle(t_series$duration_criterion)
     ind2 <- rep(seq_along(ex2$lengths), ex2$lengths)
     s2 <- split(zoo::index(t_series$thresh_criterion), ind2)
     proto_gaps <- s2[ex2$values == FALSE]
     proto_gaps_rng <-
       lapply(proto_gaps, function(x) data.frame(index_start = min(x), index_stop = max(x)))
-    
+
     proto_gaps <- do.call(rbind, proto_gaps_rng) %>%
       dplyr::mutate(event_no = c(1:length(ex2$values[ex2$values == FALSE]))) %>%
       dplyr::mutate(duration = index_stop - index_start + 1)
-    
+
     if (any(proto_gaps$duration >= 1 & proto_gaps$duration <= max_gap)) {
       proto_gaps %<>%
         dplyr::mutate(date_start = t_series[index_start, "date"]) %>%
@@ -305,7 +305,7 @@ detect <-
     } else {
       join_across_gaps <- FALSE
     }
-    
+
     if (join_across_gaps) {
       t_series$event <- t_series$duration_criterion
       for (i in 1:nrow(proto_gaps)) {
@@ -315,7 +315,7 @@ detect <-
     } else {
       t_series$event <- t_series$duration_criterion
     }
-    
+
     ex3 <- rle(t_series$event)
     ind3 <- rep(seq_along(ex3$lengths), ex3$lengths)
     s3 <- split(zoo::index(t_series$event), ind3)
@@ -324,17 +324,17 @@ detect <-
     events_rng <-
       lapply(events, function(x)
         data.frame(index_start = min(x), index_stop = max(x)))
-    
+
     events <- do.call(rbind, events_rng) %>%
       dplyr::mutate(event_no = cumsum(ex3$values[ex3$values == TRUE])) %>%
       protoFunc()
-    
+
     t_series$event_no <- rep(NA, nrow(t_series))
     for (i in 1:nrow(events)) {
       t_series$event_no[events$index_start[i]:events$index_stop[i]] <-
         rep(i, length = events$duration[i])
     }
-    
+
     events_list <- plyr::dlply(events, .(event_no), function(x)
       with(
         t_series,
@@ -349,7 +349,7 @@ detect <-
             c(thresh_clim_year[x$index_start:x$index_stop]) - c(seas_clim_year[x$index_start:x$index_stop])
         )
       ))
-    
+
     int_mean <- int_max <- int_cum <- int_mean_rel_thresh <-
       int_max_rel_thresh <- int_cum_rel_thresh <- int_mean_abs <-
       int_max_abs <- int_cum_abs <- int_mean_norm <- int_max_norm <-
@@ -385,7 +385,7 @@ detect <-
       plyr::ldply(events_list, function(x) mean(x$rel_thresh_norm))[, 2]
     events$int_max_norm <-
       plyr::ldply(events_list, function(x) max(x$rel_thresh_norm))[, 2]
-    
+
     mhw_rel_seas <- t_series$temp - t_series$seas_clim_year
     A <- mhw_rel_seas[events$index_start]
     B <- t_series$temp[events$index_start - 1]
@@ -412,7 +412,7 @@ detect <-
       )
     }
     events$rate_onset <- rateOnset(events, start_type)
-    
+
     D <- mhw_rel_seas[events$index_stop]
     E <- t_series$temp[events$index_stop + 1]
     F <- t_series$seas_clim_year[events$index_stop + 1]
@@ -427,7 +427,7 @@ detect <-
         "case6"
       )
     )[nrow(events)]
-    
+
     rateDecline <- function(x, type) {
       switch(
         type,
@@ -439,7 +439,7 @@ detect <-
       )
     }
     events$rate_decline <- rateDecline(events, stop_type)
-    
+
     if (cold_spells) {
       events <- events %>% dplyr::mutate(
         int_mean = -int_mean,
@@ -460,7 +460,7 @@ detect <-
         thresh_clim_year = -thresh_clim_year
       )
     }
-    
+
     list(clim = dplyr::group_by(t_series, event_no),
          event = dplyr::group_by(events, event_no))
   }
