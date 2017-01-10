@@ -7,6 +7,7 @@
 #' scale_fill_manual scale_x_date xlab ylab theme theme_grey element_text
 #' element_blank element_rect element_line
 #' @importFrom grid unit
+#' @importFrom magrittr %>%
 #'
 #' @param data The function receives the output from the \code{\link{detect}} function.
 #' @param spread The the number of days leading and trailing the largest event
@@ -49,8 +50,7 @@
 #'
 #' \dontrun{
 #' event_line(res, spread = 200, metric = "int_cum",
-#' start_date = "2010-10-01", end_date = "2011-08-30",
-#' file_name = "WA_event.pdf")
+#' start_date = "2010-10-01", end_date = "2011-08-30")
 #' }
 event_line <- function(data,
                        spread = 150,

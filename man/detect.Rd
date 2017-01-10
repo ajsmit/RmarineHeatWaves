@@ -66,9 +66,9 @@ instead of heat events. Default is \code{FALSE}.}
 }
 \value{
 The function will return a list of two components, \code{clim} and
-\code{event}, which are the climatology and MHW (or MCS) events, respectively. The
-climatology contains the full time series of daily temperatures, as well as
-the the seasonal climatology, the threshold and various aspects of the
+\code{event}, which are the climatology and MHW (or MCS) events, respectively.
+The climatology contains the full time series of daily temperatures, as well
+as the the seasonal climatology, the threshold and various aspects of the
 events that were detected:
   \item{doy}{Julian day (day-of-year). For non-leap years it runs 1...59 and
   61...366, while leap years run 1...366.}
@@ -116,6 +116,13 @@ units are in multiples of threshold exceedances, i.e., a value of 1.5
 indicates the event intensity (relative to the climatology) was 1.5 times the
 value of the threshold (relative to climatology,
 i.e., threshold - climatology.)
+
+Note that \code{rate_onset} and \code{rate_decline} will return NA or
+NaN when the event occurs at the start or end of time series. This
+may be particularly evident when the function is applied to large gridded
+data sets. Although the other metrics do not contain any errors and
+provide sensible values, please take this into account in its
+interpretation.
 }
 \description{
 Applies the Hobday et al. (2016) marine heat wave definition to an input time
@@ -178,7 +185,7 @@ Hobday, A.J. et al. (2016). A hierarchical approach to defining
 marine heatwaves, Progress in Oceanography, 141, pp. 227-238,
 doi:10.1016/j.pocean.2015.12.014
 
-Schlegel, R. W., Oliver, C. J., Wernberg, T. W., Smit, A. J. (submitted).
+Schlegel, R. W., Oliver, C. J., Wernberg, T. W., Smit, A. J. (in press).
 Coastal and offshore co-occurrences of marine heatwaves and cold-spells.
 Progress in Oceanography.
 }
