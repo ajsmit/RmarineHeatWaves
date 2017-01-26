@@ -220,7 +220,7 @@ detect <-
       thresh_clim_year[i] <-
         raster::quantile(
           c(t(tDat[(i - (window_half_width)):(i + window_half_width), 2:ncol(tDat)])),
-          probs = 0.9,
+          probs = pctile/100,
           type = 7,
           na.rm = TRUE,
           names = FALSE
