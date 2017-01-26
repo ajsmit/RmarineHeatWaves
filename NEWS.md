@@ -6,7 +6,6 @@ output: pdf_document
 ## Changes in version 0.14.2 (26 January 2017)
 * Fix bug which was that was brought to my attention by Mahmoud Haouari: enable 
 the pctile option in the detect() function, which was accidentally disabled.
-* Correct display of images in the package vignette.
 
 ## Changes in version 0.14.1 (10 January 2017)
 * Improved error messages in exceedence().
