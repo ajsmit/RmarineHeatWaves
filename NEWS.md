@@ -3,6 +3,11 @@ output: pdf_document
 ---
 
 # VERSION CHANGES
+## Changes in version 0.14.3 (31 January 2017)
+* Corrected plotting error in event polygons in 'event_line' function
+* Added two new functions: 'geom_event_line' and 'geom_lolli_plot'
+* These functions may be used with ggplot2 directly as geoms
+
 ## Changes in version 0.14.2 (26 January 2017)
 * Fix bug which was that was brought to my attention by Mahmoud Haouari: enable 
 the pctile option in the detect() function, which was accidentally disabled.
