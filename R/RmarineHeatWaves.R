@@ -141,13 +141,20 @@
 #' value of the threshold (relative to climatology,
 #' i.e., threshold - climatology.)
 #'
+#' Note that \code{rate_onset} and \code{rate_decline} will return NA or
+#' NaN when the event occurs at the start or end of time series. This
+#' may be particularly evident when the function is applied to large gridded
+#' data sets. Although the other metrics do not contain any errors and
+#' provide sensible values, please take this into account in its
+#' interpretation.
+#'
 #' @author Albertus J. Smit, Robert W. Schlegel, Eric C. J. Oliver
 #'
 #' @references Hobday, A.J. et al. (2016). A hierarchical approach to defining
 #' marine heatwaves, Progress in Oceanography, 141, pp. 227-238,
 #' doi:10.1016/j.pocean.2015.12.014
 #'
-#' Schlegel, R. W., Oliver, C. J., Wernberg, T. W., Smit, A. J. (submitted).
+#' Schlegel, R. W., Oliver, C. J., Wernberg, T. W., Smit, A. J. (in press).
 #' Coastal and offshore co-occurrences of marine heatwaves and cold-spells.
 #' Progress in Oceanography.
 #'
@@ -213,7 +220,7 @@ detect <-
       thresh_clim_year[i] <-
         raster::quantile(
           c(t(tDat[(i - (window_half_width)):(i + window_half_width), 2:ncol(tDat)])),
-          probs = 0.9,
+          probs = pctile/100,
           type = 7,
           na.rm = TRUE,
           names = FALSE

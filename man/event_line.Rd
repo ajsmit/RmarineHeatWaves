@@ -50,8 +50,7 @@ res <- detect(t_dat, climatology_start = 1983, climatology_end = 2012) # using d
 
 \dontrun{
 event_line(res, spread = 200, metric = "int_cum",
-start_date = "2010-10-01", end_date = "2011-08-30",
-file_name = "WA_event.pdf")
+start_date = "2010-10-01", end_date = "2011-08-30")
 }
 }
 \author{

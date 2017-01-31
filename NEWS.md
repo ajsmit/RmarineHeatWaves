@@ -3,8 +3,13 @@ output: pdf_document
 ---
 
 # VERSION CHANGES
-## Changes in version 0.14.1 (29 December 2016)
-* Improved error messages in exceedence()
+## Changes in version 0.14.2 (26 January 2017)
+* Fix bug which was that was brought to my attention by Mahmoud Haouari: enable 
+the pctile option in the detect() function, which was accidentally disabled.
+
+## Changes in version 0.14.1 (10 January 2017)
+* Improved error messages in exceedence().
+* Bug fix.
 
 ## Changes in version 0.14.0 (11 December 2016)
 * All changes since version 0.13.1.
