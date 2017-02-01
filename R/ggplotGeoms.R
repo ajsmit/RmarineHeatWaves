@@ -51,6 +51,7 @@
 #' res <- detect(t_dat, climatology_start = 1983, climatology_end = 2012) # using default values
 #'
 #' \dontrun{
+#' require(ggplot2)
 #' ggplot() + geom_event_line(res, spread = 200, metric = "int_cum",
 #' start_date = "2010-10-01", end_date = "2011-08-30") +
 #' geom_text(aes(x = as.Date("2011-05-01"), y = 28, label = "Wow. Such heatwave. Many warm."))
@@ -61,17 +62,17 @@ geom_event_line <- function(data,
                        start_date = "1999-06-30",
                        end_date = "2000-05-30") {
   date_stop <- date_start <- int_max <- int_mean <- int_cum <- duration <- NULL
-  
+
   event <- data$event %>%
     dplyr::filter(date_stop >= start_date & date_start <= end_date)
   if (nrow(event) == 0) stop("No events detected!\nConsider changing the 'start_date' or 'end_date' values.")
   event <- event[order(-abs(event[colnames(event) == metric])),]
   event_top <- event[1, ]
-  
+
   date_spread <- seq((event_top$date_start - spread), (event_top$date_stop + spread), by = 1)
-  
+
   clim <- dplyr::filter(data$clim, date %in% date_spread)
-  
+
   temp <- event_no <- thresh_clim_year <- seas_clim_year <- NULL # avoids annoying notes during check...
   dat3 <- data.frame()
   for (i in min(clim$event_no, na.rm = TRUE):max(clim$event_no, na.rm = TRUE)) {
@@ -79,7 +80,7 @@ geom_event_line <- function(data,
     grid.df <-
       data.frame(date = seq(x$date[1], x$date[nrow(x)], by = "day"))
     x <- merge(x, grid.df, by = "date", all.y = TRUE)
-    
+
     if(nrow(x[x$thresh_criterion != FALSE,]) != nrow(x)){
       ex1 <- rle(x$thresh_criterion)
       ind1 <- rep(seq_along(ex1$lengths), ex1$lengths)
@@ -112,7 +113,7 @@ geom_event_line <- function(data,
       event_no_sub <- NULL
       x$event_no_sub <- x$event_no
     }
-    
+
     mirror <- function(x){
       event_no_sub <- NULL
       y <- data.frame(
@@ -134,30 +135,30 @@ geom_event_line <- function(data,
     z <- plyr::ddply(x, .(event_no_sub), mirror)
     z$event_no_sub <- as.character(z$event_no_sub)
     dat3 <- rbind(dat3, z)
-    
+
   }
-  
+
   lineCol <- c(
     "temperature" = "black",
     "climatology" = "blue",
     "threshold" = "darkgreen"
   )
-  
+
   if (event_top$int_mean > 0) {
     fillCol <- c("events" = "salmon", "peak event" = "red")
   } else {
     fillCol <- c("events" = "steelblue3", "peak event" = "navy")
   }
-  
+
   if(metric == "int_max") ylabel <- expression(paste("Maximum intensity [", degree, "C]"))
   if(metric == "int_mean") ylabel <- expression(paste("Mean intensity [", degree, "C]"))
   if(metric == "int_cum") ylabel <- expression(paste("Cumulative intensity [", degree, "C x days]"))
   if(metric == "duration") ylabel <- "Duration [days]"
   if(!exists("ylabel")) ylabel <- metric
-  
+
   # Create the geom list for ggplot()
   all_polygons <- geom_polygon(data = dat3,
-                               aes(x = date, y = temp, group = event_no_sub, fill = "events"), size = 0.5) 
+                               aes(x = date, y = temp, group = event_no_sub, fill = "events"), size = 0.5)
   top_polygon <- geom_polygon(data = dat3[dat3$event_no == event_top$event_no[1],],
                aes(x = date, y = temp, group = event_no_sub, fill = "peak event"),
                size = 0.5)
@@ -221,17 +222,17 @@ geom_event_line <- function(data,
 #'
 #' \dontrun{
 #' ggplot() + geom_lolli_plot(res, metric = "int_cum", event_count = 3, xaxis = "date_peak") +
-#' geom_text(aes(x = as.Date("2007-01-01"), y = 375, 
+#' geom_text(aes(x = as.Date("2007-01-01"), y = 375,
 #' label = "One may clearly see\njust how dramatic\n these heatwaves are."))
 #' }
 geom_lolli_plot <- function(data,
                        metric = "int_max",
                        event_count = 3,
                        xaxis = "date_start") {
-  
+
   event <- data$event
   if(nrow(event) == 0) stop("No events detected!")
-  
+
   peak_sort <- NULL
   expr <- lazyeval::interp(~abs(x), x = as.name(metric))
   event %<>%
@@ -239,16 +240,16 @@ geom_lolli_plot <- function(data,
     dplyr::ungroup() %>%
     dplyr::mutate_(.dots = stats::setNames(list(expr), "peak_sort")) %>%
     dplyr::arrange(dplyr::desc(peak_sort))
-  
+
   event$col <- "event"
   event[1:event_count, 6] <- "peak event"
-  
+
   if(event[1, 4] < 0){
     lolli_col <- c("steelblue3", "navy")
   } else {
     lolli_col <- c("salmon", "red")
   }
-  
+
   # Create y and x axis labels
   # xaxis = "event_no" xaxis = "date_start" xaxis = "date_peak"
   if(xaxis == "event_no") xlabel <- "Event number"
@@ -260,13 +261,13 @@ geom_lolli_plot <- function(data,
   if(metric == "int_cum") ylabel <- expression(paste("Cumulative intensity [", degree, "C x days]"))
   if(metric == "duration") ylabel <- "Duration [days]"
   if(!exists("ylabel")) ylabel <- metric
-  
+
   # Create the geom list for ggplot()
   lolli_stems <- geom_segment(data = event, aes_string(x = xaxis, y = metric, xend = xaxis, yend = 0, colour = "col"),
                               size = 0.6, lineend = "butt", show.legend = F)
-  lolli_pops <- geom_point(data = event, aes_string(x = xaxis, y = metric, colour = "col", fill = "col"), 
+  lolli_pops <- geom_point(data = event, aes_string(x = xaxis, y = metric, colour = "col", fill = "col"),
                            shape = 21, size = 2.2)
-  lolli_colour <- scale_colour_manual(name = NULL, values = lolli_col, guide = FALSE) 
+  lolli_colour <- scale_colour_manual(name = NULL, values = lolli_col, guide = FALSE)
   lolli_fill <- scale_fill_manual(name = NULL, values = c("ivory1", "grey40"), guide = FALSE)
   lolli_x <- xlab(xlabel)
   lolli_y <- ylab(ylabel)
