@@ -27,7 +27,7 @@ res <- detect(t_dat, climatology_start = 1983, climatology_end = 2012) # using d
 
 \dontrun{
 ggplot() + geom_lolli_plot(res, metric = "int_cum", event_count = 3, xaxis = "date_peak") +
-geom_text(aes(x = as.Date("2007-01-01"), y = 375, 
+geom_text(aes(x = as.Date("2007-01-01"), y = 375,
 label = "One may clearly see\\njust how dramatic\\n these heatwaves are."))
 }
 }

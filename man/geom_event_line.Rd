@@ -51,6 +51,7 @@ t_dat <- make_whole(sst_WA)
 res <- detect(t_dat, climatology_start = 1983, climatology_end = 2012) # using default values
 
 \dontrun{
+require(ggplot2)
 ggplot() + geom_event_line(res, spread = 200, metric = "int_cum",
 start_date = "2010-10-01", end_date = "2011-08-30") +
 geom_text(aes(x = as.Date("2011-05-01"), y = 28, label = "Wow. Such heatwave. Many warm."))
