@@ -22,7 +22,9 @@ Default is \code{date_start}.}
 The function will return a graph of the intensity of the selected
 metric along the y-axis versus either \code{date} or \code{event_no}.
 The number of top events as per \code{event_count} will be highlighted
-in a brighter colour.
+in a brighter colour. This function differs in use from \code{\link{geom_lolli_plot}}
+in that it creates a stand alone figure. The benefit of this being
+that one must not have any prior knowledge of ggplot2 to create the figure.
 }
 \description{
 Visualise a timeline of several event metrics as 'lollipop' graphs.

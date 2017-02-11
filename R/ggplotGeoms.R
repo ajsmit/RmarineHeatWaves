@@ -53,7 +53,8 @@
 #' mhw <- mhw[10580:10690,]
 #'
 #' \dontrun{
-#'ggplot(mhw, aes(x = date, y = temp, thresh = thresh_clim_year, seas = seas_clim_year, event = event_no)) +
+#' library(ggplot2)
+#' ggplot(mhw, aes(x = date, y = temp, thresh = thresh_clim_year, seas = seas_clim_year, event = event_no)) +
 #'  geom_flame() +
 #'  geom_text(aes(x = as.Date("2011-02-01"), y = 28, label = "Wow. Such heatwave. Many warm."))
 #' }
@@ -213,17 +214,17 @@ GeomFlameOn <- ggproto("GeomFlameOn", Geom,
 #'
 #' \dontrun{
 #' ggplot() + geom_lolli_plot(res, metric = "int_cum", event_count = 3, xaxis = "date_peak") +
-#' geom_text(aes(x = as.Date("2007-01-01"), y = 375, 
+#' geom_text(aes(x = as.Date("2007-01-01"), y = 375,
 #' label = "One may clearly see\njust how dramatic\n these heatwaves are."))
 #' }
 geom_lolli_plot <- function(data,
                        metric = "int_max",
                        event_count = 3,
                        xaxis = "date_start") {
-  
+
   event <- data$event
   if(nrow(event) == 0) stop("No events detected!")
-  
+
   peak_sort <- NULL
   expr <- lazyeval::interp(~abs(x), x = as.name(metric))
   event %<>%
@@ -231,16 +232,16 @@ geom_lolli_plot <- function(data,
     dplyr::ungroup() %>%
     dplyr::mutate_(.dots = stats::setNames(list(expr), "peak_sort")) %>%
     dplyr::arrange(dplyr::desc(peak_sort))
-  
+
   event$col <- "event"
   event[1:event_count, 6] <- "peak event"
-  
+
   if(event[1, 4] < 0){
     lolli_col <- c("steelblue3", "navy")
   } else {
     lolli_col <- c("salmon", "red")
   }
-  
+
   # Create y and x axis labels
   # xaxis = "event_no" xaxis = "date_start" xaxis = "date_peak"
   if(xaxis == "event_no") xlabel <- "Event number"
@@ -252,13 +253,13 @@ geom_lolli_plot <- function(data,
   if(metric == "int_cum") ylabel <- expression(paste("Cumulative intensity [", degree, "C x days]"))
   if(metric == "duration") ylabel <- "Duration [days]"
   if(!exists("ylabel")) ylabel <- metric
-  
+
   # Create the geom list for ggplot()
   lolli_stems <- geom_segment(data = event, aes_string(x = xaxis, y = metric, xend = xaxis, yend = 0, colour = "col"),
                               size = 0.6, lineend = "butt", show.legend = F)
-  lolli_pops <- geom_point(data = event, aes_string(x = xaxis, y = metric, colour = "col", fill = "col"), 
+  lolli_pops <- geom_point(data = event, aes_string(x = xaxis, y = metric, colour = "col", fill = "col"),
                            shape = 21, size = 2.2)
-  lolli_colour <- scale_colour_manual(name = NULL, values = lolli_col, guide = FALSE) 
+  lolli_colour <- scale_colour_manual(name = NULL, values = lolli_col, guide = FALSE)
   lolli_fill <- scale_fill_manual(name = NULL, values = c("ivory1", "grey40"), guide = FALSE)
   lolli_x <- xlab(xlabel)
   lolli_y <- ylab(ylabel)
