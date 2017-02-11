@@ -1,40 +1,30 @@
-#' Create a Line Plot geom of Marine Heat Waves or Cold Spells.
+#' Create flame ploygons of Marine Heat Waves or Cold Spells.
 #'
 #' Creates a ggplot2 geom of warm or cold events as per the second row of Figure 3 in
 #' Hobday et al. (2016).
 #'
-#' @importFrom ggplot2 ggplot aes geom_polygon geom_line scale_colour_manual
-#' scale_fill_manual scale_x_date xlab ylab theme theme_grey element_text
-#' element_blank element_rect element_line
-#' @importFrom grid unit
-#' @importFrom magrittr %>%
+#' @inheritParams ggplot2::layer
+#' @param @param na.rm If \code{FALSE} (the default), removes missing values with
+#'    a warning.  If \code{TRUE} silently removes missing values.
+#' @param ... other arguments passed on to \code{\link{layer}}. These are
+#'   often aesthetics, used to set an aesthetic to a fixed value, like
+#'   \code{color = "red"} or \code{size = 3}. They may also be parameters
+#'   to the paired geom/stat.
+#' @param stat.top Choose which statistic to use to highlight the top event
+#' found within the time series. Option are: \code{int_max} for the maximum 
+#' intensity of the event, \code{int_cum} for the cummulative intensity of 
+#' the event, \code{int_mean} for the mean intensity of the event and \code{dur}
+#' for the duration of the event.
 #'
-#' @param data The function receives the output from the \code{\link{detect}} function.
-#' @param spread The the number of days leading and trailing the largest event
-#' (as per \code{metric}) detected within the time period specified by
-#' \code{start_date} and \code{end_date}. The default is 150 days.
-#' @param metric One of the following options: \code{int_mean}, \code{int_max}, \code{int_var},
-#' \code{int_cum}, \code{int_mean_rel_thresh}, \code{int_max_rel_thresh}, \code{int_var_rel_thresh},
-#' \code{int_cum_rel_thresh}, \code{int_mean_abs}, \code{int_max_abs}, \code{int_var_abs},
-#' \code{int_cum_abs}, \code{int_mean_norm}, \code{int_max_norm}, \code{rate_onset}, \code{rate_decline}.
-#' Partial name matching is currently not supported so please specify the metric
-#' name precisely. The default is \code{int_cum}.
-#' @param start_date The start date of a period of time within which the largest
-#' event (as per \code{metric}) is retrieved and plotted. This may not necessarily
-#' correspond to the biggest event of the specified metric within the entire
-#' data set. To plot the biggest event within the whole time series, make sure
-#' \code{start_date} and \code{end_date} straddle this event, or simply specify
-#' the start and end dates of the full time series given to \code{\link{detect}}.
-#' @param end_date The end date of a period of time within which the largest
-#' event (as per \code{metric}) is retrieved and plotted. See \code{start_date}
-#' for additional information.
-#'
-#' @return The function will create ggplot2 geom indicating the climatology,
+#' @return The function will create a ggplot2 geom indicating the climatology,
 #' threshold and temperature, with the hot or cold events that meet the
-#' specifications of Hobday et al. (2016) shaded in as appropriate. The plotting
-#' of hot or cold events depends on which option is specified in \code{\link{detect}}.
-#' The top event detect during the selected time period will be visible in a
-#' brighter colour. This function differs in use from \code{\link{event_line}}
+#' specifications of Hobday et al. (2016) shown as flame polygons. The function
+#' automagically detects if one is plotting MHWs or MCS and adjusts the colour 
+#' palette accordingly. These default colours may still be overridden as normal.
+#' The top event detect during the selected time period, as determined by the
+#' selected statistics given in \code{stat.top} will be visible in a
+#' brighter colour. The default colour may be overidden in the aesthetics as well. 
+#' This function differs in use from \code{\link{event_line}}
 #' in that it must be created as a ggplot() object. The benefit of this being
 #' that one may add additional information to the figure as may be necessary.
 #'
@@ -182,29 +172,28 @@ GeomFlameOn <- ggproto("GeomFlameOn", Geom,
                        }
 )
 
-#' Create a Timeline geom of Selected Event Metrics.
+#' Create a Timeline geom of a selected event metric.
 #'
 #' Visualise a timeline of several event metrics as 'lollipops'.
-#'
-#' @importFrom magrittr %<>%
-#' @importFrom ggplot2 aes_string geom_segment geom_point scale_x_continuous
-#' element_rect element_line
-#'
-#' @param data Output from the \code{\link{detect}} function.
-#' @param metric One of \code{int_mean}, \code{int_max}, \code{int_cum} and \code{duration}.
-#' Default is \code{int_cum}.
-#' @param event_count The number of top events to highlight. Default is 3.
-#' @param xaxis One of \code{event_no}, \code{date_start} or \code{date_peak}.
-#' Default is \code{date_start}.
+#' 
+#' @inheritParams ggplot2::layer
+#' @param @param na.rm If \code{FALSE} (the default), removes missing values with
+#'    a warning.  If \code{TRUE} silently removes missing values.
+#' @param ... other arguments passed on to \code{\link{layer}}. These are
+#'   often aesthetics, used to set an aesthetic to a fixed value, like
+#'   \code{color = "red"} or \code{size = 3}. They may also be parameters
+#'   to the paired geom/stat.
+#' @param n The number of top events to highlight. Default is 1.
 #'
 #' @return The function will return a graph of the intensity of the selected
-#' metric along the y-axis versus either \code{date} or \code{event_no}.
-#' The number of top events as per \code{event_count} will be highlighted
-#' in a brighter colour. This function differs in use from \code{\link{lolli_plot}
-#' in that it must be created as a ggplot() object. The benefit of this being
+#' metric along the y-axis versus a time variable along the x axis.
+#' The number of top events (\code{n}) from the chosen metric may be highlighted
+#' in a brighter colour with the aesthetic value \code{coulour.n}. 
+#' This function differs in use from \code{\link{lolli_plot}}
+#' in that it must be created as a ggplot object. The benefit of this being
 #' that one may add additional information to the figure as may be necessary.
 #'
-#' @author Albertus J. Smit and Robert W. Schlegel
+#' @author Robert W. Schlegel
 #'
 #' @export
 #'
@@ -217,77 +206,62 @@ GeomFlameOn <- ggproto("GeomFlameOn", Geom,
 #' geom_text(aes(x = as.Date("2007-01-01"), y = 375,
 #' label = "One may clearly see\njust how dramatic\n these heatwaves are."))
 #' }
-geom_lolli_plot <- function(data,
-                       metric = "int_max",
-                       event_count = 3,
-                       xaxis = "date_start") {
 
-  event <- data$event
-  if(nrow(event) == 0) stop("No events detected!")
-
-  peak_sort <- NULL
-  expr <- lazyeval::interp(~abs(x), x = as.name(metric))
-  event %<>%
-    dplyr::select_("event_no", "date_start", "date_peak", metric) %>%
-    dplyr::ungroup() %>%
-    dplyr::mutate_(.dots = stats::setNames(list(expr), "peak_sort")) %>%
-    dplyr::arrange(dplyr::desc(peak_sort))
-
-  event$col <- "event"
-  event[1:event_count, 6] <- "peak event"
-
-  if(event[1, 4] < 0){
-    lolli_col <- c("steelblue3", "navy")
-  } else {
-    lolli_col <- c("salmon", "red")
-  }
-
-  # Create y and x axis labels
-  # xaxis = "event_no" xaxis = "date_start" xaxis = "date_peak"
-  if(xaxis == "event_no") xlabel <- "Event number"
-  if(xaxis == "date_start") xlabel <- "Start date"
-  if(xaxis == "date_peak") xlabel <- "Peak date"
-  # yaxis = "int_max" yaxis = "int_mean" yaxis = "int_cum" yaxis = "duration"
-  if(metric == "int_max") ylabel <- expression(paste("Maximum intensity [", degree, "C]"))
-  if(metric == "int_mean") ylabel <- expression(paste("Mean intensity [", degree, "C]"))
-  if(metric == "int_cum") ylabel <- expression(paste("Cumulative intensity [", degree, "C x days]"))
-  if(metric == "duration") ylabel <- "Duration [days]"
-  if(!exists("ylabel")) ylabel <- metric
-
-  # Create the geom list for ggplot()
-  lolli_stems <- geom_segment(data = event, aes_string(x = xaxis, y = metric, xend = xaxis, yend = 0, colour = "col"),
-                              size = 0.6, lineend = "butt", show.legend = F)
-  lolli_pops <- geom_point(data = event, aes_string(x = xaxis, y = metric, colour = "col", fill = "col"),
-                           shape = 21, size = 2.2)
-  lolli_colour <- scale_colour_manual(name = NULL, values = lolli_col, guide = FALSE)
-  lolli_fill <- scale_fill_manual(name = NULL, values = c("ivory1", "grey40"), guide = FALSE)
-  lolli_x <- xlab(xlabel)
-  lolli_y <- ylab(ylabel)
-  lolli_theme <- theme(plot.background = element_blank(),
-                       panel.background = element_rect(fill = "white"),
-                       panel.border = element_rect(colour = "black", fill = NA, size = 0.75),
-                       panel.grid.minor = element_line(colour = NA),
-                       panel.grid.major = element_line(colour = "black", size = 0.2, linetype = "dotted"),
-                       axis.text = element_text(colour = "black"),
-                       axis.text.x = element_text(margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm")),
-                       axis.text.y = element_text(margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm")),
-                       axis.ticks.length = unit(-0.25, "cm"))
-  if(event[1, 4] < 0 & metric != "duration"){
-    lolli_theme <- theme(plot.background = element_blank(),
-                         panel.background = element_rect(fill = "white"),
-                         panel.border = element_rect(colour = "black", fill = NA, size = 0.75),
-                         panel.grid.minor = element_line(colour = NA),
-                         panel.grid.major = element_line(colour = "black", size = 0.2, linetype = "dotted"),
-                         axis.text = element_text(colour = "black"),
-                         axis.text.x = element_text(margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm")),
-                         axis.text.y = element_text(margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm")),
-                         axis.ticks.length = unit(-0.25, "cm"),
-                         legend.justification = c(0, 4.85))
-  }
-  res <- list(lolli_stems, lolli_pops, lolli_colour, lolli_fill, lolli_x, lolli_y, lolli_theme)
-  if(xaxis == "event_no"){
-    lolli_x <- scale_x_continuous(breaks = seq(from = 0, to = nrow(data$event), by = 5))
-    res <- c(res, lolli_x)
-  }
-  return(res)
+geom_lolli<- function(mapping = NULL, data = NULL, 
+                      ...,
+                      n = 1,
+                      na.rm = FALSE, show.legend = NA, inherit.aes = TRUE) {
+  
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = "identity",
+    geom = GeomLolli,
+    position = "identity",
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      na.rm = na.rm,
+      n = n,
+      ...
+    )
+  )
 }
+
+GeomLolli <- ggproto("GeomLolli", Geom,
+                     required_aes = c("x", "y"),
+                     default_aes = aes(shape = 19, colour = "grey30", size = 1, fill = NA,
+                                       alpha = NA, stroke = 1, colour.n = "black"),
+                     
+                     draw_key = draw_key_point,
+                     
+                     draw_group = function(data, panel_scales, coord, n) {
+                       data$xend = data$x 
+                       data$yend = 0
+                       data = data[order(abs(data$y), decreasing = T),]
+                       
+                       # Define the big points
+                       big_points = data
+                       big_points$size = data$size*2
+                       
+                       # Define the top n events
+                       data_n = data[1:n,]
+                       data_n$colour = data$colour.n[1:n]
+                       big_points_n = big_points[1:n,]
+                       big_points_n$colour = data$colour.n[1:n]
+                       
+                       # Define the look of the small white fillings
+                       small_points = data
+                       small_points$size = data$size/2
+                       small_points$colour = "white"
+                       
+                       grid::gList(
+                         ggplot2::GeomSegment$draw_panel(data, panel_scales, coord),
+                         ggplot2::GeomPoint$draw_panel(big_points, panel_scales, coord),
+                         ggplot2::GeomSegment$draw_panel(data_n, panel_scales, coord),
+                         ggplot2::GeomPoint$draw_panel(big_points_n, panel_scales, coord),
+                         ggplot2::GeomPoint$draw_panel(small_points, panel_scales, coord)
+                       )
+                       
+                     }
+)
