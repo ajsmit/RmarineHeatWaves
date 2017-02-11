@@ -55,6 +55,7 @@
 #' start_date = "2010-10-01", end_date = "2011-08-30")
 #' }
 event_line <- function(data,
+                       min_duration = 5,
                        spread = 150,
                        metric = "int_cum",
                        start_date = "1999-06-30",
@@ -89,7 +90,7 @@ event_line <- function(data,
         lapply(proto_events, function(x)
           data.frame(index_start = min(x), index_stop = max(x)))
       duration <- NULL ###
-      min_duration <- NULL ###
+      # min_duration <- NULL ###
       protoFunc <- function(proto_data) {
         out <- proto_data %>%
           dplyr::mutate(duration = index_stop - index_start + 1) %>%

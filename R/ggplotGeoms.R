@@ -49,149 +49,141 @@
 #' @examples
 #' t_dat <- make_whole(sst_WA)
 #' res <- detect(t_dat, climatology_start = 1983, climatology_end = 2012) # using default values
+#' mhw <- res$clim
+#' mhw <- mhw[10580:10690,]
 #'
 #' \dontrun{
-#' ggplot() + geom_event_line(res, spread = 200, metric = "int_cum",
-#' start_date = "2010-10-01", end_date = "2011-08-30") +
-#' geom_text(aes(x = as.Date("2011-05-01"), y = 28, label = "Wow. Such heatwave. Many warm."))
+#'ggplot(mhw, aes(x = date, y = temp, thresh = thresh_clim_year, seas = seas_clim_year, event = event_no)) +
+#'  geom_flame() +
+#'  geom_text(aes(x = as.Date("2011-02-01"), y = 28, label = "Wow. Such heatwave. Many warm."))
 #' }
-geom_event_line <- function(data,
-                       spread = 150,
-                       metric = "int_cum",
-                       start_date = "1999-06-30",
-                       end_date = "2000-05-30") {
-  date_stop <- date_start <- int_max <- int_mean <- int_cum <- duration <- NULL
-  
-  event <- data$event %>%
-    dplyr::filter(date_stop >= start_date & date_start <= end_date)
-  if (nrow(event) == 0) stop("No events detected!\nConsider changing the 'start_date' or 'end_date' values.")
-  event <- event[order(-abs(event[colnames(event) == metric])),]
-  event_top <- event[1, ]
-  
-  date_spread <- seq((event_top$date_start - spread), (event_top$date_stop + spread), by = 1)
-  
-  clim <- dplyr::filter(data$clim, date %in% date_spread)
-  
-  temp <- event_no <- thresh_clim_year <- seas_clim_year <- NULL # avoids annoying notes during check...
-  dat3 <- data.frame()
-  for (i in min(clim$event_no, na.rm = TRUE):max(clim$event_no, na.rm = TRUE)) {
-    x <- clim[stats::complete.cases(clim$event_no) & clim$event_no == i,]
-    grid.df <-
-      data.frame(date = seq(x$date[1], x$date[nrow(x)], by = "day"))
-    x <- merge(x, grid.df, by = "date", all.y = TRUE)
-    
-    if(nrow(x[x$thresh_criterion != FALSE,]) != nrow(x)){
-      ex1 <- rle(x$thresh_criterion)
-      ind1 <- rep(seq_along(ex1$lengths), ex1$lengths)
-      s1 <- split(zoo::index(x$thresh_criterion), ind1)
-      proto_events <- s1[ex1$values == TRUE]
-      index_stop <- index_start <- NULL ###
-      proto_events_rng <-
-        lapply(proto_events, function(x)
-          data.frame(index_start = min(x), index_stop = max(x)))
-      duration <- NULL ###
-      min_duration <- NULL ###
-      protoFunc <- function(proto_data) {
-        out <- proto_data %>%
-          dplyr::mutate(duration = index_stop - index_start + 1) %>%
-          dplyr::filter(duration >= min_duration) %>%
-          dplyr::mutate(date_start = x[index_start, "date"]) %>%
-          dplyr::mutate(date_stop = x[index_stop, "date"])
-      }
-      proto_events <- do.call(rbind, proto_events_rng) %>%
-        dplyr::mutate(event_no = cumsum(ex1$values[ex1$values == TRUE])) %>%
-        protoFunc()
-      sub.event <- function(proto_event){
-        df <-  x[proto_event$index_start:proto_event$index_stop,]
-        df$event_no_sub <- paste(df$event_no, proto_event$event_no, sep = ".")
-        return(df)
-      }
-      x <- plyr::ddply(proto_events, .(index_start), sub.event)
-      x$event_no_sub <- as.character(x$event_no_sub)
-    } else {
-      event_no_sub <- NULL
-      x$event_no_sub <- x$event_no
-    }
-    
-    mirror <- function(x){
-      event_no_sub <- NULL
-      y <- data.frame(
-        temp = x$temp,
-        date = x$date,
-        event_no = x$event_no,
-        event_no_sub = x$event_no_sub
-      )
-      z <-
-        rbind(y, data.frame(
-          temp = rev(x$thresh_clim_year),
-          date = rev(x$date),
-          event_no = x$event_no,
-          event_no_sub = x$event_no_sub
-        ))
-      z$order <- rep(c(1, 2), each = nrow(x))
-      return(z)
-    }
-    z <- plyr::ddply(x, .(event_no_sub), mirror)
-    z$event_no_sub <- as.character(z$event_no_sub)
-    dat3 <- rbind(dat3, z)
-    
-  }
-  
-  lineCol <- c(
-    "temperature" = "black",
-    "climatology" = "blue",
-    "threshold" = "darkgreen"
+
+geom_flame <- function(mapping = NULL, data = NULL,
+                       stat = "identity", position = "identity",
+                       ...,
+                       stat.top = "int_cum",
+                       na.rm = FALSE,
+                       show.legend = NA,
+                       inherit.aes = TRUE) {
+  layer(
+    data = data,
+    mapping = mapping,
+    stat = stat,
+    geom = GeomFlameOn,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      stat.top = stat.top,
+      na.rm = na.rm,
+      ...
+    )
   )
-  
-  if (event_top$int_mean > 0) {
-    fillCol <- c("events" = "salmon", "peak event" = "red")
-  } else {
-    fillCol <- c("events" = "steelblue3", "peak event" = "navy")
-  }
-  
-  if(metric == "int_max") ylabel <- expression(paste("Maximum intensity [", degree, "C]"))
-  if(metric == "int_mean") ylabel <- expression(paste("Mean intensity [", degree, "C]"))
-  if(metric == "int_cum") ylabel <- expression(paste("Cumulative intensity [", degree, "C x days]"))
-  if(metric == "duration") ylabel <- "Duration [days]"
-  if(!exists("ylabel")) ylabel <- metric
-  
-  # Create the geom list for ggplot()
-  all_polygons <- geom_polygon(data = dat3,
-                               aes(x = date, y = temp, group = event_no_sub, fill = "events"), size = 0.5) 
-  top_polygon <- geom_polygon(data = dat3[dat3$event_no == event_top$event_no[1],],
-               aes(x = date, y = temp, group = event_no_sub, fill = "peak event"),
-               size = 0.5)
-  clim_line <- geom_line(data = clim, aes(x = date, y = seas_clim_year, col = "climatology"),
-                         size = 0.7, alpha = 1)
-  thresh_line <- geom_line(data = clim, aes(x = date, y = thresh_clim_year, col = "threshold"),
-                           size = 0.7, alpha = 1)
-  temp_line <- geom_line(data = clim, aes(x = date, y = temp, col = "temperature"), size = 0.6)
-  line_colours <- scale_colour_manual(name = NULL, values = lineCol)
-  poly_colours <- scale_fill_manual(name = NULL, values = fillCol, guide = FALSE)
-  x_label <- scale_x_date(expand = c(0, 0), date_labels = "%b %Y")
-  y_label <- ylab(ylabel)
-  event_theme <- theme(plot.background = element_blank(),
-                       panel.background = element_rect(fill = "white"),
-                       panel.border = element_rect(colour = "black", fill = NA, size = 0.75),
-                       panel.grid.minor = element_line(colour = NA),
-                       panel.grid.major = element_line(colour = "black", size = 0.2, linetype = "dotted"),
-                       axis.text = element_text(colour = "black"),
-                       axis.text.x = element_text(margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm")),
-                       axis.text.y = element_text(margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm")),
-                       axis.ticks.length = unit(-0.25, "cm"),
-                       legend.background = element_rect(colour = "black"),
-                       legend.direction = "horizontal",
-                       legend.justification = c(0, 0),
-                       legend.position = c(0.005, 0.015),
-                       legend.key = element_blank())
-  res <- list(all_polygons, top_polygon, clim_line, thresh_line, temp_line, line_colours,
-              poly_colours, x_label, y_label, event_theme)
-  return(res)
 }
+
+GeomFlame <- ggproto("GeomFlame", Geom,
+                     
+                     required_aes = c("x", "y", "thresh"),
+                     
+                     default_aes = aes(colour = NA, fill = NA,
+                                       size = 0.5, linetype = 1, alpha = NA),
+                     
+                     draw_key = draw_key_polygon,
+                     
+                     draw_group = function(data, panel_scales, coord, na.rm = FALSE) {
+                       if (na.rm) data <- data[stats::complete.cases(data[c("x", "y", "thesh")]), ]
+                       
+                       # Check that aesthetics are constant
+                       aes <- unique(data[c("colour", "fill", "size", "linetype", "alpha")])
+                       if (nrow(aes) > 1) {
+                         stop("Aesthetics must be consistent")
+                       }
+                       
+                       aes <- as.list(aes)
+                       
+                       missing_pos <- !stats::complete.cases(data[c("x", "y", "thresh")])
+                       ids <- cumsum(missing_pos) + 1
+                       ids[missing_pos] <- NA
+                       
+                       positions <- plyr::summarise(data,
+                                                    x = c(x, rev(x)), y = c(y, rev(thresh)), id = c(ids, rev(ids)))
+                       munched <- coord_munch(coord, positions, panel_scales)
+                       
+                       grid::polygonGrob(
+                         munched$x, munched$y, id = munched$id,
+                         default.units = "native",
+                         gp = grid::gpar(
+                           fill = alpha(aes$fill, aes$alpha),
+                           col = aes$colour,
+                           lwd = aes$size * .pt,
+                           lty = aes$linetype)
+                       )
+                     }
+)
+
+GeomFlameOn <- ggproto("GeomFlameOn", Geom,
+                       required_aes = c("x", "y", "thresh", "seas"), # "event" intentionally not included here as a required aes, but it does require it...
+                       
+                       default_aes = aes(colour = NA, fill.MHW = "salmon", fill.MHW.top = "red", 
+                                         fill.MCS = "steelblue3", fill.MCS.top = "navy", 
+                                         size = 0.5, linetype = 1, alpha = NA,
+                                         temp.line = "black", seas.line = "grey60", thresh.line = "forestgreen"),
+                       
+                       draw_key = draw_key_polygon,
+                       
+                       draw_group = function(data, panel_scales, coord, stat.top, na.rm = FALSE){
+                         
+                         # Deduce if MHWs or MCSs are being measured and set default fill colours accordingly
+                         flame_all <- data
+                         if(flame_all$y[complete.cases(flame_all$event)][1] > flame_all$thresh[complete.cases(flame_all$event)][1]){
+                           flame_all$y[flame_all$y < flame_all$thresh] <- NA
+                           flame_top <- flame_all
+                           flame_all$fill <- data$fill.MHW
+                           flame_top$fill <- data$fill.MHW.top
+                         } else if (flame_all$y[complete.cases(flame_all$event)][1] < flame_all$thresh[complete.cases(flame_all$event)][1]){
+                           flame_all$y[flame_all$y > flame_all$thresh] <- NA
+                           flame_top <- flame_all
+                           flame_all$fill <- data$fill.MCS
+                           flame_top$fill <- data$fill.MCS.top
+                         }
+                         
+                         # Choose event to subset
+                         flame_stats <- plyr::ddply(data[complete.cases(data$event),], "event", plyr::summarise,
+                                                    int_max = max(abs(y-thresh),na.rm = T),
+                                                    int_cum = abs(sum(y-thresh, na.rm = T)),
+                                                    int_mean = abs(mean(y-thresh, na.rm = T)),
+                                                    dur = length(y))
+                         flame_var <- data.frame(event = flame_stats$event, var = flame_stats[,colnames(flame_stats) == as.character(stat.top)])
+                         flame_top <- flame_top[flame_top$event == flame_var$event[flame_var$var == max(flame_var$var)],]
+                         
+                         # Create temperature line info
+                         temp_line <- data
+                         temp_line$colour <- data$temp.line
+                         
+                         # Create seasonal climatology line info
+                         seas_line <- data
+                         seas_line$y <- data$seas
+                         seas_line$colour <- data$seas.line
+                         
+                         # Create threshold line info
+                         thresh_line <- data
+                         thresh_line$y <- data$thresh
+                         thresh_line$colour <- data$thresh.line
+                         
+                         # The list of geoms to create
+                         grid::gList(
+                           GeomFlame$draw_panel(flame_all, panel_scales, coord),
+                           GeomFlame$draw_panel(flame_top, panel_scales, coord),
+                           ggplot2::GeomLine$draw_panel(temp_line, panel_scales, coord),
+                           ggplot2::GeomLine$draw_panel(seas_line, panel_scales, coord),
+                           ggplot2::GeomLine$draw_panel(thresh_line, panel_scales, coord)
+                         )
+                       }
+)
 
 #' Create a Timeline geom of Selected Event Metrics.
 #'
-#' Visualise a timeline of several event metrics as a 'lollipop' geom.
+#' Visualise a timeline of several event metrics as 'lollipops'.
 #'
 #' @importFrom magrittr %<>%
 #' @importFrom ggplot2 aes_string geom_segment geom_point scale_x_continuous

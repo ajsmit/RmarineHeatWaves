@@ -55,7 +55,7 @@ the 2011 Western Australia event, the 2012 Northwest Atlantic event and the
 Here is the `detect()` function applied to the Western Australian test data,
 which are also discussed by Hobday et al. (2016):
 ```{r detect-example1, fig.height = 3, fig.width = 8, message = FALSE, warning = FALSE}
-library(RmarineHeatWaves); library(dplyr)
+library(RmarineHeatWaves); library(plyr); library(dplyr)
 ts <- make_whole(sst_WA)
 mhw <- detect(ts, climatology_start = 1983, climatology_end = 2012)
 mhw$event %>% 
@@ -72,12 +72,14 @@ event_line(mhw, spread = 200, metric = "int_cum",
 lolli_plot(mhw)
 ```
 
-If one requires more control over the output, one may choose to create these figures in ggplot2 as geoms:
+If one requires more control over the output, one may choose to create these figures in ggplot2 as geoms. These require only one facet of the `detect()` ouput:
 
 ```{r fig-example1, fig.height = 3, fig.width = 8}
-ggplot() + geom_event_line(mhw, spread = 200, metric = "int_cum",
-           start_date = "2011-01-01", end_date = "2011-08-30") +
-  geom_text(aes(x = as.Date("2011-06-01"), y = 28, label = "The MHW that launched\na thousand papers."))
+mhw2 <- mhw$clim
+mhw2 <- mhw2[10580:10690,]
+ggplot(mhw2, aes(x = date, y = temp, thresh = thresh_clim_year, seas = seas_clim_year, event = event_no)) +
+  geom_flame() +
+  geom_text(aes(x = as.Date("2011-02-01"), y = 28, label = "The MHW that launched\na thousand papers."))
 ggplot() + geom_lolli_plot(mhw) +
   geom_text(aes(x = as.Date("2007-01-01"), y = 5, 
                 label = "The distribution of events\nis skewed towards the\nend of the time series."))
@@ -104,8 +106,12 @@ lolli_plot(mcs)
 These same cold spell figures may be created as geoms in ggplot, too:
 
 ```{r fig-example2, fig.height = 3, fig.width = 8}
-ggplot() + geom_event_line(mcs, spread = 200, metric = "int_cum",
-           start_date = "1990-01-01", end_date = "1990-08-30")
+mcs2 <- mcs$clim
+mcs2 <- mcs2[3340:3380,]
+ggplot(mcs2, aes(x = date, y = temp, thresh = thresh_clim_year, seas = seas_clim_year, event = event_no)) +
+  geom_flame(stat.top = "dur") +
+  # Note that the plot centres on the polygons, so it may be necessary to manually zoom out a bit
+  scale_y_continuous(limits = c(21, 23.5)) 
 ggplot() + geom_lolli_plot(mcs)
 ```
 
