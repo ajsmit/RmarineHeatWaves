@@ -10,6 +10,9 @@ event_line(data, min_duration = 5, spread = 150, metric = "int_cum",
 \arguments{
 \item{data}{The function receives the output from the \code{\link{detect}} function.}
 
+\item{min_duration}{The minimum duration that an event has to for it to
+qualify as a marine heat wave or marine cold spell.}
+
 \item{spread}{The the number of days leading and trailing the largest event
 (as per \code{metric}) detected within the time period specified by
 \code{start_date} and \code{end_date}. The default is 150 days.}
@@ -38,7 +41,7 @@ threshold and temperature, with the hot or cold events that meet the
 specifications of Hobday et al. (2016) shaded in as appropriate. The plotting
 of hot or cold events depends on which option is specified in \code{\link{detect}}.
 The top event detect during the selected time period will be visible in a
-brighter colour. This function differs in use from \code{\link{geom_event_line}}
+brighter colour. This function differs in use from \code{\link{geom_flame}}
 in that it creates a stand alone figure. The benefit of this being
 that one must not have any prior knowledge of ggplot2 to create the figure.
 }

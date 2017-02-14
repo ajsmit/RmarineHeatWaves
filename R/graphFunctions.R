@@ -10,6 +10,8 @@
 #' @importFrom magrittr %>%
 #'
 #' @param data The function receives the output from the \code{\link{detect}} function.
+#' @param min_duration The minimum duration that an event has to for it to
+#' qualify as a marine heat wave or marine cold spell.
 #' @param spread The the number of days leading and trailing the largest event
 #' (as per \code{metric}) detected within the time period specified by
 #' \code{start_date} and \code{end_date}. The default is 150 days.
@@ -34,7 +36,7 @@
 #' specifications of Hobday et al. (2016) shaded in as appropriate. The plotting
 #' of hot or cold events depends on which option is specified in \code{\link{detect}}.
 #' The top event detect during the selected time period will be visible in a
-#' brighter colour. This function differs in use from \code{\link{geom_event_line}}
+#' brighter colour. This function differs in use from \code{\link{geom_flame}}
 #' in that it creates a stand alone figure. The benefit of this being
 #' that one must not have any prior knowledge of ggplot2 to create the figure.
 #'
@@ -79,7 +81,7 @@ event_line <- function(data,
     grid.df <-
       data.frame(date = seq(x$date[1], x$date[nrow(x)], by = "day"))
     x <- merge(x, grid.df, by = "date", all.y = TRUE)
-    
+
     if(nrow(x[x$thresh_criterion != FALSE,]) != nrow(x)){
       ex1 <- rle(x$thresh_criterion)
       ind1 <- rep(seq_along(ex1$lengths), ex1$lengths)
@@ -112,7 +114,7 @@ event_line <- function(data,
       event_no_sub <- NULL
       x$event_no_sub <- x$event_no
     }
-    
+
     mirror <- function(x){
       event_no_sub <- NULL
       y <- data.frame(
@@ -134,7 +136,7 @@ event_line <- function(data,
     z <- plyr::ddply(x, .(event_no_sub), mirror)
     z$event_no_sub <- as.character(z$event_no_sub)
     dat3 <- rbind(dat3, z)
-    
+
   }
 
   lineCol <- c(
@@ -206,7 +208,7 @@ event_line <- function(data,
 #' @return The function will return a graph of the intensity of the selected
 #' metric along the y-axis versus either \code{date} or \code{event_no}.
 #' The number of top events as per \code{event_count} will be highlighted
-#' in a brighter colour. This function differs in use from \code{\link{geom_lolli_plot}}
+#' in a brighter colour. This function differs in use from \code{\link{geom_lolli}}
 #' in that it creates a stand alone figure. The benefit of this being
 #' that one must not have any prior knowledge of ggplot2 to create the figure.
 #'
