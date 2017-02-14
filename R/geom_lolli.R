@@ -6,7 +6,7 @@
 #' @importFrom ggplot2 ggproto
 #' @inheritParams ggplot2::layer
 #' @param na.rm If \code{FALSE} (the default), removes missing values with
-#'    a warning.  If \code{TRUE} silently removes missing values.
+#'    a warning. If \code{TRUE} silently removes missing values.
 #' @param ... other arguments passed on to \code{\link{layer}}. These are
 #'   often aesthetics, used to set an aesthetic to a fixed value, like
 #'   \code{color = "red"} or \code{size = 3}. They may also be parameters
@@ -30,9 +30,11 @@
 #' res <- detect(t_dat, climatology_start = 1983, climatology_end = 2012) # using default values
 #'
 #' \dontrun{
-#' ggplot() + geom_lolli(res, metric = "int_cum", event_count = 3, xaxis = "date_peak") +
-#' geom_text(aes(x = as.Date("2007-01-01"), y = 375,
-#' label = "One may clearly see\njust how dramatic\n these heatwaves are."))
+#' require(lubridate)
+#' ggplot(res$event, aes(x = res$event$date_peak, y = res$event$duration)) +
+#'   geom_lolli(n = 0, shape = 20, aes(colour = res$event$int_cum)) +
+#'   scale_color_distiller(palette = "Spectral", name = "Cumulative \nintensity") +
+#'   xlab("Date") + ylab("Event duration [days]")
 #' }
 
 geom_lolli <- function(mapping = NULL, data = NULL,
@@ -41,10 +43,10 @@ geom_lolli <- function(mapping = NULL, data = NULL,
                       na.rm = FALSE, show.legend = NA, inherit.aes = TRUE) {
 
   ggplot2::layer(
+    geom = GeomLolli,
     data = data,
     mapping = mapping,
     stat = "identity",
-    geom = GeomLolli,
     position = "identity",
     show.legend = show.legend,
     inherit.aes = inherit.aes,
@@ -58,10 +60,10 @@ geom_lolli <- function(mapping = NULL, data = NULL,
 
 GeomLolli <- ggplot2::ggproto("GeomLolli", ggplot2::Geom,
                               required_aes = c("x", "y"),
-                              default_aes = aes(shape = 19, colour = "grey30", size = 1, fill = NA,
+                              default_aes = aes(shape = 19, colour = "grey35", size = 1, fill = NA,
                                                 alpha = NA, stroke = 1, colour.n = "black"),
 
-                              # draw_key = draw_key_point,
+                              draw_key = draw_key_point,
 
                               draw_group = function(data, panel_scales, coord, n) {
                                 data$xend = data$x

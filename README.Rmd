@@ -4,8 +4,6 @@ output:
     variant: markdown_github
 ---
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
-
 ```{r, echo = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
@@ -57,7 +55,7 @@ the 2011 Western Australia event, the 2012 Northwest Atlantic event and the
 Here is the `detect()` function applied to the Western Australian test data,
 which are also discussed by Hobday et al. (2016):
 ```{r detect-example1, fig.height = 3, fig.width = 8, message = FALSE, warning = FALSE}
-library(RmarineHeatWaves); library(plyr); library(dplyr)
+library(RmarineHeatWaves); library(plyr); library(dplyr); library(ggplot2)
 ts <- make_whole(sst_WA)
 mhw <- detect(ts, climatology_start = 1983, climatology_end = 2012)
 mhw$event %>% 
@@ -77,7 +75,7 @@ lolli_plot(mhw)
 
 If one requires more control over the output, one may choose to create these figures in ggplot2 as geoms. These require only one facet of the `detect()` ouput:
 
-```{r fig-example1, fig.height = 3, fig.width = 8}
+```{r fig-example2, fig.height = 3, fig.width = 8}
 mhw2 <- mhw$clim
 mhw2 <- mhw2[10580:10690,]
 
@@ -103,7 +101,7 @@ mcs$event %>%
 
 The plots showing the marine cold spells look like this:
 
-```{r fig-example2, fig.height = 3, fig.width = 8}
+```{r fig-example3, fig.height = 3, fig.width = 8}
 event_line(mcs, spread = 200, metric = "int_cum",
            start_date = "1990-01-01", end_date = "1990-08-30")
 
@@ -112,7 +110,7 @@ lolli_plot(mcs)
 
 These same cold spell figures may be created as geoms in ggplot, too:
 
-```{r fig-example2, fig.height = 3, fig.width = 8}
+```{r fig-example4, fig.height = 3, fig.width = 8}
 mcs2 <- mcs$clim
 mcs2 <- mcs2[3340:3380,]
 

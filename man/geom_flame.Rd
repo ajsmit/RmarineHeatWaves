@@ -81,10 +81,11 @@ mhw <- res$clim
 mhw <- mhw[10580:10690,]
 
 \dontrun{
-library(ggplot2)
-ggplot(mhw, aes(x = date, y = temp, thresh = thresh_clim_year, seas = seas_clim_year, event = event_no)) +
- geom_flame() +
- geom_text(aes(x = as.Date("2011-02-01"), y = 28, label = "Wow. Such heatwave. Many warm."))
+require(ggplot2)
+ggplot(mhw, aes(x = date, y = temp)) +
+  geom_flame(aes(thresh = thresh_clim_year, seas = seas_clim_year, event = event_no)) +
+  geom_text(aes(x = as.Date("2011-02-01"), y = 28, label = "Wow. Such heatwave. Many warm.")) +
+  xlab("Date") + ylab("Temperature [degrees C]")
 }
 }
 \references{

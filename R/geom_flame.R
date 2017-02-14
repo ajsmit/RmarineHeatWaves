@@ -45,10 +45,11 @@
 #' mhw <- mhw[10580:10690,]
 #'
 #' \dontrun{
-#' library(ggplot2)
-#' ggplot(mhw, aes(x = date, y = temp, thresh = thresh_clim_year, seas = seas_clim_year, event = event_no)) +
-#'  geom_flame() +
-#'  geom_text(aes(x = as.Date("2011-02-01"), y = 28, label = "Wow. Such heatwave. Many warm."))
+#' require(ggplot2)
+#' ggplot(mhw, aes(x = date, y = temp)) +
+#'   geom_flame(aes(thresh = thresh_clim_year, seas = seas_clim_year, event = event_no)) +
+#'   geom_text(aes(x = as.Date("2011-02-01"), y = 28, label = "Wow. Such heatwave. Many warm.")) +
+#'   xlab("Date") + ylab("Temperature [degrees C]")
 #' }
 
 geom_flame <- function(mapping = NULL, data = NULL,
@@ -81,7 +82,7 @@ GeomFlame <- ggplot2::ggproto("GeomFlame", ggplot2::Geom,
                               default_aes = aes(colour = NA, fill = NA,
                                                 size = 0.5, linetype = 1, alpha = NA),
 
-                              # draw_key = draw_key_polygon,
+                              draw_key = draw_key_polygon,
 
                               draw_group = function(data, panel_scales, coord, na.rm = FALSE) {
                                 if (na.rm) data <- data[stats::complete.cases(data[c("x", "y", "thesh")]), ]
@@ -115,14 +116,14 @@ GeomFlame <- ggplot2::ggproto("GeomFlame", ggplot2::Geom,
 )
 
 GeomFlameOn <- ggplot2::ggproto("GeomFlameOn", ggplot2::Geom,
-                                required_aes = c("x", "y", "thresh", "seas"), # "event" intentionally not included here as a required aes, but it does require it...
+                                required_aes = c("x", "y", "thresh", "seas", "event"), # "event" intentionally not included here as a required aes, but it does require it...
 
                                 default_aes = aes(colour = NA, fill.MHW = "salmon", fill.MHW.top = "red",
                                                   fill.MCS = "steelblue3", fill.MCS.top = "navy",
                                                   size = 0.5, linetype = 1, alpha = NA,
                                                   temp.line = "black", seas.line = "grey60", thresh.line = "forestgreen"),
 
-                                # draw_key = draw_key_polygon,
+                                draw_key = draw_key_polygon,
 
                                 draw_group = function(data, panel_scales, coord, stat.top, na.rm = FALSE){
 

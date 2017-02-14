@@ -35,7 +35,7 @@ to the paired geom/stat.}
 \item{n}{The number of top events to highlight. Default is 1.}
 
 \item{na.rm}{If \code{FALSE} (the default), removes missing values with
-a warning.  If \code{TRUE} silently removes missing values.}
+a warning. If \code{TRUE} silently removes missing values.}
 
 \item{show.legend}{logical. Should this layer be included in the legends?
 \code{NA}, the default, includes if any aesthetics are mapped.
@@ -63,9 +63,11 @@ t_dat <- make_whole(sst_NW_Atl)
 res <- detect(t_dat, climatology_start = 1983, climatology_end = 2012) # using default values
 
 \dontrun{
-ggplot() + geom_lolli_plot(res, metric = "int_cum", event_count = 3, xaxis = "date_peak") +
-geom_text(aes(x = as.Date("2007-01-01"), y = 375,
-label = "One may clearly see\\njust how dramatic\\n these heatwaves are."))
+require(lubridate)
+ggplot(res$event, aes(x = res$event$date_peak, y = res$event$duration)) +
+  geom_lolli(n = 0, shape = 20, aes(colour = res$event$int_cum)) +
+  scale_color_distiller(palette = "Spectral", name = "Cumulative \\nintensity") +
+  xlab("Date") + ylab("Event duration [days]")
 }
 }
 \author{

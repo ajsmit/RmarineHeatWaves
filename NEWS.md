@@ -3,9 +3,12 @@ output: pdf_document
 ---
 
 # VERSION CHANGES
+## Changes in version 0.14.5 (14 February 2017)
+* Edits to 'geom_flame' and 'geom_lolli'
+
 ## Changes in version 0.14.4 (11 February 2017)
 * Changed 'geom_event_line' and 'geom_lolli_plot' to 'geom_flame' and 'geom_lolli'
-* These new functions are now proper ggplot geoms
+* These new functions are now proper ggplot geoms.
 
 ## Changes in version 0.14.3 (31 January 2017)
 * Corrected plotting error in event polygons in 'event_line' function
