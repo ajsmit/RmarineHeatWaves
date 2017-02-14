@@ -65,4 +65,3 @@ filter(date >= clim_start & date <= clim_end) \%>\%
 \author{
 Smit, A. J.
 }
-

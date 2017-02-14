@@ -21,4 +21,3 @@ A dataset containing the sea surface temperature (in degrees Celsius) and
 date for the Northwest Atlantic region from 1982-01-01 to 2014-12-31.
 }
 \keyword{datasets}
-

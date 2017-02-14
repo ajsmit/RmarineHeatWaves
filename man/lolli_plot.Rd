@@ -40,4 +40,3 @@ lolli_plot(res, metric = "int_cum", event_count = 3, xaxis = "date_peak")
 \author{
 Albertus J. Smit and Robert W. Schlegel
 }
-

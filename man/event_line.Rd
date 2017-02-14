@@ -4,7 +4,7 @@
 \alias{event_line}
 \title{Create a Line Plot of Marine Heat Waves or Cold Spells.}
 \usage{
-event_line(data, spread = 150, metric = "int_cum",
+event_line(data, min_duration = 5, spread = 150, metric = "int_cum",
   start_date = "1999-06-30", end_date = "2000-05-30")
 }
 \arguments{
@@ -55,12 +55,11 @@ event_line(res, spread = 200, metric = "int_cum",
 start_date = "2010-10-01", end_date = "2011-08-30")
 }
 }
-\author{
-Robert W. Schlegel
-}
 \references{
 Hobday, A.J. et al. (2016), A hierarchical approach to defining
 marine heatwaves, Progress in Oceanography, 141, pp. 227-238,
 doi: 10.1016/j.pocean.2015.12.014
 }
-
+\author{
+Robert W. Schlegel
+}

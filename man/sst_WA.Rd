@@ -22,4 +22,3 @@ A dataset containing the sea surface temperature temperature
 for the period 1982-01-01 to 2014-12-31.
 }
 \keyword{datasets}
-

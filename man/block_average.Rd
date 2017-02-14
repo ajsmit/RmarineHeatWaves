@@ -77,12 +77,11 @@ plot(out$year, out$count, col = "salmon", pch = 16,
 lines(out$year, out$count)
 }
 }
-\author{
-Albertus J. Smit, Eric C. J. Oliver
-}
 \references{
 Hobday, A.J. et al. (2016), A hierarchical approach to defining
 marine heatwaves, Progress in Oceanography, 141, pp. 227-238,
 doi: 10.1016/j.pocean.2015.12.014
 }
-
+\author{
+Albertus J. Smit, Eric C. J. Oliver
+}

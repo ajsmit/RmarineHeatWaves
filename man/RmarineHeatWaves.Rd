@@ -36,10 +36,6 @@ One may also use the \code{\link{exceedence}} function to calculate consecutive
 days above or below a given static threshold. The output of this function is
 similar to \code{\link{detect}}.
 }
-\author{
-Albertus J. Smit <\email{albertus.smit@gmail.com}>, Robert W. Schlegel,
-Eric C. J. Oliver
-}
 \references{
 Hobday, A. J. et al. (2016), A hierarchical approach to defining
 marine heatwaves. Progress in Oceanography, 141, pp. 227-238,
@@ -49,4 +45,7 @@ Schlegel, R. W., Oliver, E. C. J., Wernberg, T. W., Smit, A. J. (2017)
 Coastal and offshore co-occurrences of marine heatwaves and cold-spells.
 Progress in Oceanography, <DOI:10.1016/j.pocean.2017.01.004>
 }
-
+\author{
+Albertus J. Smit <\email{albertus.smit@gmail.com}>, Robert W. Schlegel,
+Eric C. J. Oliver
+}

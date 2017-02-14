@@ -126,12 +126,11 @@ res$threshold[1:10, ]
 # show first five exceedences:
 res$exceedence[1:5, ]
 }
-\author{
-Robert W. Schlegel, Albertus J. Smit, Eric C. J. Oliver
-}
 \references{
 Hobday, A.J. et al. (2016). A hierarchical approach to defining
 marine heatwaves, Progress in Oceanography, 141, pp. 227-238,
 doi:10.1016/j.pocean.2015.12.014
 }
-
+\author{
+Robert W. Schlegel, Albertus J. Smit, Eric C. J. Oliver
+}

@@ -177,9 +177,6 @@ res$clim[1:10, ]
 # show some of the heat waves:
 res$event[1:5, 1:10]
 }
-\author{
-Albertus J. Smit, Robert W. Schlegel, Eric C. J. Oliver
-}
 \references{
 Hobday, A.J. et al. (2016). A hierarchical approach to defining
 marine heatwaves, Progress in Oceanography, 141, pp. 227-238,
@@ -189,4 +186,6 @@ Schlegel, R. W., Oliver, C. J., Wernberg, T. W., Smit, A. J. (in press).
 Coastal and offshore co-occurrences of marine heatwaves and cold-spells.
 Progress in Oceanography.
 }
-
+\author{
+Albertus J. Smit, Robert W. Schlegel, Eric C. J. Oliver
+}
