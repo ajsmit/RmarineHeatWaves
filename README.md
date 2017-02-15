@@ -3,9 +3,9 @@ RmarineHeatWaves
 
 [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/RmarineHeatWaves)](https://cran.r-project.org/package=RmarineHeatWaves) [![Travis-CI Build Status](https://travis-ci.org/ajsmit/RmarineHeatWaves.svg?branch=master)](https://travis-ci.org/ajsmit/RmarineHeatWaves) ![](https://cranlogs.r-pkg.org/badges/grand-total/RmarineHeatWaves)
 
-The RmarineHeatWaves package is a translation of the original Python code written by Eric C. J. Oliver that can be found on [GitHub](https://github.com/ecjoliver/marineHeatWaves).
+The **RmarineHeatWaves** package is a translation of the original Python code written by Eric C. J. Oliver that can be found on [GitHub](https://github.com/ecjoliver/marineHeatWaves).
 
-The RmarineHeatWaves R package contains a number of functions which calculate and display marine heat waves according to the definition of Hobday et al. (2016). The marine cold spell option was implemented in version 0.13 (21 Nov 2015) of the Python module as a result of the preparation of Schlegel et al. (in press), wherein the cold events are introduced and briefly discussed.
+The **RmarineHeatWaves** R package contains a number of functions which calculate and display marine heat waves according to the definition of Hobday et al. (2016). The marine cold spell option was implemented in version 0.13 (21 Nov 2015) of the Python module as a result of the preparation of Schlegel et al. (in press), wherein the cold events are introduced and briefly discussed.
 
 This package may be found on [CRAN](https://cran.r-project.org/package=RmarineHeatWaves). Alternatively, you may install it from GitHub by issuing the following command:
 
@@ -108,13 +108,13 @@ lolli_plot(mhw)
 
 ![](README-fig-example1-2.png)
 
-If one requires more control over the output, one may choose to create these figures in ggplot2 as geoms. These require only the `clim` dataframe from the `detect()` ouput:
+If one requires more control over the output, one may choose to create these figures in **ggplot2** as 'geoms'. These require only the `clim` dataframe from the `detect()` ouput:
 
 ``` r
 mhw2 <- mhw$clim
 mhw2 <- mhw2[10580:10690,]
 
-ggplot(mhw2, aes(x = date, y = temp, thresh = thresh_clim_year)) +
+ggplot(mhw2, aes(x = date, y = temp, y2 = thresh_clim_year)) +
   geom_flame() +
   geom_text(aes(x = as.Date("2011-02-01"), y = 28, label = "The MHW that launched\na thousand papers."))
 ```
@@ -131,26 +131,27 @@ ggplot(mhw$event, aes(x = date_start, y = int_max)) +
 
 ![](README-fig-example2-2.png)
 
-The default output of these function may not be to your liking. If so, not to worry. As ggplot geoms, they are highly maleable. For example, if one were to choose to reproduce the format of the MHWs as seen in Hobday et al. (2016), the code would look something like this:
+The default output of these function may not be to your liking. If so, not to worry. As **ggplot2** geoms, they are highly maleable. For example, if one were to choose to reproduce the format of the MHWs as seen in Hobday et al. (2016), the code would look something like this:
 
 ``` r
 # It is necessary to give geom_flame() at least one row on either side of the event in order to calculate the ploygon corners smoothly
 mhw_top <- mhw2[49:110,]
 
 ggplot(data = mhw2, aes(x = date)) +
-  geom_flame(aes(y = temp, thresh = thresh_clim_year, fill = "all"), show.legend = T) +
-  geom_flame(data = mhw_top, aes(y = temp, thresh = thresh_clim_year, fill = "top"), show.legend = T) +
+  geom_flame(aes(y = temp, y2 = thresh_clim_year, fill = "all"), show.legend = T) +
+  geom_flame(data = mhw_top, aes(y = temp, y2 = thresh_clim_year, fill = "top"), show.legend = T) +
   geom_line(aes(y = temp, colour = "temp")) +
   geom_line(aes(y = thresh_clim_year, colour = "thresh")) +
   geom_line(aes(y = seas_clim_year, colour = "seas")) +
   scale_colour_manual(name = "Line Colour", values = c("temp" = "black", "thresh" =  "forestgreen","seas" = "grey80")) +
   scale_fill_manual(name = "Event Colour", values = c("all" = "salmon", "top" = "red")) +
-  guides(colour = guide_legend(override.aes = list(fill = NA)))
+  guides(colour = guide_legend(override.aes = list(fill = NA))) +
+  xlab("Date") + ylab("Temperature [degrees C]")
 ```
 
 ![](README-fig-example3-1.png)
 
-Conversely, should one not wish ot highlight any events with geom)lolli, it would look like this:
+Conversely, should one not wish to highlight any events with `geom_lolli()`, it would look like this:
 
 ``` r
 # Note that this is accomplished by setting 'colour.n = NA', not by setting 'n = 0'.
@@ -200,14 +201,14 @@ lolli_plot(mcs)
 
 ![](README-fig-example5-2.png)
 
-Cold spell figures may be created as geoms in ggplot, too:
+Cold spell figures may be created as geoms in **ggplot2**, too:
 
 ``` r
 mcs2 <- mcs$clim
 mcs2 <- mcs2[2990:3190,]
 
 # Note that the plot centres on the polygons, so it may be necessary to manually zoom out a bit
-ggplot(mcs2, aes(x = date, y = thresh_clim_year, thresh = temp)) +
+ggplot(mcs2, aes(x = date, y = thresh_clim_year, y2 = temp)) +
   geom_flame(fill = "steelblue3") +
   geom_line(aes(y = temp), colour = "black") +
   geom_line(aes(y = thresh_clim_year), colour = "forestgreen") +

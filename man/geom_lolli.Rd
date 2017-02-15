@@ -2,7 +2,7 @@
 % Please edit documentation in R/geom_lolli.R
 \name{geom_lolli}
 \alias{geom_lolli}
-\title{Visualise a timeline of several event metrics as 'lollipops'.}
+\title{Visualise a Timeline of Several Event Metrics as 'Lollipops'.}
 \usage{
 geom_lolli(mapping = NULL, data = NULL, ..., n = 1, na.rm = FALSE,
   show.legend = NA, inherit.aes = TRUE)
@@ -32,7 +32,8 @@ often aesthetics, used to set an aesthetic to a fixed value, like
 \code{color = "red"} or \code{size = 3}. They may also be parameters
 to the paired geom/stat.}
 
-\item{n}{The number of top events to highlight. Default is 1.}
+\item{n}{The number of top events to highlight. Default is 1. This parameter
+has no effect if \code{colour.n} is set to \code{NA} outside of \code{aes()}.}
 
 \item{na.rm}{If \code{FALSE} (the default), removes missing values with
 a warning. If \code{TRUE} silently removes missing values.}
@@ -48,12 +49,13 @@ the default plot specification, e.g. \code{\link{borders}}.}
 }
 \description{
 The function will return a graph of the intensity of the selected
-metric along the y-axis versus a time variable along the x axis.
+metric along the y-axis versus a time variable along the x-axis.
 The number of top events (\code{n}) from the chosen metric may be highlighted
 in a brighter colour with the aesthetic value \code{coulour.n}.
 This function differs in use from \code{\link{lolli_plot}}
-in that it must be created as a ggplot object. The benefit of this being
-that one may add additional information to the figure as may be necessary.
+in that it must be created as a ggplot 'geom' object. The benefit of this being
+that one may add additional information layer by layer to the figure as
+geoms as necessary.
 }
 \section{Aesthetics}{
 
@@ -69,7 +71,7 @@ are in bold):
   \item \code{shape}
   \item \code{stroke}
   \item \code{fill}
-  \item \code{colour.n} : While this value may be used as an aesthetic, it also 
+  \item \code{colour.n} : While this value may be used as an aesthetic, it also
 works as a parameter for this function. If one chooses not to highlight
 any events, use \code{colour.n = NA} outside of \code{aes()}. One may
 also provide a non-static value to \code{colour.na} but remember that
@@ -82,18 +84,29 @@ discrete. ggplot2 will attempt to do this automatically.
 
 \examples{
 t_dat <- make_whole(sst_NW_Atl)
-res <- detect(t_dat, climatology_start = 1983, climatology_end = 2012) # using default values
+# with defaults:
+res <- detect(t_dat, climatology_start = 1983, climatology_end = 2012)
+mhw <- res$event
 
 \dontrun{
 require(lubridate)
-ggplot(res$event, aes(x = res$event$date_peak, y = res$event$duration)) +
-  geom_lolli(n = 0, shape = 20, aes(colour = res$event$int_cum), colour.n = NA) +
+# Height of lollis represent event durations and their colours
+# are mapped to the events' cumulative intensity:
+ggplot(mhw, aes(x = mhw$date_peak, y = mhw$duration)) +
+  geom_lolli(n = 0, shape = 20, aes(colour = mhw$int_cum), colour.n = NA) +
+  scale_color_distiller(palette = "Spectral", name = "Cumulative \\nintensity") +
+  xlab("Date") + ylab("Event duration [days]")
+
+# Height of lollis represent event durations and the top three (longest)
+# lollis are highlighted in red:
+ggplot(mhw, aes(x = mhw$date_peak, y = mhw$duration)) +
+  geom_lolli(n = 3, shape = 20, colour.n = "red") +
   scale_color_distiller(palette = "Spectral", name = "Cumulative \\nintensity") +
   xlab("Date") + ylab("Event duration [days]")
 }
 }
 \seealso{
-\code{\link{lolli_plot}} for a non-ggplot2 based lolliplot function
+\code{\link{lolli_plot}} for a non-geom based lolliplot function.
 }
 \author{
 Robert W. Schlegel

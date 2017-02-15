@@ -3,11 +3,15 @@ output: pdf_document
 ---
 
 # VERSION CHANGES
+## Changes in version 0.15.0 (15 February 2017)
+* Final edits to 'geom_flame' and 'geom_lolli'. 
+* Updated examples.
+
 ## Changes in version 0.14.6 (15 February 2017)
-* Edits to 'geom_flame' and 'geom_lolli'
+* Edits to 'geom_flame' and 'geom_lolli'.
 
 ## Changes in version 0.14.5 (14 February 2017)
-* Edits to 'geom_flame' and 'geom_lolli'
+* Edits to 'geom_flame' and 'geom_lolli'.
 
 ## Changes in version 0.14.4 (11 February 2017)
 * Changed 'geom_event_line' and 'geom_lolli_plot' to 'geom_flame' and 'geom_lolli'
