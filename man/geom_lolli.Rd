@@ -2,7 +2,7 @@
 % Please edit documentation in R/geom_lolli.R
 \name{geom_lolli}
 \alias{geom_lolli}
-\title{Create a Timeline geom of a Selected Event Metric.}
+\title{Visualise a timeline of several event metrics as 'lollipops'.}
 \usage{
 geom_lolli(mapping = NULL, data = NULL, ..., n = 1, na.rm = FALSE,
   show.legend = NA, inherit.aes = TRUE)
@@ -46,7 +46,7 @@ rather than combining with them. This is most useful for helper functions
 that define both data and aesthetics and shouldn't inherit behaviour from
 the default plot specification, e.g. \code{\link{borders}}.}
 }
-\value{
+\description{
 The function will return a graph of the intensity of the selected
 metric along the y-axis versus a time variable along the x axis.
 The number of top events (\code{n}) from the chosen metric may be highlighted
@@ -55,9 +55,31 @@ This function differs in use from \code{\link{lolli_plot}}
 in that it must be created as a ggplot object. The benefit of this being
 that one may add additional information to the figure as may be necessary.
 }
-\description{
-Visualise a timeline of several event metrics as 'lollipops'.
+\section{Aesthetics}{
+
+\code{geom_lolli} understands the following aesthetics (required aesthetics
+are in bold):
+\itemize{
+  \item \strong{\code{x}}
+  \item \strong{\code{y}}
+  \item \code{alpha}
+  \item \code{color}
+  \item \code{linetype}
+  \item \code{size}
+  \item \code{shape}
+  \item \code{stroke}
+  \item \code{fill}
+  \item \code{colour.n} : While this value may be used as an aesthetic, it also 
+works as a parameter for this function. If one chooses not to highlight
+any events, use \code{colour.n = NA} outside of \code{aes()}. One may
+also provide a non-static value to \code{colour.na} but remember that
+one may not provide multiple continuous or discrete scales to a single
+ggplot2 object. Therefore, if one provides a continuous value to
+\code{aes(colour)}, the values supplied to \code{colour.n} must be
+discrete. ggplot2 will attempt to do this automatically.
 }
+}
+
 \examples{
 t_dat <- make_whole(sst_NW_Atl)
 res <- detect(t_dat, climatology_start = 1983, climatology_end = 2012) # using default values
@@ -65,10 +87,13 @@ res <- detect(t_dat, climatology_start = 1983, climatology_end = 2012) # using d
 \dontrun{
 require(lubridate)
 ggplot(res$event, aes(x = res$event$date_peak, y = res$event$duration)) +
-  geom_lolli(n = 0, shape = 20, aes(colour = res$event$int_cum)) +
+  geom_lolli(n = 0, shape = 20, aes(colour = res$event$int_cum), colour.n = NA) +
   scale_color_distiller(palette = "Spectral", name = "Cumulative \\nintensity") +
   xlab("Date") + ylab("Event duration [days]")
 }
+}
+\seealso{
+\code{\link{lolli_plot}} for a non-ggplot2 based lolliplot function
 }
 \author{
 Robert W. Schlegel

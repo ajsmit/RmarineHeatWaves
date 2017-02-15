@@ -73,13 +73,13 @@ event_line(mhw, spread = 200, metric = "int_cum",
 lolli_plot(mhw)
 ```
 
-If one requires more control over the output, one may choose to create these figures in ggplot2 as geoms. These require only one facet of the `detect()` ouput:
+If one requires more control over the output, one may choose to create these figures in ggplot2 as geoms. These require only the `clim` dataframe from the `detect()` ouput:
 
 ```{r fig-example2, fig.height = 3, fig.width = 8}
 mhw2 <- mhw$clim
 mhw2 <- mhw2[10580:10690,]
 
-ggplot(mhw2, aes(x = date, y = temp, thresh = thresh_clim_year, seas = seas_clim_year, event = event_no)) +
+ggplot(mhw2, aes(x = date, y = temp, thresh = thresh_clim_year)) +
   geom_flame() +
   geom_text(aes(x = as.Date("2011-02-01"), y = 28, label = "The MHW that launched\na thousand papers."))
 
@@ -89,7 +89,33 @@ ggplot(mhw$event, aes(x = date_start, y = int_max)) +
                 label = "The distribution of events\nis skewed towards the\nend of the time series."), colour = "black")
 ```
 
-Marine cold spells are also accommodated. Here is a cold spell detected in the OISST data for Western Australia:
+The default output of these function may not be to your liking. If so, not to worry. As ggplot geoms, they are highly maleable. For example, if one were to choose to reproduce the format of the MHWs as seen in Hobday et al. (2016), the code would look something like this:
+
+```{r fig-example3, fig.height = 3, fig.width = 8, warning=FALSE}
+# It is necessary to give geom_flame() at least one row on either side of the event in order to calculate the ploygon corners smoothly
+mhw_top <- mhw2[49:110,]
+
+ggplot(data = mhw2, aes(x = date)) +
+  geom_flame(aes(y = temp, thresh = thresh_clim_year, fill = "all"), show.legend = T) +
+  geom_flame(data = mhw_top, aes(y = temp, thresh = thresh_clim_year, fill = "top"), show.legend = T) +
+  geom_line(aes(y = temp, colour = "temp")) +
+  geom_line(aes(y = thresh_clim_year, colour = "thresh")) +
+  geom_line(aes(y = seas_clim_year, colour = "seas")) +
+  scale_colour_manual(name = "Line Colour", values = c("temp" = "black", "thresh" =  "forestgreen","seas" = "grey80")) +
+  scale_fill_manual(name = "Event Colour", values = c("all" = "salmon", "top" = "red")) +
+  guides(colour = guide_legend(override.aes = list(fill = NA))) +
+  xlab("Date") + ylab("Temperature [degrees C]")
+```
+
+Conversely, should one not wish ot highlight any events with geom)lolli, it would look like this:
+
+```{r fig-example4, fig.height = 3, fig.width = 8, warning=FALSE}
+# Note that this is accomplished by setting 'colour.n = NA', not by setting 'n = 0'.
+ggplot(mhw$event, aes(x = date_start, y = int_cum)) +
+  geom_lolli(colour = "salmon", n = 3, colour.n = NA)
+```
+
+The calculation and visualisation of marine cold spells is also accommodated within this package. Here is a cold spell detected in the OISST data for Western Australia:
 
 ```{r detect-example2, fig.height = 3, fig.width = 8, message = FALSE, warning = FALSE}
 mcs <- detect(ts, climatology_start = 1983, climatology_end = 2012, cold_spells = TRUE)
@@ -101,23 +127,26 @@ mcs$event %>%
 
 The plots showing the marine cold spells look like this:
 
-```{r fig-example3, fig.height = 3, fig.width = 8}
+```{r fig-example5, fig.height = 3, fig.width = 8}
 event_line(mcs, spread = 200, metric = "int_cum",
            start_date = "1990-01-01", end_date = "1990-08-30")
 
 lolli_plot(mcs)
 ```
 
-These same cold spell figures may be created as geoms in ggplot, too:
+Cold spell figures may be created as geoms in ggplot, too:
 
-```{r fig-example4, fig.height = 3, fig.width = 8}
+```{r fig-example6, fig.height = 3, fig.width = 8}
 mcs2 <- mcs$clim
-mcs2 <- mcs2[3340:3380,]
+mcs2 <- mcs2[2990:3190,]
 
-ggplot(mcs2, aes(x = date, y = temp, thresh = thresh_clim_year, seas = seas_clim_year, event = event_no)) +
-  geom_flame(stat.top = "dur") +
-  # Note that the plot centres on the polygons, so it may be necessary to manually zoom out a bit
-  scale_y_continuous(limits = c(21, 23.5))
+# Note that the plot centres on the polygons, so it may be necessary to manually zoom out a bit
+ggplot(mcs2, aes(x = date, y = thresh_clim_year, thresh = temp)) +
+  geom_flame(fill = "steelblue3") +
+  geom_line(aes(y = temp), colour = "black") +
+  geom_line(aes(y = thresh_clim_year), colour = "forestgreen") +
+  geom_line(aes(y= seas_clim_year), colour = "grey80")
+  scale_y_continuous(limits = c(18, 23.5))
 
 ggplot(mcs$event, aes(x = date_start, y = int_cum)) +
   geom_lolli(colour = "steelblue3", colour.n = "navy", n = 7)

@@ -2,11 +2,11 @@
 % Please edit documentation in R/geom_flame.R
 \name{geom_flame}
 \alias{geom_flame}
-\title{Create flame ploygons of Marine Heat Waves or Cold Spells.}
+\title{Create flame ploygons}
 \usage{
 geom_flame(mapping = NULL, data = NULL, stat = "identity",
-  position = "identity", ..., stat.top = "int_cum", na.rm = FALSE,
-  show.legend = NA, inherit.aes = TRUE)
+  position = "identity", ..., na.rm = FALSE, show.legend = NA,
+  inherit.aes = TRUE)
 }
 \arguments{
 \item{mapping}{Set of aesthetic mappings created by \code{\link{aes}} or
@@ -39,12 +39,6 @@ often aesthetics, used to set an aesthetic to a fixed value, like
 \code{color = "red"} or \code{size = 3}. They may also be parameters
 to the paired geom/stat.}
 
-\item{stat.top}{Choose which statistic to use to highlight the top event
-found within the time series. Options are: \code{int_max} for the maximum
-intensity of the event, \code{int_cum} for the cummulative intensity of
-the event, \code{int_mean} for the mean intensity of the event and \code{dur}
-for the duration of the event.}
-
 \item{na.rm}{If \code{FALSE} (the default), removes missing values with
 a warning. If \code{TRUE} silently removes missing values.}
 
@@ -57,34 +51,44 @@ rather than combining with them. This is most useful for helper functions
 that define both data and aesthetics and shouldn't inherit behaviour from
 the default plot specification, e.g. \code{\link{borders}}.}
 }
-\value{
-The function will create a ggplot2 geom indicating the climatology,
-threshold and temperature, with the hot or cold events that meet the
-specifications of Hobday et al. (2016) shown as flame polygons. The function
-automagically detects if one is plotting MHWs or MCS and adjusts the colour
-palette accordingly. These default colours may still be overridden as normal.
-The top event detect during the selected time period, as determined by the
-selected statistics given in \code{stat.top} will be visible in a
-brighter colour. The default colour may be overidden in the aesthetics as well.
-This function differs in use from \code{\link{event_line}}
+\description{
+This function will create polygons between two lines. If given a 
+temperature and theshold time series, like that produced by \code{\link{detect}}, 
+the output will meet the specifications of Hobday et al. (2016) shown as 
+flame polygons. If one wishes to plot polygons below a given threshold, and not
+above, switch the values being fed to the \code{y} and \code{thresh} 
+aesthetics. This function differs in use from \code{\link{event_line}}
 in that it must be created as a ggplot() object. The benefit of this being
 that one may add additional information to the figure as may be necessary.
 }
-\description{
-Creates a ggplot2 geom of warm or cold events as per the second row of Figure 3 in
-Hobday et al. (2016).
+\section{Aesthetics}{
+
+\code{geom_flame} understands the following aesthetics (required aesthetics
+are in bold):
+\itemize{
+  \item \strong{\code{x}}
+  \item \strong{\code{y}}
+  \item \strong{\code{thresh}}
+  \item \code{colour}
+  \item \code{fill}
+  \item \code{size}
+  \item \code{alpha}
+  \item \code{linetype}
 }
+}
+
 \examples{
 t_dat <- make_whole(sst_WA)
-res <- detect(t_dat, climatology_start = 1983, climatology_end = 2012) # using default values
+res <- detect(t_dat, climatology_start = 1983, climatology_end = 2012)
 mhw <- res$clim
 mhw <- mhw[10580:10690,]
 
 \dontrun{
 require(ggplot2)
 ggplot(mhw, aes(x = date, y = temp)) +
-  geom_flame(aes(thresh = thresh_clim_year, seas = seas_clim_year, event = event_no)) +
-  geom_text(aes(x = as.Date("2011-02-01"), y = 28, label = "Wow. Such heatwave. Many warm.")) +
+  geom_flame(aes(thresh = thresh_clim_year)) +
+  geom_text(aes(x = as.Date("2011-02-01"), y = 28, 
+  label = "That's not a heatwave.\\nThis, is a heatwave.")) +
   xlab("Date") + ylab("Temperature [degrees C]")
 }
 }
@@ -92,6 +96,9 @@ ggplot(mhw, aes(x = date, y = temp)) +
 Hobday, A.J. et al. (2016), A hierarchical approach to defining
 marine heatwaves, Progress in Oceanography, 141, pp. 227-238,
 doi: 10.1016/j.pocean.2015.12.014
+}
+\seealso{
+\code{\link{event_line}} for a non-ggplot2 based flame function
 }
 \author{
 Robert W. Schlegel

@@ -108,16 +108,15 @@ lolli_plot(mhw)
 
 ![](README-fig-example1-2.png)
 
-If one requires more control over the output, one may choose to create these figures in ggplot2 as geoms. These require only one facet of the `detect()` ouput:
+If one requires more control over the output, one may choose to create these figures in ggplot2 as geoms. These require only the `clim` dataframe from the `detect()` ouput:
 
 ``` r
 mhw2 <- mhw$clim
 mhw2 <- mhw2[10580:10690,]
 
-ggplot(mhw2, aes(x = date, y = temp, thresh = thresh_clim_year, seas = seas_clim_year, event = event_no)) +
+ggplot(mhw2, aes(x = date, y = temp, thresh = thresh_clim_year)) +
   geom_flame() +
   geom_text(aes(x = as.Date("2011-02-01"), y = 28, label = "The MHW that launched\na thousand papers."))
-#> Warning: Removed 11 rows containing missing values (geom_flame_on).
 ```
 
 ![](README-fig-example2-1.png)
@@ -132,7 +131,36 @@ ggplot(mhw$event, aes(x = date_start, y = int_max)) +
 
 ![](README-fig-example2-2.png)
 
-Marine cold spells are also accommodated. Here is a cold spell detected in the OISST data for Western Australia:
+The default output of these function may not be to your liking. If so, not to worry. As ggplot geoms, they are highly maleable. For example, if one were to choose to reproduce the format of the MHWs as seen in Hobday et al. (2016), the code would look something like this:
+
+``` r
+# It is necessary to give geom_flame() at least one row on either side of the event in order to calculate the ploygon corners smoothly
+mhw_top <- mhw2[49:110,]
+
+ggplot(data = mhw2, aes(x = date)) +
+  geom_flame(aes(y = temp, thresh = thresh_clim_year, fill = "all"), show.legend = T) +
+  geom_flame(data = mhw_top, aes(y = temp, thresh = thresh_clim_year, fill = "top"), show.legend = T) +
+  geom_line(aes(y = temp, colour = "temp")) +
+  geom_line(aes(y = thresh_clim_year, colour = "thresh")) +
+  geom_line(aes(y = seas_clim_year, colour = "seas")) +
+  scale_colour_manual(name = "Line Colour", values = c("temp" = "black", "thresh" =  "forestgreen","seas" = "grey80")) +
+  scale_fill_manual(name = "Event Colour", values = c("all" = "salmon", "top" = "red")) +
+  guides(colour = guide_legend(override.aes = list(fill = NA)))
+```
+
+![](README-fig-example3-1.png)
+
+Conversely, should one not wish ot highlight any events with geom)lolli, it would look like this:
+
+``` r
+# Note that this is accomplished by setting 'colour.n = NA', not by setting 'n = 0'.
+ggplot(mhw$event, aes(x = date_start, y = int_cum)) +
+  geom_lolli(colour = "salmon", n = 3, colour.n = NA)
+```
+
+![](README-fig-example4-1.png)
+
+The calculation and visualisation of marine cold spells is also accommodated within this package. Here is a cold spell detected in the OISST data for Western Australia:
 
 ``` r
 mcs <- detect(ts, climatology_start = 1983, climatology_end = 2012, cold_spells = TRUE)
@@ -163,37 +191,42 @@ event_line(mcs, spread = 200, metric = "int_cum",
            start_date = "1990-01-01", end_date = "1990-08-30")
 ```
 
-![](README-fig-example3-1.png)
+![](README-fig-example5-1.png)
 
 ``` r
 
 lolli_plot(mcs)
 ```
 
-![](README-fig-example3-2.png)
+![](README-fig-example5-2.png)
 
-These same cold spell figures may be created as geoms in ggplot, too:
+Cold spell figures may be created as geoms in ggplot, too:
 
 ``` r
 mcs2 <- mcs$clim
-mcs2 <- mcs2[3340:3380,]
+mcs2 <- mcs2[2990:3190,]
 
-ggplot(mcs2, aes(x = date, y = temp, thresh = thresh_clim_year, seas = seas_clim_year, event = event_no)) +
-  geom_flame(stat.top = "dur") +
-  # Note that the plot centres on the polygons, so it may be necessary to manually zoom out a bit
-  scale_y_continuous(limits = c(21, 23.5))
-#> Warning: Removed 20 rows containing missing values (geom_flame_on).
+# Note that the plot centres on the polygons, so it may be necessary to manually zoom out a bit
+ggplot(mcs2, aes(x = date, y = thresh_clim_year, thresh = temp)) +
+  geom_flame(fill = "steelblue3") +
+  geom_line(aes(y = temp), colour = "black") +
+  geom_line(aes(y = thresh_clim_year), colour = "forestgreen") +
+  geom_line(aes(y= seas_clim_year), colour = "grey80")
 ```
 
-![](README-fig-example4-1.png)
+![](README-fig-example6-1.png)
 
 ``` r
+  scale_y_continuous(limits = c(18, 23.5))
+#> <ScaleContinuousPosition>
+#>  Range:  
+#>  Limits:   18 -- 23.5
 
 ggplot(mcs$event, aes(x = date_start, y = int_cum)) +
   geom_lolli(colour = "steelblue3", colour.n = "navy", n = 7)
 ```
 
-![](README-fig-example4-2.png)
+![](README-fig-example6-2.png)
 
 We can also load the gridded 0.25 degree Reynolds [OISST data](http://www.ncdc.noaa.gov/thredds/oisst-catalog.html) and apply the function pixel by pixel over all of the days of data. The example data used here have 93 longitude steps, 43 latitude steps, and cover 12797 days (1981 to 2016). We apply the `detect()` function to these data, fit a generalised linear model (GLM), and then plot the trend per decade of the marine heatwave count. In other words, have marine heatwaves become more or less frequent in recent years? Under climate change we can expect that extreme events would tend to occur more frequently and be of greater intensity. Indeed, we can clearly see in the figure below of the result of the GLM, how the Agulhas Current has been experiencing marine heat waves more frequently in recent decades. But there are two smaller areas, one along the western side of the Cape Peninsula in the Benguela Upwelling system and another around the Eastern Cape Province near Algoa Bay, where the frequency of marine heat waves seems to have actually been decreasing -- although the P-value of the decreasing trend is &gt; 0.05, and therefore not significant.
 

@@ -3,6 +3,9 @@ output: pdf_document
 ---
 
 # VERSION CHANGES
+## Changes in version 0.14.6 (15 February 2017)
+* Edits to 'geom_flame' and 'geom_lolli'
+
 ## Changes in version 0.14.5 (14 February 2017)
 * Edits to 'geom_flame' and 'geom_lolli'
 
