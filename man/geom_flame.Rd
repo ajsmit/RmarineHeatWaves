@@ -2,7 +2,7 @@
 % Please edit documentation in R/geom_flame.R
 \name{geom_flame}
 \alias{geom_flame}
-\title{Create 'Flame' Ploygons}
+\title{Create 'Flame' Ploygons.}
 \usage{
 geom_flame(mapping = NULL, data = NULL, stat = "identity",
   position = "identity", ..., na.rm = FALSE, show.legend = NA,
