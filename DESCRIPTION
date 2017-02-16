@@ -1,5 +1,5 @@
 Package: RmarineHeatWaves
-Version: 0.15.0
+Version: 0.15.1
 Date: 2017-02-15
 Title: Detect Marine Heat Waves and Marine Cold Spells
 Type: Package
@@ -30,8 +30,8 @@ Suggests:
 VignetteBuilder: knitr
 Description: Given a time series of daily temperatures, the package provides tools
     to detect extreme thermal events, including marine heat waves, and to
-    calculate the exceedences above or below specified threshold values.
-    It outputs the properties of all detected events and exceedences.
+    calculate the exceedances above or below specified threshold values.
+    It outputs the properties of all detected events and exceedances.
 License: MIT + file LICENSE
 URL: https://github.com/ajsmit/RmarineHeatWaves
 LazyData: TRUE

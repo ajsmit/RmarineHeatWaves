@@ -3,6 +3,9 @@ output: pdf_document
 ---
 
 # VERSION CHANGES
+## Changes in version 0.15.1 (15 February 2017)
+* 'exceedence' changed to 'exceedance' throughout.
+
 ## Changes in version 0.15.0 (15 February 2017)
 * Final edits to 'geom_flame' and 'geom_lolli'. 
 * Updated examples.
@@ -27,7 +30,7 @@ with ggplot2 directly as geoms.
 the pctile option in the detect() function, which was accidentally disabled.
 
 ## Changes in version 0.14.1 (10 January 2017)
-* Improved error messages in exceedence().
+* Improved error messages in exceedance().
 * Bug fix.
 
 ## Changes in version 0.14.0 (11 December 2016)
@@ -45,12 +48,12 @@ event_line plot.
 as here it has less chance of plotting over the peak events when the graph is rescaled.
 
 ## Changes in version 0.13.8.9200 (23 November 2016)
-* Minor update to exceedence() function to improve usability.
-* Usage of exceedence() shown in README file
+* Minor update to exceedance() function to improve usability.
+* Usage of exceedance() shown in README file
 
 ## Changes in version 0.13.7.9100 (22 October 2016)
 * The additions to the detect() function madde in the previous update have been 
-rolled back in favour of creating an independent function to calculate exceedences.
+rolled back in favour of creating an independent function to calculate exceedances.
 
 ## Changes in version 0.13.6.9000 (22 October 2016)
 * Added 'threshold' variable to detect() function.

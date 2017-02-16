@@ -47,7 +47,7 @@ The functions
 <td>Creates a timeline of selected event metrics.</td>
 </tr>
 <tr class="even">
-<td><code>exceedence()</code></td>
+<td><code>exceedance()</code></td>
 <td>A function similar to <code>detect()</code> but that detects consecutive days above/ below a given threshold.</td>
 </tr>
 <tr class="odd">
@@ -235,19 +235,19 @@ We can also load the gridded 0.25 degree Reynolds [OISST data](http://www.ncdc.n
 
 Please read the package [vignette](https://github.com/ajsmit/RmarineHeatWaves/blob/master/vignettes/gridded-event-detection.Rmd) to see how to load a netCDF file with the OISST data, apply the RmarineHeatWaves function to the whole 3D array of data, and then fit the GLM and plot the data.
 
-The exceedence function
+The exceedance function
 -----------------------
 
-In addition to the calculation of extreme events, consecutive days over a given static threshold may be calculated with the `exceedence()` function.
+In addition to the calculation of extreme events, consecutive days over a given static threshold may be calculated with the `exceedance()` function.
 
 ``` r
-exc <- exceedence(ts, threshold = 25)
-exc$exceedence %>% 
+exc <- exceedance(ts, threshold = 25)
+exc$exceedance %>% 
   ungroup() %>%
-  select(exceedence_no, duration, date_start, date_peak, int_mean, int_max, int_cum) %>% 
+  select(exceedance_no, duration, date_start, date_peak, int_mean, int_max, int_cum) %>% 
   dplyr::arrange(-int_cum)
 #> # A tibble: 11 × 7
-#>    exceedence_no duration date_start  date_peak  int_mean   int_max
+#>    exceedance_no duration date_start  date_peak  int_mean   int_max
 #>            <int>    <dbl>     <date>     <date>     <dbl>     <dbl>
 #> 1              7       52 2011-02-08 2011-02-28 1.6740379 4.7399993
 #> 2              6       25 2008-04-03 2008-04-14 0.9799994 2.1899994
@@ -266,13 +266,13 @@ exc$exceedence %>%
 The same function may be used to calculate consecutive days below a threshold, too.
 
 ``` r
-exc <- exceedence(ts, threshold = 19, below = TRUE)
-exc$exceedence %>% 
+exc <- exceedance(ts, threshold = 19, below = TRUE)
+exc$exceedance %>% 
   ungroup() %>%
-  select(exceedence_no, duration, date_start, date_peak, int_mean, int_max, int_cum) %>% 
+  select(exceedance_no, duration, date_start, date_peak, int_mean, int_max, int_cum) %>% 
   dplyr::arrange(int_cum)
 #> # A tibble: 22 × 7
-#>    exceedence_no duration date_start  date_peak   int_mean    int_max
+#>    exceedance_no duration date_start  date_peak   int_mean    int_max
 #>            <int>    <dbl>     <date>     <date>      <dbl>      <dbl>
 #> 1             17       46 2003-09-06 2003-09-16 -0.6008700 -1.3400004
 #> 2             16       31 2002-09-08 2002-09-25 -0.8480649 -1.8800004
