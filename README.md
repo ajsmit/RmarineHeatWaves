@@ -7,7 +7,7 @@ The **RmarineHeatWaves** package is a translation of the original Python code wr
 
 The **RmarineHeatWaves** R package contains a number of functions which calculate and display marine heat waves according to the definition of Hobday et al. (2016). The marine cold spell option was implemented in version 0.13 (21 Nov 2015) of the Python module as a result of the preparation of Schlegel et al. (in press), wherein the cold events are introduced and briefly discussed.
 
-This package may be found on [CRAN](https://cran.r-project.org/package=RmarineHeatWaves). Alternatively, you may install it from GitHub by issuing the following command:
+This package may be found on [CRAN](https://cran.r-project.org/package=RmarineHeatWaves). Alternatively, you can install it from GitHub by issuing the following command:
 
 `devtools::install_github("ajsmit/RmarineHeatWaves")`
 
@@ -63,10 +63,10 @@ The functions
 
 The package also provides data of observed SST records for three historical MHWs: the 2011 Western Australia event, the 2012 Northwest Atlantic event and the 2003 Mediterranean event.
 
-The detect and graphing functions
----------------------------------
+The detection and graphing functions
+------------------------------------
 
-Here is the `detect()` function applied to the Western Australian test data, which are also discussed by Hobday et al. (2016):
+The `detect()` function is the package's core function. Here is the `detect()` function applied to the Western Australian test data, which are also discussed by Hobday et al. (2016):
 
 ``` r
 library(RmarineHeatWaves); library(plyr); library(dplyr); library(ggplot2)
@@ -102,24 +102,23 @@ event_line(mhw, spread = 200, metric = "int_cum",
 ![](README-fig-example1-1.png)
 
 ``` r
-
 lolli_plot(mhw)
 ```
 
-![](README-fig-example1-2.png)
+![](README-fig-example2-1.png)
 
-If one requires more control over the output, one may choose to create these figures in **ggplot2** as 'geoms'. These require only the `clim` dataframe from the `detect()` ouput:
+The `event_line()` and `lolli_plot()` functions were designed to work directly on one of the data frames returned by `detect()` -- they are contained within a list as part of the output. If more control over the figures is required, it may be useful to create them in **ggplot2** by stacking 'geoms'. We specifically created two new **ggplot2** geoms to reproduce the functionality of `event_line()` and `lolli_plot()`. These functions are more general in their functionality and can be used outside of the **RmarineHeatWave** package too. To apply them to MHWs and MCSs, they require only the `clim` or `event` data frames to be identified within the list that is produced by `detect()`. Here is how:
 
 ``` r
-mhw2 <- mhw$clim
-mhw2 <- mhw2[10580:10690,]
+mhw2 <- mhw$clim # find the climatology dataframe
+mhw2 <- mhw2[10580:10690,] # identify the region of the time series of interest
 
 ggplot(mhw2, aes(x = date, y = temp, y2 = thresh_clim_year)) +
   geom_flame() +
   geom_text(aes(x = as.Date("2011-02-01"), y = 28, label = "The MHW that launched\na thousand papers."))
 ```
 
-![](README-fig-example2-1.png)
+![](README-fig-example3-1.png)
 
 ``` r
 
@@ -129,9 +128,9 @@ ggplot(mhw$event, aes(x = date_start, y = int_max)) +
                 label = "The distribution of events\nis skewed towards the\nend of the time series."), colour = "black")
 ```
 
-![](README-fig-example2-2.png)
+![](README-fig-example3-2.png)
 
-The default output of these function may not be to your liking. If so, not to worry. As **ggplot2** geoms, they are highly maleable. For example, if one were to choose to reproduce the format of the MHWs as seen in Hobday et al. (2016), the code would look something like this:
+The default output of these function may not be to your liking. If so, not to worry. As **ggplot2** geoms, they are highly maleable. For example, if we were to choose to reproduce the format of the MHWs as seen in Hobday et al. (2016), the code would look something like this:
 
 ``` r
 # It is necessary to give geom_flame() at least one row on either side of the event in order to calculate the ploygon corners smoothly
@@ -141,17 +140,17 @@ ggplot(data = mhw2, aes(x = date)) +
   geom_flame(aes(y = temp, y2 = thresh_clim_year, fill = "all"), show.legend = T) +
   geom_flame(data = mhw_top, aes(y = temp, y2 = thresh_clim_year, fill = "top"), show.legend = T) +
   geom_line(aes(y = temp, colour = "temp")) +
-  geom_line(aes(y = thresh_clim_year, colour = "thresh")) +
-  geom_line(aes(y = seas_clim_year, colour = "seas")) +
-  scale_colour_manual(name = "Line Colour", values = c("temp" = "black", "thresh" =  "forestgreen","seas" = "grey80")) +
+  geom_line(aes(y = thresh_clim_year, colour = "thresh"), size = 1.0) +
+  geom_line(aes(y = seas_clim_year, colour = "seas"), size = 1.2) +
+  scale_colour_manual(name = "Line Colour", values = c("temp" = "black", "thresh" =  "forestgreen", "seas" = "grey80")) +
   scale_fill_manual(name = "Event Colour", values = c("all" = "salmon", "top" = "red")) +
   guides(colour = guide_legend(override.aes = list(fill = NA))) +
-  xlab("Date") + ylab("Temperature [degrees C]")
+  xlab("Date") + ylab(expression(paste("Temperature [", degree, "C]")))
 ```
 
-![](README-fig-example3-1.png)
+![](README-fig-example4-1.png)
 
-Conversely, should one not wish to highlight any events with `geom_lolli()`, it would look like this:
+Conversely, should we not wish to highlight any events with `geom_lolli()`, it would look like this:
 
 ``` r
 # Note that this is accomplished by setting 'colour.n = NA', not by setting 'n = 0'.
@@ -159,7 +158,7 @@ ggplot(mhw$event, aes(x = date_start, y = int_cum)) +
   geom_lolli(colour = "salmon", n = 3, colour.n = NA)
 ```
 
-![](README-fig-example4-1.png)
+![](README-fig-example5-1.png)
 
 The calculation and visualisation of marine cold spells is also accommodated within this package. Here is a cold spell detected in the OISST data for Western Australia:
 
@@ -192,14 +191,14 @@ event_line(mcs, spread = 200, metric = "int_cum",
            start_date = "1990-01-01", end_date = "1990-08-30")
 ```
 
-![](README-fig-example5-1.png)
+![](README-fig-example6-1.png)
 
 ``` r
 
 lolli_plot(mcs)
 ```
 
-![](README-fig-example5-2.png)
+![](README-fig-example6-2.png)
 
 Cold spell figures may be created as geoms in **ggplot2**, too:
 
@@ -211,11 +210,11 @@ mcs2 <- mcs2[2990:3190,]
 ggplot(mcs2, aes(x = date, y = thresh_clim_year, y2 = temp)) +
   geom_flame(fill = "steelblue3") +
   geom_line(aes(y = temp), colour = "black") +
-  geom_line(aes(y = thresh_clim_year), colour = "forestgreen") +
-  geom_line(aes(y= seas_clim_year), colour = "grey80")
+  geom_line(aes(y = thresh_clim_year), colour = "forestgreen", size = 1.0) +
+  geom_line(aes(y= seas_clim_year), colour = "grey80", size = 1.2)
 ```
 
-![](README-fig-example6-1.png)
+![](README-fig-example7-1.png)
 
 ``` r
   scale_y_continuous(limits = c(18, 23.5))
@@ -227,13 +226,7 @@ ggplot(mcs$event, aes(x = date_start, y = int_cum)) +
   geom_lolli(colour = "steelblue3", colour.n = "navy", n = 7)
 ```
 
-![](README-fig-example6-2.png)
-
-We can also load the gridded 0.25 degree Reynolds [OISST data](http://www.ncdc.noaa.gov/thredds/oisst-catalog.html) and apply the function pixel by pixel over all of the days of data. The example data used here have 93 longitude steps, 43 latitude steps, and cover 12797 days (1981 to 2016). We apply the `detect()` function to these data, fit a generalised linear model (GLM), and then plot the trend per decade of the marine heatwave count. In other words, have marine heatwaves become more or less frequent in recent years? Under climate change we can expect that extreme events would tend to occur more frequently and be of greater intensity. Indeed, we can clearly see in the figure below of the result of the GLM, how the Agulhas Current has been experiencing marine heat waves more frequently in recent decades. But there are two smaller areas, one along the western side of the Cape Peninsula in the Benguela Upwelling system and another around the Eastern Cape Province near Algoa Bay, where the frequency of marine heat waves seems to have actually been decreasing -- although the P-value of the decreasing trend is &gt; 0.05, and therefore not significant.
-
-![](README-fig-example3.png) ![](README-fig-example4.png)
-
-Please read the package [vignette](https://github.com/ajsmit/RmarineHeatWaves/blob/master/vignettes/gridded-event-detection.Rmd) to see how to load a netCDF file with the OISST data, apply the RmarineHeatWaves function to the whole 3D array of data, and then fit the GLM and plot the data.
+![](README-fig-example7-2.png)
 
 The exceedance function
 -----------------------
@@ -287,12 +280,37 @@ exc$exceedance %>%
 #> # ... with 12 more rows, and 1 more variables: int_cum <dbl>
 ```
 
+Working with gridded SST data
+=============================
+
+We can also load the gridded 0.25 degree Reynolds [OISST data](http://www.ncdc.noaa.gov/thredds/oisst-catalog.html) and apply the function pixel by pixel over all of the days of data. The example data used here have 93 longitude steps, 43 latitude steps, and cover 12797 days (1981 to 2016). We apply the `detect()` function to these data, fit a generalised linear model (GLM), and then plot the trend per decade of the marine heatwave count. In other words, have marine heatwaves become more or less frequent in recent years? Under climate change we can expect that extreme events would tend to occur more frequently and be of greater intensity. Indeed, we can clearly see in the figure below of the result of the GLM, how the Agulhas Current has been experiencing marine heat waves more frequently in recent decades. But there are two smaller areas, one along the western side of the Cape Peninsula in the Benguela Upwelling system and another around the Eastern Cape Province near Algoa Bay, where the frequency of marine heat waves seems to have actually been decreasing -- although the *P*-value of the decreasing trend is &gt; 0.05, and therefore not significant.
+
+``` r
+knitr::include_graphics("README-grid-example2.png")
+```
+
+<img src="README-grid-example2.png" alt="Plot of marine heat waves detected in the 0.25 degree Reynold's OISST around South Africa, showing the increase in frequency of marine heat waves within the Agulhas Current. Outlined pixels indicate that the trend is significant at p &lt; 0.05." width="580px" />
+<p class="caption">
+Plot of marine heat waves detected in the 0.25 degree Reynold's OISST around South Africa, showing the increase in frequency of marine heat waves within the Agulhas Current. Outlined pixels indicate that the trend is significant at p &lt; 0.05.
+</p>
+
+``` r
+knitr::include_graphics("README-grid-example1.png")
+```
+
+<img src="README-grid-example1.png" alt="Plot of marine heat waves found in the 0.25 degree Reynold's OISST around South Africa, showing the significance of the detected trend in frequency of marine heat waves within the Agulhas Current." width="580px" />
+<p class="caption">
+Plot of marine heat waves found in the 0.25 degree Reynold's OISST around South Africa, showing the significance of the detected trend in frequency of marine heat waves within the Agulhas Current.
+</p>
+
+Please read the package [vignette](https://github.com/ajsmit/RmarineHeatWaves/blob/master/vignettes/gridded-event-detection.Rmd) to see how to load a netCDF file with the OISST data, apply the RmarineHeatWaves function to the whole 3D array of data, and then fit the GLM and plot the data.
+
 References
 ==========
 
 Hobday, A.J. et al. (2016). A hierarchical approach to defining marine heatwaves, Progress in Oceanography, 141, pp. 227-238.
 
-Schlegel, R. W., Oliver, E. C. J., Wernberg, T. W., Smit, A. J. (in press). Coastal and offshore co-occurrences of marine heatwaves and cold-spells. Progress in Oceanography.
+Schlegel, R. W., Oliver, E. C. J., Wernberg, T. W., Smit, A. J. (2017). Coastal and offshore co-occurrences of marine heatwaves and cold-spells. Progress in Oceanography, 151, pp. 189-205.
 
 Acknowledgements
 ================

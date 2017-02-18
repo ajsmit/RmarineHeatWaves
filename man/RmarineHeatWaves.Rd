@@ -43,7 +43,7 @@ marine heatwaves. Progress in Oceanography, 141, pp. 227-238,
 
 Schlegel, R. W., Oliver, E. C. J., Wernberg, T. W., Smit, A. J. (2017)
 Coastal and offshore co-occurrences of marine heatwaves and cold-spells.
-Progress in Oceanography, <DOI:10.1016/j.pocean.2017.01.004>
+Progress in Oceanography, 151, pp. 189-205, <DOI:10.1016/j.pocean.2017.01.004>
 }
 \author{
 Albertus J. Smit <\email{albertus.smit@gmail.com}>, Robert W. Schlegel,

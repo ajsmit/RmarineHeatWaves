@@ -3,6 +3,10 @@ output: pdf_document
 ---
 
 # VERSION CHANGES
+## Changes in version 0.15.2 (18 February 2017)
+* Updating README.md, README.Rmd files.
+* Updating the vignette.
+
 ## Changes in version 0.15.1 (15 February 2017)
 * 'exceedence' changed to 'exceedance' throughout.
 

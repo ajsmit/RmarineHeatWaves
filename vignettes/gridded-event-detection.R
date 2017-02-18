@@ -112,7 +112,7 @@ knitr::opts_chunk$set(fig.width = 4, fig.align = 'center',
 #                 size = 0.5, colour = "black", fill = NA) +
 #    coord_fixed(ratio = 1, xlim = c(12.12, 35.12), ylim = c(-26.88, -37.38), expand = TRUE) +
 #    theme_bw()
-#  ggsave(file = "README-fig-example3.png", width = 6, height = 3.2)
+#  ggsave(file = "README-grid-example1.png", width = 6, height = 3.2)
 #  
 #  ggplot(OISST_nTrend, aes(lon, lat)) +
 #    geom_raster(aes(fill = pval), interpolate = FALSE) +
@@ -129,11 +129,11 @@ knitr::opts_chunk$set(fig.width = 4, fig.align = 'center',
 #                 size = 0.5, colour = "black", fill = NA) +
 #    coord_fixed(ratio = 1, xlim = c(12.12, 35.12), ylim = c(-26.88, -37.38), expand = TRUE) +
 #    theme_bw()
-#  ggsave(file = "README-fig-example4.png", width = 6, height = 3.2)
+#  ggsave(file = "README-grid-example2.png", width = 6, height = 3.2)
 
 ## ---- out.width = "580px", fig.cap = "**Figure 1.** Plot of marine heat waves detected in the 0.25 degree Reynold's OISST around South Africa, showing the increase in frequency of marine heat waves within the Agulhas Current. Outlined pixels indicate that the trend is significant at p < 0.05."----
-knitr::include_graphics("README-fig-example3.png")
+knitr::include_graphics("README-grid-example2.png")
 
 ## ---- out.width = "580px", fig.cap = "**Figure 2.** Plot of marine heat waves found in the 0.25 degree Reynold's OISST around South Africa, showing the significance of the detected trend in frequency of marine heat waves within the Agulhas Current."----
-knitr::include_graphics("README-fig-example4.png")
+knitr::include_graphics("README-grid-example1.png")
 
