@@ -287,15 +287,9 @@ Working with gridded SST data
 
 We can also load the gridded 0.25 degree Reynolds [OISST data](http://www.ncdc.noaa.gov/thredds/oisst-catalog.html) and apply the function pixel by pixel over all of the days of data. The example data used here have 93 longitude steps, 43 latitude steps, and cover 12797 days (1981 to 2016). We apply the `detect()` function to these data, fit a generalised linear model (GLM), and then plot the trend per decade of the marine heatwave count. In other words, have marine heatwaves become more or less frequent in recent years? Under climate change we can expect that extreme events would tend to occur more frequently and be of greater intensity. Indeed, we can clearly see in the figure below of the result of the GLM, how the Agulhas Current has been experiencing marine heat waves more frequently in recent decades. But there are two smaller areas, one along the western side of the Cape Peninsula in the Benguela Upwelling system and another around the Eastern Cape Province near Algoa Bay, where the frequency of marine heat waves seems to have actually been decreasing -- although the *P*-value of the decreasing trend is &gt; 0.05, and therefore not significant.
 
-<img src="README-grid-example2.png" alt="Plot of marine heat waves detected in the 0.25 degree Reynold's OISST around South Africa, showing the increase in frequency of marine heat waves within the Agulhas Current. Outlined pixels indicate that the trend is significant at p &lt; 0.05." width="580px" />
-<p class="caption">
-Plot of marine heat waves detected in the 0.25 degree Reynold's OISST around South Africa, showing the increase in frequency of marine heat waves within the Agulhas Current. Outlined pixels indicate that the trend is significant at p &lt; 0.05.
-</p>
+![Count-trend](vignettes/README-grid-example1.png)
 
-<img src="README-grid-example1.png" alt="Plot of marine heat waves found in the 0.25 degree Reynold's OISST around South Africa, showing the significance of the detected trend in frequency of marine heat waves within the Agulhas Current." width="580px" />
-<p class="caption">
-Plot of marine heat waves found in the 0.25 degree Reynold's OISST around South Africa, showing the significance of the detected trend in frequency of marine heat waves within the Agulhas Current.
-</p>
+![P-of-trend](vignettes/README-grid-example2.png)
 
 Please read the package [vignette](https://github.com/ajsmit/RmarineHeatWaves/blob/master/vignettes/gridded-event-detection.Rmd) to see how to load a netCDF file with the OISST data, apply the RmarineHeatWaves function to the whole 3D array of data, and then fit the GLM and plot the data.
 
