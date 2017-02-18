@@ -132,17 +132,17 @@ exceedance <-
     if (missing(threshold))
       stop("Oh no! Please provide a threshold against which to calculate exceedances.")
 
-    if (threshold > max(t_series$temp, na.rm = T)){
+    if (threshold > max(t_series$temp, na.rm = T)) {
       stop(paste("The given threshold value of ", threshold, " is greater than the maximum temperature of ",
                  max(t_series$temp, na.rm = T), " present in this time series.", sep = ""))
     }
 
-    if (threshold < min(t_series$temp, na.rm = T)){
+    if (threshold < min(t_series$temp, na.rm = T)) {
       stop(paste("The given threshold value of ", threshold, " is less than the minimum temperature of ",
                  min(t_series$temp, na.rm = T), " present in this time series.", sep = ""))
     }
 
-    if (below){
+    if (below) {
       t_series$temp <- -t_series$temp
       threshold <- -threshold
     }
@@ -173,10 +173,10 @@ exceedance <-
       dplyr::mutate(exceedance_no = cumsum(ex1$values[ex1$values == TRUE])) %>%
       protoFunc()
 
-    if(length(proto_exceedances$index_start) == 0 & below == FALSE){
+    if (length(proto_exceedances$index_start) == 0 & below == FALSE) {
       stop(paste("No temperatures over ", threshold, " degrees detected.", sep =  ""))
     }
-    if(length(proto_exceedances$index_start) == 0 & below == TRUE){
+    if (length(proto_exceedances$index_start) == 0 & below == TRUE) {
       stop(paste("No temperatures under ", threshold, " degrees detected.", sep =  ""))
     }
 
@@ -207,7 +207,7 @@ exceedance <-
       join_across_gaps <- FALSE
     }
 
-    if(length(proto_gaps$index_start) == 0){
+    if (length(proto_gaps$index_start) == 0) {
       stop(paste("No temperatures in exceedance of ", threshold,
                  " degrees detected for ", min_duration,
                  " or more consecutive days.", sep = ""))

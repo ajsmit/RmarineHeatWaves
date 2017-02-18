@@ -120,8 +120,8 @@ GeomFlame <- ggplot2::ggproto("GeomFlame", ggplot2::Geom,
                                 y.points <- x1[intersect.points] + (x1.slopes * (x.points - intersect.points))
 
                                 # Coerece x.points to the same scale as x
-                                x_gap <- data$x[2]-data$x[1]
-                                x.points <- data$x[intersect.points]+(x_gap*(x.points-intersect.points))
+                                x_gap <- data$x[2] - data$x[1]
+                                x.points <- data$x[intersect.points] + (x_gap*(x.points - intersect.points))
 
                                 # Create new data frame and merge to introduce new rows of data
                                 data2 <- data.frame(y = c(data$y, y.points), x = c(data$x, x.points))

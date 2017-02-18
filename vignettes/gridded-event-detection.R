@@ -131,9 +131,9 @@ knitr::opts_chunk$set(fig.width = 4, fig.align = 'center',
 #    theme_bw()
 #  ggsave(file = "README-grid-example2.png", width = 6, height = 3.2)
 
-## ---- out.width = "580px", fig.cap = "**Figure 1.** Plot of marine heat waves detected in the 0.25 degree Reynold's OISST around South Africa, showing the increase in frequency of marine heat waves within the Agulhas Current. Outlined pixels indicate that the trend is significant at p < 0.05."----
-knitr::include_graphics("README-grid-example2.png")
-
-## ---- out.width = "580px", fig.cap = "**Figure 2.** Plot of marine heat waves found in the 0.25 degree Reynold's OISST around South Africa, showing the significance of the detected trend in frequency of marine heat waves within the Agulhas Current."----
+## ---- echo = FALSE, include = TRUE, out.width = "580px", fig.cap = "**Figure 1.** Plot of marine heat waves detected in the 0.25 degree Reynold's OISST around South Africa, showing the increase in frequency of marine heat waves within the Agulhas Current. Outlined pixels indicate that the trend is significant at p < 0.05."----
 knitr::include_graphics("README-grid-example1.png")
+
+## ---- echo = FALSE, include = TRUE, out.width = "580px", fig.cap = "**Figure 2.** Plot of marine heat waves found in the 0.25 degree Reynold's OISST around South Africa, showing the significance of the detected trend in frequency of marine heat waves within the Agulhas Current."----
+knitr::include_graphics("README-grid-example2.png")
 
