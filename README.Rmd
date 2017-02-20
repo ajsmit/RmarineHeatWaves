@@ -148,7 +148,7 @@ mcs2 <- mcs2[2990:3190,]
 
 # Note that the plot centres on the polygons, so it may be necessary to manually zoom out a bit
 ggplot(data = mcs2, aes(x = date)) +
-  geom_flame(aes(y = thresh_clim_year, y2 = temp), fill = "steelblue3", show.legend = T) +
+  geom_flame(aes(y = thresh_clim_year, y2 = temp), fill = "steelblue3", show.legend = F) +
   geom_line(aes(y = temp, colour = "temp")) +
   geom_line(aes(y = thresh_clim_year, colour = "thresh"), size = 1.0) +
   geom_line(aes(y = seas_clim_year, colour = "seas"), size = 1.2) + 
