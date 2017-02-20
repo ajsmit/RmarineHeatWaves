@@ -5,7 +5,7 @@ RmarineHeatWaves
 
 The **RmarineHeatWaves** package is a translation of the original Python code written by Eric C. J. Oliver that can be found on [GitHub](https://github.com/ecjoliver/marineHeatWaves).
 
-The **RmarineHeatWaves** R package contains a number of functions which calculate and display marine heat waves according to the definition of Hobday et al. (2016). The marine cold spell option was implemented in version 0.13 (21 Nov 2015) of the Python module as a result of the preparation of Schlegel et al. (in press), wherein the cold events are introduced and briefly discussed.
+The **RmarineHeatWaves** R package contains a number of functions which calculate and display marine heat waves according to the definition of Hobday et al. (2016). The marine cold spell option was implemented in version 0.13 (21 Nov 2015) of the Python module as a result of the preparation of Schlegel et al. (2017), wherein the cold events are introduced and briefly discussed.
 
 This package may be found on [CRAN](https://cran.r-project.org/package=RmarineHeatWaves). Alternatively, you can install it from GitHub by issuing the following command:
 
@@ -147,7 +147,8 @@ ggplot(data = mhw2, aes(x = date)) +
                       values = c("temp" = "black", "thresh" =  "forestgreen", "seas" = "grey80")) +
   scale_fill_manual(name = "Event Colour", values = c("all" = "salmon", "top" = "red")) +
   guides(colour = guide_legend(override.aes = list(fill = NA))) +
-  xlab("Date") + ylab(expression(paste("Temperature [", degree, "C]")))
+  xlab("Date") + 
+  ylab(expression(paste("Temperature [", degree, "C]")))
 ```
 
 ![](README-fig-example4-1.png)
@@ -209,23 +210,26 @@ mcs2 <- mcs$clim
 mcs2 <- mcs2[2990:3190,]
 
 # Note that the plot centres on the polygons, so it may be necessary to manually zoom out a bit
-ggplot(mcs2, aes(x = date, y = thresh_clim_year, y2 = temp)) +
-  geom_flame(fill = "steelblue3") +
-  geom_line(aes(y = temp), colour = "black") +
-  geom_line(aes(y = thresh_clim_year), colour = "forestgreen", size = 1.0) +
-  geom_line(aes(y= seas_clim_year), colour = "grey80", size = 1.2)
+ggplot(data = mcs2, aes(x = date)) +
+  geom_flame(aes(y = thresh_clim_year, y2 = temp), fill = "steelblue3", show.legend = T) +
+  geom_line(aes(y = temp, colour = "temp")) +
+  geom_line(aes(y = thresh_clim_year, colour = "thresh"), size = 1.0) +
+  geom_line(aes(y = seas_clim_year, colour = "seas"), size = 1.2) + 
+  scale_colour_manual(name = "Line Colour", 
+                      values = c("temp" = "black", "thresh" =  "forestgreen", "seas" = "grey80")) +
+  scale_y_continuous(limits = c(18, 23.5)) +
+  xlab("Date") +
+  ylab(expression(paste("Temperature [", degree, "C]")))
 ```
 
 ![](README-fig-example7-1.png)
 
 ``` r
-  scale_y_continuous(limits = c(18, 23.5))
-#> <ScaleContinuousPosition>
-#>  Range:  
-#>  Limits:   18 -- 23.5
-
+  
 ggplot(mcs$event, aes(x = date_start, y = int_cum)) +
-  geom_lolli(colour = "steelblue3", colour.n = "navy", n = 7)
+  geom_lolli(colour = "steelblue3", colour.n = "navy", n = 7) +
+  xlab("Date") + 
+  ylab(expression(paste("Cumulative intensity [days x ", degree, "C]")))
 ```
 
 ![](README-fig-example7-2.png)

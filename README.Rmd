@@ -26,7 +26,7 @@ by Eric C. J. Oliver that can be found on [GitHub](https://github.com/ecjoliver/
 The **RmarineHeatWaves** R package contains a number of functions which calculate 
 and display marine heat waves according to the definition of Hobday et al. (2016). 
 The marine cold spell option was implemented in version 0.13 (21 Nov 2015) of the 
-Python module as a result of the preparation of Schlegel et al. (in press), wherein
+Python module as a result of the preparation of Schlegel et al. (2017), wherein
 the cold events are introduced and briefly discussed.
 
 This package may be found on [CRAN](https://cran.r-project.org/package=RmarineHeatWaves). 
@@ -109,7 +109,8 @@ ggplot(data = mhw2, aes(x = date)) +
                       values = c("temp" = "black", "thresh" =  "forestgreen", "seas" = "grey80")) +
   scale_fill_manual(name = "Event Colour", values = c("all" = "salmon", "top" = "red")) +
   guides(colour = guide_legend(override.aes = list(fill = NA))) +
-  xlab("Date") + ylab(expression(paste("Temperature [", degree, "C]")))
+  xlab("Date") + 
+  ylab(expression(paste("Temperature [", degree, "C]")))
 ```
 
 Conversely, should we not wish to highlight any events with `geom_lolli()`, it would look like this:
@@ -146,15 +147,21 @@ mcs2 <- mcs$clim
 mcs2 <- mcs2[2990:3190,]
 
 # Note that the plot centres on the polygons, so it may be necessary to manually zoom out a bit
-ggplot(mcs2, aes(x = date, y = thresh_clim_year, y2 = temp)) +
-  geom_flame(fill = "steelblue3") +
-  geom_line(aes(y = temp), colour = "black") +
-  geom_line(aes(y = thresh_clim_year), colour = "forestgreen", size = 1.0) +
-  geom_line(aes(y= seas_clim_year), colour = "grey80", size = 1.2)
-  scale_y_continuous(limits = c(18, 23.5))
-
+ggplot(data = mcs2, aes(x = date)) +
+  geom_flame(aes(y = thresh_clim_year, y2 = temp), fill = "steelblue3", show.legend = T) +
+  geom_line(aes(y = temp, colour = "temp")) +
+  geom_line(aes(y = thresh_clim_year, colour = "thresh"), size = 1.0) +
+  geom_line(aes(y = seas_clim_year, colour = "seas"), size = 1.2) + 
+  scale_colour_manual(name = "Line Colour", 
+                      values = c("temp" = "black", "thresh" =  "forestgreen", "seas" = "grey80")) +
+  scale_y_continuous(limits = c(18, 23.5)) +
+  xlab("Date") +
+  ylab(expression(paste("Temperature [", degree, "C]")))
+  
 ggplot(mcs$event, aes(x = date_start, y = int_cum)) +
-  geom_lolli(colour = "steelblue3", colour.n = "navy", n = 7)
+  geom_lolli(colour = "steelblue3", colour.n = "navy", n = 7) +
+  xlab("Date") + 
+  ylab(expression(paste("Cumulative intensity [days x ", degree, "C]")))
 ```
 
 ## The exceedance function
