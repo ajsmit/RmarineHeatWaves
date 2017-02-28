@@ -145,7 +145,8 @@ ggplot(data = mhw2, aes(x = date)) +
   geom_line(aes(y = seas_clim_year, colour = "seas")) +
   scale_colour_manual(name = "Line Colour", values = c("temp" = "black", "thresh" =  "forestgreen","seas" = "grey80")) +
   scale_fill_manual(name = "Event Colour", values = c("all" = "salmon", "top" = "red")) +
-  guides(colour = guide_legend(override.aes = list(fill = NA)))
+  guides(colour = guide_legend(override.aes = list(fill = NA))) +
+  xlab("Date") + ylab("Temperature [degrees C]")
 ```
 
 ![](README-fig-example3-1.png)
