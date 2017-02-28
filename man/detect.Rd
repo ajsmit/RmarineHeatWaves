@@ -6,8 +6,9 @@
 \usage{
 detect(data, climatology_start = 1983, climatology_end = 2012,
   pctile = 90, window_half_width = 5, smooth_percentile = TRUE,
-  smooth_percentile_width = 31, min_duration = 5, join_across_gaps = TRUE,
-  max_gap = 2, max_pad_length = 3, cold_spells = FALSE)
+  smooth_percentile_width = 31, clim_only = FALSE, min_duration = 5,
+  join_across_gaps = TRUE, max_gap = 2, max_pad_length = 3,
+  cold_spells = FALSE)
 }
 \arguments{
 \item{data}{A data frame with three columns. They are headed \code{doy},
@@ -44,6 +45,9 @@ climatology and threshold. Default is \code{31} days.}
 \item{smooth_percentile_width}{Boolean switch selecting whether to smooth the
 climatology and threshold percentile timeseries with a moving average of
 width \code{smooth_percentile}. Default is \code{TRUE}.}
+
+\item{clim_only}{Choose to calculate only the climatologies and not the 
+events. Default is \code{FALSE}.}
 
 \item{min_duration}{Minimum duration for acceptance of detected MHWs.
 Default is \code{5} days.}
@@ -161,6 +165,9 @@ then it works just as for heat waves except that events are detected as
 deviations below the (100 - pctile)th percentile  (e.g., the 10th instead of
 90th) for at least 5 days. Intensities are reported as negative values and
 represent the temperature anomaly below climatology.
+\item If one wishes to only calculate the climatologies for the time
+series, and not the events themselves, this may be done byt setting
+\code{clim_only} = TRUE.
 }
 The original Python algorithm was written by Eric Oliver, Institute for
 Marine and Antarctic Studies, University of Tasmania, Feb 2015, and is
