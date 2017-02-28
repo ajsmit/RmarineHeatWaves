@@ -105,7 +105,7 @@
 #'   \code{thresh_clim_year}.}
 #'   \item{duration_criterion}{Boolean indicating whether periods of consecutive
 #'   \code{thresh_criterion} are >= \code{min_duration}.}
-#'   \item{event}{Boolean indicting if all criteria that define a MHW or MCS are
+#'   \item{event}{Boolean indicating if all criteria that define a MHW or MCS are
 #'   met.}
 #'   \item{event_no}{A sequential number indicating the ID and order of
 #'   occurence of the MHWs or MCSs.}
