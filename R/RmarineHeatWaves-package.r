@@ -25,7 +25,7 @@
 #' Western Australia event, the 2012 Northwest Atlantic event and the 2003
 #' Mediterranean event. These data are included herewith.
 #'
-#' One may also use the \code{\link{exceedence}} function to calculate consecutive
+#' One may also use the \code{\link{exceedance}} function to calculate consecutive
 #' days above or below a given static threshold. The output of this function is
 #' similar to \code{\link{detect}}.
 #'
@@ -38,7 +38,7 @@
 #'
 #' Schlegel, R. W., Oliver, E. C. J., Wernberg, T. W., Smit, A. J. (2017)
 #' Coastal and offshore co-occurrences of marine heatwaves and cold-spells.
-#' Progress in Oceanography, <DOI:10.1016/j.pocean.2017.01.004>
+#' Progress in Oceanography, 151, pp. 189-205, <DOI:10.1016/j.pocean.2017.01.004>
 #'
 #' @name RmarineHeatWaves
 #' @docType package

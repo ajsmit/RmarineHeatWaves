@@ -2,7 +2,7 @@
 % Please edit documentation in R/geom_flame.R
 \name{geom_flame}
 \alias{geom_flame}
-\title{Create flame ploygons}
+\title{Create 'Flame' Ploygons.}
 \usage{
 geom_flame(mapping = NULL, data = NULL, stat = "identity",
   position = "identity", ..., na.rm = FALSE, show.legend = NA,
@@ -52,14 +52,15 @@ that define both data and aesthetics and shouldn't inherit behaviour from
 the default plot specification, e.g. \code{\link{borders}}.}
 }
 \description{
-This function will create polygons between two lines. If given a 
-temperature and theshold time series, like that produced by \code{\link{detect}}, 
-the output will meet the specifications of Hobday et al. (2016) shown as 
-flame polygons. If one wishes to plot polygons below a given threshold, and not
-above, switch the values being fed to the \code{y} and \code{thresh} 
+This function will create polygons between two lines. If given a
+temperature and theshold time series, like that produced by \code{\link{detect}},
+the output will meet the specifications of Hobday et al. (2016) shown as
+'flame polygons'. If one wishes to plot polygons below a given threshold, and not
+above, switch the values being fed to the \code{y} and \code{y2}
 aesthetics. This function differs in use from \code{\link{event_line}}
-in that it must be created as a ggplot() object. The benefit of this being
-that one may add additional information to the figure as may be necessary.
+in that it must be created as a \code{ggplot()} 'geom' object. The benefit
+of this being that one may add additional information to the figure as geom
+layers as may be necessary.
 }
 \section{Aesthetics}{
 
@@ -68,7 +69,7 @@ are in bold):
 \itemize{
   \item \strong{\code{x}}
   \item \strong{\code{y}}
-  \item \strong{\code{thresh}}
+  \item \strong{\code{y2}}
   \item \code{colour}
   \item \code{fill}
   \item \code{size}
@@ -86,10 +87,10 @@ mhw <- mhw[10580:10690,]
 \dontrun{
 require(ggplot2)
 ggplot(mhw, aes(x = date, y = temp)) +
-  geom_flame(aes(thresh = thresh_clim_year)) +
-  geom_text(aes(x = as.Date("2011-02-01"), y = 28, 
+  geom_flame(aes(y2 = thresh_clim_year)) +
+  geom_text(aes(x = as.Date("2011-02-01"), y = 28,
   label = "That's not a heatwave.\\nThis, is a heatwave.")) +
-  xlab("Date") + ylab("Temperature [degrees C]")
+  xlab("Date") + ylab(expression(paste("Temperature [", degree, "C]")))
 }
 }
 \references{
@@ -98,7 +99,7 @@ marine heatwaves, Progress in Oceanography, 141, pp. 227-238,
 doi: 10.1016/j.pocean.2015.12.014
 }
 \seealso{
-\code{\link{event_line}} for a non-ggplot2 based flame function
+\code{\link{event_line}} for a non-ggplot2 based flame function.
 }
 \author{
 Robert W. Schlegel

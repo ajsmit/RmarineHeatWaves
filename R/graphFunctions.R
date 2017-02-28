@@ -82,7 +82,7 @@ event_line <- function(data,
       data.frame(date = seq(x$date[1], x$date[nrow(x)], by = "day"))
     x <- merge(x, grid.df, by = "date", all.y = TRUE)
 
-    if(nrow(x[x$thresh_criterion != FALSE,]) != nrow(x)){
+    if (nrow(x[x$thresh_criterion != FALSE,]) != nrow(x)) {
       ex1 <- rle(x$thresh_criterion)
       ind1 <- rep(seq_along(ex1$lengths), ex1$lengths)
       s1 <- split(zoo::index(x$thresh_criterion), ind1)
@@ -152,11 +152,11 @@ event_line <- function(data,
   }
 
   # yaxis = "int_max" yaxis = "int_mean" yaxis = "int_cum" yaxis = "duration"
-  if(metric == "int_max") ylabel <- expression(paste("Maximum intensity [", degree, "C]"))
-  if(metric == "int_mean") ylabel <- expression(paste("Mean intensity [", degree, "C]"))
-  if(metric == "int_cum") ylabel <- expression(paste("Cumulative intensity [", degree, "C x days]"))
-  if(metric == "duration") ylabel <- "Duration [days]"
-  if(!exists("ylabel")) ylabel <- metric
+  if (metric == "int_max") ylabel <- expression(paste("Maximum intensity [", degree, "C]"))
+  if (metric == "int_mean") ylabel <- expression(paste("Mean intensity [", degree, "C]"))
+  if (metric == "int_cum") ylabel <- expression(paste("Cumulative intensity [", degree, "C x days]"))
+  if (metric == "duration") ylabel <- "Duration [days]"
+  if (!exists("ylabel")) ylabel <- metric
 
   ggplot(data = clim, aes(x = date, y = temp)) +
     geom_polygon(data = dat3,
@@ -229,7 +229,7 @@ lolli_plot <- function(data,
                        xaxis = "date_start") {
 
   event <- data$event
-  if(nrow(event) == 0) stop("No events detected!")
+  if (nrow(event) == 0) stop("No events detected!")
 
   peak_sort <- NULL
   expr <- lazyeval::interp(~abs(x), x = as.name(metric))
@@ -242,7 +242,7 @@ lolli_plot <- function(data,
     event$col <- "event"
     event[1:event_count, 6] <- "peak event"
 
-  if(event[1, 4] < 0){
+  if (event[1, 4] < 0) {
     lolli_col <- c("steelblue3", "navy")
   } else {
     lolli_col <- c("salmon", "red")
@@ -250,15 +250,15 @@ lolli_plot <- function(data,
 
   # Create y and x axis labels
   # xaxis = "event_no" xaxis = "date_start" xaxis = "date_peak"
-  if(xaxis == "event_no") xlabel <- "Event number"
-  if(xaxis == "date_start") xlabel <- "Start date"
-  if(xaxis == "date_peak") xlabel <- "Peak date"
+  if (xaxis == "event_no") xlabel <- "Event number"
+  if (xaxis == "date_start") xlabel <- "Start date"
+  if (xaxis == "date_peak") xlabel <- "Peak date"
   # yaxis = "int_max" yaxis = "int_mean" yaxis = "int_cum" yaxis = "duration"
-  if(metric == "int_max") ylabel <- expression(paste("Maximum intensity [", degree, "C]"))
-  if(metric == "int_mean") ylabel <- expression(paste("Mean intensity [", degree, "C]"))
-  if(metric == "int_cum") ylabel <- expression(paste("Cumulative intensity [", degree, "C x days]"))
-  if(metric == "duration") ylabel <- "Duration [days]"
-  if(!exists("ylabel")) ylabel <- metric
+  if (metric == "int_max") ylabel <- expression(paste("Maximum intensity [", degree, "C]"))
+  if (metric == "int_mean") ylabel <- expression(paste("Mean intensity [", degree, "C]"))
+  if (metric == "int_cum") ylabel <- expression(paste("Cumulative intensity [", degree, "C x days]"))
+  if (metric == "duration") ylabel <- "Duration [days]"
+  if (!exists("ylabel")) ylabel <- metric
 
   # Create the figure
   lolli <- ggplot(data = event, aes_string(x = xaxis, y = metric)) +
@@ -279,13 +279,13 @@ lolli_plot <- function(data,
       axis.text = element_text(colour = "black"),
       axis.text.x = element_text(margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm")),
       axis.text.y = element_text(margin = unit(c(0.5, 0.5, 0.5, 0.5), "cm")),
-      axis.ticks.length  =unit(-0.25, "cm")
+      axis.ticks.length = unit(-0.25, "cm")
     )
-  if(xaxis == "event_no"){
+  if (xaxis == "event_no") {
     lolli <- lolli +
       scale_x_continuous(breaks = seq(from = 0, to = nrow(data$event), by = 5))
   }
-  if(event[1, 4] < 0 & metric != "duration"){
+  if (event[1, 4] < 0 & metric != "duration") {
     lolli <- lolli +
       theme(legend.justification = c(0, 4.85))
   }

@@ -3,7 +3,7 @@
 export(block_average)
 export(detect)
 export(event_line)
-export(exceedence)
+export(exceedance)
 export(geom_flame)
 export(geom_lolli)
 export(lolli_plot)

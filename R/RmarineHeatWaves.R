@@ -185,7 +185,9 @@ detect <-
            join_across_gaps = TRUE,
            max_gap = 2,
            max_pad_length = 3,
-           cold_spells = FALSE) {
+           cold_spells = FALSE
+           # verbose = TRUE, # to be implemented
+           ) {
 
     t_series <- data
     t_series$temp <- zoo::na.approx(t_series$temp, maxgap = max_pad_length)

@@ -3,8 +3,21 @@ output: pdf_document
 ---
 
 # VERSION CHANGES
-## Changes in version 0.14.7 (28 February 2017)
+## Changes in version 0.15.3 (28 February 2017)
 * The detect() function may now be told to calculate climatologies only.
+
+## Changes in version 0.15.2 (18 February 2017)
+* Updating README.md, README.Rmd files.
+* Updating the vignette.
+
+## Changes in version 0.15.1 (15 February 2017)
+* 'exceedence' changed to 'exceedance' throughout.
+
+## Changes in version 0.15.0 (15 February 2017)
+* Final edits to 'geom_flame' and 'geom_lolli';
+  - specifically in geom_flame, small gaps in the corners of polygons are now 
+  being filled in correctly.
+* Updated examples.
 
 ## Changes in version 0.14.6 (15 February 2017)
 * Edits to 'geom_flame' and 'geom_lolli'.
@@ -18,15 +31,15 @@ output: pdf_document
 
 ## Changes in version 0.14.3 (31 January 2017)
 * Corrected plotting error in event polygons in 'event_line' function
-* Added two new functions: 'geom_event_line' and 'geom_lolli_plot' which may be used 
-with ggplot2 directly as geoms.
+* Added two new functions: 'geom_event_line' and 'geom_lolli_plot' which may be 
+used with ggplot2 directly as geoms.
 
 ## Changes in version 0.14.2 (26 January 2017)
 * Fix bug which was that was brought to my attention by Mahmoud Haouari: enable 
 the pctile option in the detect() function, which was accidentally disabled.
 
 ## Changes in version 0.14.1 (10 January 2017)
-* Improved error messages in exceedence().
+* Improved error messages in exceedance().
 * Bug fix.
 
 ## Changes in version 0.14.0 (11 December 2016)
@@ -34,22 +47,23 @@ the pctile option in the detect() function, which was accidentally disabled.
 
 ## Changes in version 0.13.9.9200 (11 December 2016)
 * Minor edits to documentation.
-* Corrected issue where the event_line graph's y-axis did not reflect the correct units
-for the metric selected for plotting.
+* Corrected issue where the event_line graph's y-axis did not reflect the correct 
+units for the metric selected for plotting.
 * Updated the theme, i.e. removed the default ggplot2 theme in favour
 of a more conventional white background with nice black axes.
 * Removed the legend that indicated the peak and secondary events from the 
 event_line plot. 
-* Repositioned the legend in the event_line plot: it is now int he bottom right corner
-as here it has less chance of plotting over the peak events when the graph is rescaled.
+* Repositioned the legend in the event_line plot: it is now int he bottom right 
+corner as here it has less chance of plotting over the peak events when the 
+graph is rescaled.
 
 ## Changes in version 0.13.8.9200 (23 November 2016)
-* Minor update to exceedence() function to improve usability.
-* Usage of exceedence() shown in README file
+* Minor update to exceedance() function to improve usability.
+* Usage of exceedance() shown in README file
 
 ## Changes in version 0.13.7.9100 (22 October 2016)
 * The additions to the detect() function madde in the previous update have been 
-rolled back in favour of creating an independent function to calculate exceedences.
+rolled back in favour of creating an independent function to calculate exceedances.
 
 ## Changes in version 0.13.6.9000 (22 October 2016)
 * Added 'threshold' variable to detect() function.
@@ -186,29 +200,3 @@ compatibility with plyr (version < 1.8.3).
 * Add 'eventNo' to climatology output to identify each unique event and to
 fascilitate plotting of filled polygons using 'geom_polygon' in ggplot2, as per
 Robert Schlegel's suggestion.
-
-# TODO:
-* Allow make_whole() function to provide helpful output, such as % NAs per year,
-the number of missing dates filled in, and the start and end dates of the time
-series.
-* Test if specified years in 'climatology_period' are full years.
-* What happens when 'climatology_period' is given but dates outside of the time 
-series are provided? It should fail with the appropriate error message 
-retruned - possibly something helpful such as start and end dates of the first
-and last full years.
-* Enable 'smooth_percentile' = TRUE / FALSE.
-* Enable 'join_across_gaps' = TRUE / FALSE.
-* event_line() function: if 'start_date' and 'end_date' are not provided, make
-the function automatically select the beginning and end dates of the whole time
-series.
-* event_line() function: Windows computers do not easily produce pdf files as 
-output. Provide the option to output png and jpg files, and maybe have a jpg as
-default.
-
-# THOUGHTS:
-* My intention with the output is that the objects are simple enough for users 
-to interact with directly ...
-* Implement diagnostics, assessment, and exploration of the input data.
-* Implement diagnostics, assessment, and exploration of these data objects.
-* Could the review of these data objects be streamlined using classes and methods?
-* If so, how should these be structured?

@@ -2,7 +2,7 @@
 ^\.Rproj\.user$
 ^README\.Rmd$
 ^README-.*\.png$
-^NEWS\.md$
+^TODO\.md$
 ^\.travis\.yml$
 ^\.DS_Store$
 ^\.Rhistory$
