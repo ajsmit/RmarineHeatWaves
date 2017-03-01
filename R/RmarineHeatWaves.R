@@ -33,7 +33,7 @@
 #' @param smooth_percentile_width Boolean switch selecting whether to smooth the
 #' climatology and threshold percentile timeseries with a moving average of
 #' width \code{smooth_percentile}. Default is \code{TRUE}.
-#' @param clim_only Choose to calculate only the climatologies and not the 
+#' @param clim_only Choose to calculate only the climatologies and not the
 #' events. Default is \code{FALSE}.
 #' @param min_duration Minimum duration for acceptance of detected MHWs.
 #' Default is \code{5} days.
@@ -83,9 +83,8 @@
 #' deviations below the (100 - pctile)th percentile  (e.g., the 10th instead of
 #' 90th) for at least 5 days. Intensities are reported as negative values and
 #' represent the temperature anomaly below climatology.
-#' \item If one wishes to only calculate the climatologies for the time
-#' series, and not the events themselves, this may be done byt setting
-#' \code{clim_only} = TRUE.
+#' \item If only the climatology for the time series is required, and not the
+#' events themselves, this may be done by setting \code{clim_only} = TRUE.
 #' }
 #' The original Python algorithm was written by Eric Oliver, Institute for
 #' Marine and Antarctic Studies, University of Tasmania, Feb 2015, and is
@@ -265,17 +264,17 @@ detect <-
           )
         )
     }
-    
+
     if(clim_only){
       t_series <- merge(data, clim, by = "doy")
       t_series <- t_series[order(t_series$date),]
       return(t_series)
-      
+
     } else {
-      
+
       t_series %<>% dplyr::inner_join(clim, by = "doy")
       t_series$temp[is.na(t_series$temp)] <- t_series$seas_clim_year[is.na(t_series$temp)]
-      
+
       t_series$thresh_criterion <- t_series$temp > t_series$thresh_clim_year
       ex1 <- rle(t_series$thresh_criterion)
       ind1 <- rep(seq_along(ex1$lengths), ex1$lengths)
@@ -285,9 +284,9 @@ detect <-
       proto_events_rng <-
         lapply(proto_events, function(x)
           data.frame(index_start = min(x), index_stop = max(x)))
-      
+
       duration <- NULL ###
-      
+
       protoFunc <- function(proto_data) {
         out <- proto_data %>%
           dplyr::mutate(duration = index_stop - index_start + 1) %>%
@@ -295,29 +294,29 @@ detect <-
           dplyr::mutate(date_start = t_series[index_start, "date"]) %>%
           dplyr::mutate(date_stop = t_series[index_stop, "date"])
       }
-      
+
       proto_events <- do.call(rbind, proto_events_rng) %>%
         dplyr::mutate(event_no = cumsum(ex1$values[ex1$values == TRUE])) %>%
         protoFunc()
-      
+
       t_series$duration_criterion <- rep(FALSE, nrow(t_series))
-      
+
       for (i in 1:nrow(proto_events)) {
         t_series$duration_criterion[proto_events$index_start[i]:proto_events$index_stop[i]] <-
           rep(TRUE, length = proto_events$duration[i])
       }
-      
+
       ex2 <- rle(t_series$duration_criterion)
       ind2 <- rep(seq_along(ex2$lengths), ex2$lengths)
       s2 <- split(zoo::index(t_series$thresh_criterion), ind2)
       proto_gaps <- s2[ex2$values == FALSE]
       proto_gaps_rng <-
         lapply(proto_gaps, function(x) data.frame(index_start = min(x), index_stop = max(x)))
-      
+
       proto_gaps <- do.call(rbind, proto_gaps_rng) %>%
         dplyr::mutate(event_no = c(1:length(ex2$values[ex2$values == FALSE]))) %>%
         dplyr::mutate(duration = index_stop - index_start + 1)
-      
+
       if (any(proto_gaps$duration >= 1 & proto_gaps$duration <= max_gap)) {
         proto_gaps %<>%
           dplyr::mutate(date_start = t_series[index_start, "date"]) %>%
@@ -326,7 +325,7 @@ detect <-
       } else {
         join_across_gaps <- FALSE
       }
-      
+
       if (join_across_gaps) {
         t_series$event <- t_series$duration_criterion
         for (i in 1:nrow(proto_gaps)) {
@@ -336,7 +335,7 @@ detect <-
       } else {
         t_series$event <- t_series$duration_criterion
       }
-      
+
       ex3 <- rle(t_series$event)
       ind3 <- rep(seq_along(ex3$lengths), ex3$lengths)
       s3 <- split(zoo::index(t_series$event), ind3)
@@ -345,17 +344,17 @@ detect <-
       events_rng <-
         lapply(events, function(x)
           data.frame(index_start = min(x), index_stop = max(x)))
-      
+
       events <- do.call(rbind, events_rng) %>%
         dplyr::mutate(event_no = cumsum(ex3$values[ex3$values == TRUE])) %>%
         protoFunc()
-      
+
       t_series$event_no <- rep(NA, nrow(t_series))
       for (i in 1:nrow(events)) {
         t_series$event_no[events$index_start[i]:events$index_stop[i]] <-
           rep(i, length = events$duration[i])
       }
-      
+
       events_list <- plyr::dlply(events, .(event_no), function(x)
         with(
           t_series,
@@ -370,7 +369,7 @@ detect <-
               c(thresh_clim_year[x$index_start:x$index_stop]) - c(seas_clim_year[x$index_start:x$index_stop])
           )
         ))
-      
+
       int_mean <- int_max <- int_cum <- int_mean_rel_thresh <-
         int_max_rel_thresh <- int_cum_rel_thresh <- int_mean_abs <-
         int_max_abs <- int_cum_abs <- int_mean_norm <- int_max_norm <-
@@ -406,7 +405,7 @@ detect <-
         plyr::ldply(events_list, function(x) mean(x$rel_thresh_norm))[, 2]
       events$int_max_norm <-
         plyr::ldply(events_list, function(x) max(x$rel_thresh_norm))[, 2]
-      
+
       mhw_rel_seas <- t_series$temp - t_series$seas_clim_year
       A <- mhw_rel_seas[events$index_start]
       B <- t_series$temp[events$index_start - 1]
@@ -433,7 +432,7 @@ detect <-
         )
       }
       events$rate_onset <- rateOnset(events, start_type)
-      
+
       D <- mhw_rel_seas[events$index_stop]
       E <- t_series$temp[events$index_stop + 1]
       F <- t_series$seas_clim_year[events$index_stop + 1]
@@ -448,7 +447,7 @@ detect <-
           "case6"
         )
       )[nrow(events)]
-      
+
       rateDecline <- function(x, type) {
         switch(
           type,
@@ -460,7 +459,7 @@ detect <-
         )
       }
       events$rate_decline <- rateDecline(events, stop_type)
-      
+
       if (cold_spells) {
         events <- events %>% dplyr::mutate(
           int_mean = -int_mean,
@@ -481,9 +480,9 @@ detect <-
           thresh_clim_year = -thresh_clim_year
         )
       }
-      
+
       list(clim = dplyr::group_by(t_series, event_no),
            event = dplyr::group_by(events, event_no))
-      
+
     }
   }

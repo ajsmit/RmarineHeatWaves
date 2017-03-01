@@ -46,7 +46,7 @@ climatology and threshold. Default is \code{31} days.}
 climatology and threshold percentile timeseries with a moving average of
 width \code{smooth_percentile}. Default is \code{TRUE}.}
 
-\item{clim_only}{Choose to calculate only the climatologies and not the 
+\item{clim_only}{Choose to calculate only the climatologies and not the
 events. Default is \code{FALSE}.}
 
 \item{min_duration}{Minimum duration for acceptance of detected MHWs.
@@ -85,7 +85,7 @@ events that were detected:
   \code{thresh_clim_year}.}
   \item{duration_criterion}{Boolean indicating whether periods of consecutive
   \code{thresh_criterion} are >= \code{min_duration}.}
-  \item{event}{Boolean indicting if all criteria that define a MHW or MCS are
+  \item{event}{Boolean indicating if all criteria that define a MHW or MCS are
   met.}
   \item{event_no}{A sequential number indicating the ID and order of
   occurence of the MHWs or MCSs.}
@@ -165,9 +165,8 @@ then it works just as for heat waves except that events are detected as
 deviations below the (100 - pctile)th percentile  (e.g., the 10th instead of
 90th) for at least 5 days. Intensities are reported as negative values and
 represent the temperature anomaly below climatology.
-\item If one wishes to only calculate the climatologies for the time
-series, and not the events themselves, this may be done byt setting
-\code{clim_only} = TRUE.
+\item If only the climatology for the time series is required, and not the
+events themselves, this may be done by setting \code{clim_only} = TRUE.
 }
 The original Python algorithm was written by Eric Oliver, Institute for
 Marine and Antarctic Studies, University of Tasmania, Feb 2015, and is
