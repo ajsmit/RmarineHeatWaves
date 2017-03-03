@@ -81,6 +81,7 @@ events that were detected:
   \item{seas_clim_year}{Climatological seasonal cycle [deg. C].}
   \item{thresh_clim_year}{Seasonally varying threshold (e.g., 90th
   percentile) [deg. C].}
+  \item{var_clim_year}{Seasonally varying variance (standard deviation) [deg. C].}
   \item{thresh_criterion}{Boolean indicating if \code{temp} exceeds
   \code{thresh_clim_year}.}
   \item{duration_criterion}{Boolean indicating whether periods of consecutive

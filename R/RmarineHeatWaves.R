@@ -4,6 +4,7 @@
 #' series of temperature along with a daily date vector.
 #'
 #' @importFrom magrittr %>%
+#' @importFrom stats sd
 #' @importFrom plyr .
 #' @param data A data frame with three columns. They are headed \code{doy},
 #' which is the Julian day running from 1 to 366, but modified so that the
@@ -105,6 +106,7 @@
 #'   \item{seas_clim_year}{Climatological seasonal cycle [deg. C].}
 #'   \item{thresh_clim_year}{Seasonally varying threshold (e.g., 90th
 #'   percentile) [deg. C].}
+#'   \item{var_clim_year}{Seasonally varying variance (standard deviation) [deg. C].}
 #'   \item{thresh_criterion}{Boolean indicating if \code{temp} exceeds
 #'   \code{thresh_clim_year}.}
 #'   \item{duration_criterion}{Boolean indicating whether periods of consecutive
@@ -218,11 +220,14 @@ detect <-
     tDat[59:61, no_NA] <- zoo::na.approx(tDat[59:61, no_NA], maxgap = 1, na.rm = TRUE)
     tDat <- rbind(utils::tail(tDat, window_half_width),
                   tDat, utils::head(tDat, window_half_width))
-    seas_clim_year <- thresh_clim_year <- rep(NA, nrow(tDat))
+
+    seas_clim_year <- thresh_clim_year <- var_clim_year <- rep(NA, nrow(tDat))
 
     for (i in (window_half_width + 1):((nrow(tDat) - window_half_width))) {
       seas_clim_year[i] <-
-        mean(c(t(tDat[(i - (window_half_width)):(i + window_half_width), 2:ncol(tDat)])), na.rm = TRUE)
+        mean(
+          c(t(tDat[(i - (window_half_width)):(i + window_half_width), 2:ncol(tDat)])),
+          na.rm = TRUE)
       thresh_clim_year[i] <-
         raster::quantile(
           c(t(tDat[(i - (window_half_width)):(i + window_half_width), 2:ncol(tDat)])),
@@ -231,6 +236,11 @@ detect <-
           na.rm = TRUE,
           names = FALSE
         )
+      var_clim_year[i] <-
+        sd(
+          c(t(tDat[(i - (window_half_width)):(i + window_half_width), 2:ncol(tDat)])),
+          na.rm = TRUE
+        )
     }
 
     len_clim_year <- 366
@@ -238,7 +248,8 @@ detect <-
       data.frame(
         doy = tDat[(window_half_width + 1):((window_half_width) + len_clim_year), 1],
         seas_clim_year = seas_clim_year[(window_half_width + 1):((window_half_width) + len_clim_year)],
-        thresh_clim_year = thresh_clim_year[(window_half_width + 1):((window_half_width) + len_clim_year)]
+        thresh_clim_year = thresh_clim_year[(window_half_width + 1):((window_half_width) + len_clim_year)],
+        var_clim_year = var_clim_year[(window_half_width + 1):((window_half_width) + len_clim_year)]
       )
 
     if (smooth_percentile) {
@@ -262,16 +273,24 @@ detect <-
             circular = TRUE,
             na.rm = FALSE
           )
+        ) %>%
+        dplyr::mutate(
+          var_clim_year = raster::movingFun(
+            var_clim_year,
+            n = smooth_percentile_width,
+            fun = mean,
+            type = "around",
+            circular = TRUE,
+            na.rm = FALSE
+          )
         )
     }
 
-    if(clim_only){
+    if(clim_only) {
       t_series <- merge(data, clim, by = "doy")
       t_series <- t_series[order(t_series$date),]
       return(t_series)
-
     } else {
-
       t_series %<>% dplyr::inner_join(clim, by = "doy")
       t_series$temp[is.na(t_series$temp)] <- t_series$seas_clim_year[is.na(t_series$temp)]
 
@@ -483,6 +502,5 @@ detect <-
 
       list(clim = dplyr::group_by(t_series, event_no),
            event = dplyr::group_by(events, event_no))
-
     }
   }
