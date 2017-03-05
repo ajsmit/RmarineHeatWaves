@@ -12,13 +12,13 @@ detect(data, climatology_start = 1983, climatology_end = 2012,
 }
 \arguments{
 \item{data}{A data frame with three columns. They are headed \code{doy},
-which is the Julian day running from 1 to 366, but modified so that the
-day-of-year (doy) vector for non-leap-years runs 1...59 and then
-61...366. For leap years the 60th day is February 29. The \code{date} column
-is a vector of dates of class \code{Date}, while \code{temp} is the
-temperature. Data of the appropriate format are created by the function
-\code{\link{make_whole}}, but your own data can be supplied if they meet the
-criteria specified by \code{\link{make_whole}}.}
+\code{date} and \code{temp.} \code{doy} is the Julian day running from 1
+to 366, but modified so that the day-of-year (doy) vector for non-leap-years
+runs 1...59 and then 61...366. For leap years the 60th day is February 29.
+The \code{date} column is a vector of dates of class \code{Date}, while
+\code{temp} is the temperature. Data of the appropriate format are created
+by the function \code{\link{make_whole}}, but your own data can be supplied
+if they meet the criteria specified by \code{\link{make_whole}}.}
 
 \item{climatology_start}{The first full year from which the (varying by
 day-of-year) seasonal cycle and extremes threshold are calculated (full being

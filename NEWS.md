@@ -3,8 +3,9 @@ output: pdf_document
 ---
 
 # VERSION CHANGES
-## Changes in version 0.15.4 (3 March 2017)
+## Changes in version 0.15.4 (5 March 2017)
 * The detect() function now also produces a 'climatological' variance.
+* Improve documentation in a help file.
 
 ## Changes in version 0.15.3 (28 February 2017)
 * The detect() function may now be told to calculate climatologies only.
