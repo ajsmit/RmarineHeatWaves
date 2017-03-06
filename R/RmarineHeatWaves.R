@@ -293,7 +293,6 @@ detect <-
     } else {
       t_series %<>% dplyr::inner_join(clim, by = "doy")
       t_series$temp[is.na(t_series$temp)] <- t_series$seas_clim_year[is.na(t_series$temp)]
-
       t_series$thresh_criterion <- t_series$temp > t_series$thresh_clim_year
       ex1 <- rle(t_series$thresh_criterion)
       ind1 <- rep(seq_along(ex1$lengths), ex1$lengths)
@@ -306,12 +305,19 @@ detect <-
 
       duration <- NULL ###
 
+      # protoFunc <- function(proto_data) {
+      #   out <- proto_data %>%
+      #     dplyr::mutate(duration = index_stop - index_start + 1) %>%
+      #     dplyr::filter(duration >= min_duration) %>%
+      #     dplyr::mutate(date_start = t_series[index_start, "date"]) %>%
+      #     dplyr::mutate(date_stop = t_series[index_stop, "date"])
+      # }
       protoFunc <- function(proto_data) {
         out <- proto_data %>%
           dplyr::mutate(duration = index_stop - index_start + 1) %>%
           dplyr::filter(duration >= min_duration) %>%
-          dplyr::mutate(date_start = t_series[index_start, "date"]) %>%
-          dplyr::mutate(date_stop = t_series[index_stop, "date"])
+          dplyr::mutate(date_start = t_series$date[index_start]) %>%
+          dplyr::mutate(date_stop = t_series$date[index_stop])
       }
 
       proto_events <- do.call(rbind, proto_events_rng) %>%
@@ -338,8 +344,8 @@ detect <-
 
       if (any(proto_gaps$duration >= 1 & proto_gaps$duration <= max_gap)) {
         proto_gaps %<>%
-          dplyr::mutate(date_start = t_series[index_start, "date"]) %>%
-          dplyr::mutate(date_stop = t_series[index_stop, "date"]) %>%
+          dplyr::mutate(date_start = t_series$date[index_start]) %>%
+          dplyr::mutate(date_stop = t_series$date[index_stop]) %>%
           dplyr::filter(duration >= 1 & duration <= max_gap)
       } else {
         join_across_gaps <- FALSE

@@ -3,6 +3,12 @@ output: pdf_document
 ---
 
 # VERSION CHANGES
+## Changes in version 0.15.5 (6 March 2017)
+* Update to 'protoFunc' helper function within 'detect'; in the previous version
+it returned the error "Error: not compatible with STRSXP" under rare circumstances,
+the cause of which remains unknown.
+* Update the calculation of proto_gaps for the same reason.
+
 ## Changes in version 0.15.4 (5 March 2017)
 * The detect() function now also produces a 'climatological' variance.
 * Improve documentation in a help file.
