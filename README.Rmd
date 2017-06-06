@@ -69,7 +69,7 @@ mhw$event %>%
 
 The corresponding `event_line()` and `lolli_plot()`, which represent the massive Western Australian heatwave of 2011, look like this:
 
-```{r fig-example1, fig.height = 3, fig.width = 8, include=FALSE, echo=TRUE}
+```{r fig-example1, fig.height = 3, fig.width = 8, eval=FALSE}
 event_line(mhw, spread = 200, metric = "int_cum",
            start_date = "2010-10-01", end_date = "2011-08-30")
 ```
