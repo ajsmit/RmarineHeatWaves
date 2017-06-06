@@ -21,7 +21,6 @@ knitr::opts_chunk$set(
 [![Travis-CI Build Status](https://travis-ci.org/ajsmit/RmarineHeatWaves.svg?branch=master)](https://travis-ci.org/ajsmit/RmarineHeatWaves)
 ![](https://cranlogs.r-pkg.org/badges/grand-total/RmarineHeatWaves)
 
-
 The **RmarineHeatWaves** package is a translation of the original Python code written 
 by Eric C. J. Oliver that can be found on [GitHub](https://github.com/ecjoliver/marineHeatWaves).
 
@@ -70,12 +69,14 @@ mhw$event %>%
 
 The corresponding `event_line()` and `lolli_plot()`, which represent the massive Western Australian heatwave of 2011, look like this:
 
-```{r fig-example1, fig.height = 3, fig.width = 8}
+```{r fig-example1, fig.height = 3, fig.width = 8, include=FALSE}
 event_line(mhw, spread = 200, metric = "int_cum",
            start_date = "2010-10-01", end_date = "2011-08-30")
 ```
 
-```{r fig-example2, fig.height = 3, fig.width = 8}
+![The Western Australian heatwave of 2011.](tools/fig-example1.png)
+
+```{r fig-example2, fig.height = 3, fig.width = 8, include=FALSE}
 lolli_plot(mhw)
 ```
 

@@ -94,18 +94,7 @@ mhw$event %>%
 
 The corresponding `event_line()` and `lolli_plot()`, which represent the massive Western Australian heatwave of 2011, look like this:
 
-``` r
-event_line(mhw, spread = 200, metric = "int_cum",
-           start_date = "2010-10-01", end_date = "2011-08-30")
-```
-
-![](tools/fig-example1-1.png)
-
-``` r
-lolli_plot(mhw)
-```
-
-![](tools/fig-example2-1.png)
+![The Western Australian heatwave of 2011.](tools/fig-example1.png)
 
 The `event_line()` and `lolli_plot()` functions were designed to work directly on one of the list returned by `detect()`. If more control over the figures is required, it may be useful to create them in **ggplot2** by stacking 'geoms'. We specifically created two new **ggplot2** geoms to reproduce the functionality of `event_line()` and `lolli_plot()`. These functions are more general in their functionality and can be used outside of the **RmarineHeatWave** package too. To apply them to MHWs and MCSs, they require that we access the `clim` or `event` data frames within the list that is produced by `detect()`. Here is how:
 
