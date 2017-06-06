@@ -201,11 +201,13 @@ detect <-
 
     clim_start <- paste(climatology_start, "01", "01", sep = "-")
     if (t_series$date[1] > clim_start)
-      stop(paste("The specified start date precedes the first day of series, which is", t_series$date[1]))
+      stop(paste("The specified start date precedes the first day of series, which is",
+                 t_series$date[1]))
 
     clim_end <- paste(climatology_end, "12", "31", sep = "-")
     if (clim_end > t_series$date[nrow(t_series)])
-      stop(paste("The specified end date follows the last day of series, which is", t_series$date[nrow(t_series)]))
+      stop(paste("The specified end date follows the last day of series, which is",
+                 t_series$date[nrow(t_series)]))
 
     if (cold_spells)
       t_series$temp <- -t_series$temp
@@ -305,13 +307,6 @@ detect <-
 
       duration <- NULL ###
 
-      # protoFunc <- function(proto_data) {
-      #   out <- proto_data %>%
-      #     dplyr::mutate(duration = index_stop - index_start + 1) %>%
-      #     dplyr::filter(duration >= min_duration) %>%
-      #     dplyr::mutate(date_start = t_series[index_start, "date"]) %>%
-      #     dplyr::mutate(date_stop = t_series[index_stop, "date"])
-      # }
       protoFunc <- function(proto_data) {
         out <- proto_data %>%
           dplyr::mutate(duration = index_stop - index_start + 1) %>%
