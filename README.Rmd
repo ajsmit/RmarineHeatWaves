@@ -9,7 +9,7 @@ output:
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.path = "README-",
+  fig.path = "tools/",
   fig.height = 3,
   fig.width = 8
 )
