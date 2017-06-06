@@ -3,6 +3,9 @@ output: pdf_document
 ---
 
 # VERSION CHANGES
+## Changes in version 0.15.6 (6 March 2017)
+* Update README.Rmd to correct figure paths.
+ 
 ## Changes in version 0.15.5 (6 March 2017)
 * Update to 'protoFunc' helper function within 'detect'; in the previous version
 it returned the error "Error: not compatible with STRSXP" under rare circumstances,
