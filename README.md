@@ -99,7 +99,13 @@ event_line(mhw, spread = 200, metric = "int_cum",
            start_date = "2010-10-01", end_date = "2011-08-30")
 ```
 
-![The Western Australian heatwave of 2011.](tools/fig-example1-1.png)
+![](tools/fig-example1-1.png)
+
+``` r
+lolli_plot(mhw)
+```
+
+![](tools/fig-example2-1.png)
 
 The `event_line()` and `lolli_plot()` functions were designed to work directly on one of the list returned by `detect()`. If more control over the figures is required, it may be useful to create them in **ggplot2** by stacking 'geoms'. We specifically created two new **ggplot2** geoms to reproduce the functionality of `event_line()` and `lolli_plot()`. These functions are more general in their functionality and can be used outside of the **RmarineHeatWave** package too. To apply them to MHWs and MCSs, they require that we access the `clim` or `event` data frames within the list that is produced by `detect()`. Here is how:
 
@@ -179,16 +185,11 @@ The plots showing the marine cold spells look like this:
 ``` r
 event_line(mcs, spread = 200, metric = "int_cum",
            start_date = "1990-01-01", end_date = "1990-08-30")
-```
-
-![](tools/fig-example6-1.png)
-
-``` r
 
 lolli_plot(mcs)
 ```
 
-![](tools/fig-example6-2.png)
+![](tools/fig-example6-1.png) ![](tools/fig-example6-2.png)
 
 Cold spell figures may be created as geoms in **ggplot2**, too:
 
@@ -207,11 +208,6 @@ ggplot(data = mcs2, aes(x = date)) +
   scale_y_continuous(limits = c(18, 23.5)) +
   xlab("Date") +
   ylab(expression(paste("Temperature [", degree, "C]")))
-```
-
-![](tools/fig-example7-1.png)
-
-``` r
 
 ggplot(mcs$event, aes(x = date_start, y = int_cum)) +
   geom_lolli(colour = "steelblue3", colour.n = "navy", n = 7) +
@@ -219,7 +215,7 @@ ggplot(mcs$event, aes(x = date_start, y = int_cum)) +
   ylab(expression(paste("Cumulative intensity [days x ", degree, "C]")))
 ```
 
-![](tools/fig-example7-2.png)
+![](tools/fig-example7-1.png) ![](tools/fig-example7-2.png)
 
 The exceedance function
 -----------------------
