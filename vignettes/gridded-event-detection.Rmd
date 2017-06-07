@@ -35,7 +35,7 @@ Because of human-induced climate change, we anticipate that extreme events would
 
 ## Reading in the netCDF
 
-First, I read in the 0.25 degree [OISST netCDF file](http://www.ncdc.noaa.gov/thredds/oisst-catalog.html). I save the only variable, **sst**, as a multidimensional array (longitude, latitude and date). To do this, I use the **ncdf4** package. I then construct a list with names and values for each dimension of the SST array. The example data used here cover 93 longitude and 43 latitude steps (i.e. 3999 pixels), and cover 12797 days (1981 to 2016). The names for the three dimensions are simply a list of longitudes, latitudes and dates, which I get directly from the netCDF file. Note that not all netCDF files are created equally, and sometimes vectors of longitudes, latitudes and dates need to be created based on the start values for lat/lon/date in the netCDF, and the 'steps' between sequential lats/lons/dates. To determine out how to approach reading in the netCDF file, use the `print()` function to scrutinise the content of the netCDF.
+First, I read in the 0.25 degree [OISST netCDF file](https://www.ncei.noaa.gov/thredds/blended-global/oisst-catalog.html). I save the only variable, **sst**, as a multidimensional array (longitude, latitude and date). To do this, I use the **ncdf4** package. I then construct a list with names and values for each dimension of the SST array. The example data used here cover 93 longitude and 43 latitude steps (i.e. 3999 pixels), and cover 12797 days (1981 to 2016). The names for the three dimensions are simply a list of longitudes, latitudes and dates, which I get directly from the netCDF file. Note that not all netCDF files are created equally, and sometimes vectors of longitudes, latitudes and dates need to be created based on the start values for lat/lon/date in the netCDF, and the 'steps' between sequential lats/lons/dates. To determine out how to approach reading in the netCDF file, use the `print()` function to scrutinise the content of the netCDF.
 
 ```{r read-netcdf, echo = TRUE, eval = FALSE}
 nc <- nc_open("/Users/ajsmit/spatial/OISSTv2/daily/OISST-V2-AVHRR_agg.nc")
@@ -187,7 +187,7 @@ ggsave(file = "README-grid-example2.png", width = 6, height = 3.2)
 <!-- knitr::include_graphics("README-grid-example2.png") -->
 <!-- ``` -->
 
-![](README-grid-example1.png){ width=100% }
+![](README-grid-example1.png){width=100%}
 
-![](README-grid-example2.png){ width=100% }
+![](README-grid-example2.png){width=100%}
 
