@@ -48,7 +48,14 @@
 #' greater than \code{max_pad_length} will be left as \code{NA}. Set as an
 #' integer. Default is \code{3} days.
 #' @param cold_spells Boolean specifying if the code should detect cold events
-#' instead of heat events. Default is \code{FALSE}.
+#' instead of heat events. Default is \code{FALSE}. Please note that the 
+#' climatological thresholds for cold-spells are calculated the same as for 
+#' heatwaves. Meaning that \code{pctile} should be set the same regardless
+#' if one is calculating heatwaves or cold-spells. For example, if one wants 
+#' to calculate heatwaves above the 90th percentile threshold 
+#' (the default) one sets \code{pctile} = 90. Likewise, if one would like 
+#' identify cold-spells below the 10th percentile one must set
+#' \code{pctile} = 90 as these values are taken in absolute terms.
 #'
 #' @details
 #' \enumerate{
@@ -146,8 +153,8 @@
 #' value of the threshold (relative to climatology,
 #' i.e., threshold - climatology.)
 #'
-#' Note that \code{rate_onset} and \code{rate_decline} will return NA or
-#' NaN when the event occurs at the start or end of time series. This
+#' Note that \code{rate_onset} and \code{rate_decline} will return NA
+#' when the event begins/ ends on the first/ last day of the time series. This
 #' may be particularly evident when the function is applied to large gridded
 #' data sets. Although the other metrics do not contain any errors and
 #' provide sensible values, please take this into account in its
@@ -270,7 +277,7 @@ detect <-
       t_series <- merge(data, clim, by = "doy")
       t_series <- t_series[order(t_series$date),]
       return(t_series)
-      
+
     } else {
       
       t_series %<>% dplyr::inner_join(clim, by = "doy")
@@ -356,7 +363,8 @@ detect <-
           rep(i, length = events$duration[i])
       }
       
-      events_list <- plyr::dlply(events, .(event_no), function(x)
+      ## RWS: I changed .(event_no) to c("event_no") in order to not need to load plyr while testing the code
+      events_list <- plyr::dlply(events, c("event_no"), function(x)
         with(
           t_series,
           data.frame(
@@ -411,56 +419,82 @@ detect <-
       A <- mhw_rel_seas[events$index_start]
       B <- t_series$temp[events$index_start - 1]
       C <- t_series$seas_clim_year[events$index_start - 1]
-      mhw_rel_seas_start <- 0.5 * (A + B - C)
-      start_type <- ifelse(
-        events$index_start > 1,
-        "case1",
-        ifelse(
-          events$index_start == 1 &
-            difftime(events$date_peak, events$date_start, units = "days") > 0,
-          "case2",
-          "case3"
-        )
-      )[1]
-      rateOnset <- function(x, type) {
-        switch(
-          type,
-          case1 = (x$int_max - mhw_rel_seas_start) / (as.numeric(
-            difftime(x$date_peak, x$date_start, units = "days")
-          ) + 0.5),
-          case2 = (x$int_max - A) / 1,
-          case3 = (x$int_max - A) / as.numeric(difftime(x$date_peak, x$date_start, units = "days"))
-        )
+      ## RWS: I added this bit of logic to prevent the warning messages caused by unequal A and B 
+      ## vector lengths which occurs when an event starts on day 1 of the time series
+      ## The vector maths do not add an NA automatically so it is necessary to do it here
+      if(length(B)+1 == length(A)){
+        B <- c(NA, B)
+        C <- c(NA, C)
       }
-      events$rate_onset <- rateOnset(events, start_type)
+      mhw_rel_seas_start <- 0.5 * (A + B - C) ## RWS: Uncertain that this calculates rate of onset correctly
+      
+      # The following commented out section has been replaced with this small chunk
+      events$rate_onset <- ifelse(
+        events$index_start > 1,
+        (events$int_max - mhw_rel_seas_start) / (as.numeric( ## RWS: The other part of the calculation
+          difftime(events$date_peak, events$date_start, units = "days")) + 0.5),
+        NA
+        )
+      # events$start_type <- ifelse(
+      #   events$index_start > 1,
+      #   "case1",
+      #   ifelse(
+      #     events$index_start == 1 &
+      #       difftime(events$date_peak, events$date_start, units = "days") == 0,
+      #     "case2",
+      #     "case3"
+      #   )
+      # )
+      # 
+      # rateOnset <- function(x, type) {
+      #   switch(
+      #     type,
+      #     case1 = (x$int_max - mhw_rel_seas_start) / (as.numeric(
+      #       difftime(x$date_peak, x$date_start, units = "days")
+      #     ) + 0.5),
+      #     case2 = (x$int_max - A) / 1,
+      #     case3 = (x$int_max - A) / as.numeric(difftime(x$date_peak, x$date_start, units = "days"))
+      #   )
+      # }
+      # events$rate_onset <- rateOnset(events, start_type)
       
       D <- mhw_rel_seas[events$index_stop]
       E <- t_series$temp[events$index_stop + 1]
       F <- t_series$seas_clim_year[events$index_stop + 1]
       mhw_rel_seas_end <- 0.5 * (D + E - F)
-      stop_type <- ifelse(
+      ## RWS: If an event ends on the last day of the time series R automatically inserts an NA
+      ## here so it is not ecessary to do so as it was with rate_onset above
+      
+      # The following commented out section has been replaced with this small chunk
+      events$rate_decline <- ifelse(
         events$index_stop < nrow(t_series),
-        "case4",
-        ifelse(
-          events$index_stop == nrow(t_series) &
-            difftime(events$date_peak, t_series[nrow(t_series), "date"], units = "days") < 0,
-          "case5",
-          "case6"
-        )
-      )[nrow(events)]
-      
-      rateDecline <- function(x, type) {
-        switch(
-          type,
-          case4 = (x$int_max - mhw_rel_seas_end) / (as.numeric(
-            difftime(x$date_stop, x$date_peak, units = "days")
-          ) + 0.5),
-          case5 = (x$int_max - mhw_rel_seas_end) / 1,
-          case6 = (x$int_max - mhw_rel_seas_end) / as.numeric(difftime(x$date_stop, x$date_peak, units = "days"))
-        )
-      }
-      events$rate_decline <- rateDecline(events, stop_type)
-      
+        (events$int_max - mhw_rel_seas_end) / (as.numeric(
+          difftime(events$date_stop, events$date_peak, units = "days")) + 0.5),
+        NA
+      )
+      # stop_type <- ifelse(
+      #   events$index_stop < nrow(t_series),
+      #   "case4",
+      #   ifelse(
+      #     events$index_stop == nrow(t_series) &
+      #       difftime(events$date_peak, t_series[nrow(t_series), "date"], units = "days") == 0,
+      #     "case5",
+      #     "case6"
+      #   )
+      # )[nrow(events)]
+      # 
+      # rateDecline <- function(x, type) {
+      #   switch(
+      #     type,
+      #     case4 = (x$int_max - mhw_rel_seas_end) / (as.numeric(
+      #       difftime(x$date_stop, x$date_peak, units = "days")
+      #     ) + 0.5),
+      #     case5 = (x$int_max - mhw_rel_seas_end) / 1,
+      #     case6 = (x$int_max - mhw_rel_seas_end) / as.numeric(difftime(x$date_stop, x$date_peak, units = "days"))
+      #   )
+      # }
+      # events$rate_decline <- rateDecline(events, stop_type)
+ 
       if (cold_spells) {
         events <- events %>% dplyr::mutate(
           int_mean = -int_mean,
@@ -473,7 +507,9 @@ detect <-
           int_max_abs = -int_max_abs,
           int_cum_abs = -int_cum_abs,
           int_mean_norm = -int_mean_norm,
-          int_max_norm = -int_max_norm
+          int_max_norm = -int_max_norm,
+          rate_onset = -rate_onset,
+          rate_decline = -rate_decline
         )
         t_series <- t_series %>% dplyr::mutate(
           temp = -temp,

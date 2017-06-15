@@ -3,6 +3,10 @@ output: pdf_document
 ---
 
 # VERSION CHANGES
+## Changes in version 0.15.4 (15 June 2017)
+* Warnings given by detect() when events begin/ end on the first/ last day of the time series have been corrected.
+* Documentation in detect() about the use of percentiles with cold-spells has been made more clear
+
 ## Changes in version 0.15.3 (28 February 2017)
 * The detect() function may now be told to calculate climatologies only.
 
