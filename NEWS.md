@@ -3,9 +3,22 @@ output: pdf_document
 ---
 
 # VERSION CHANGES
-## Changes in version 0.15.4 (15 June 2017)
+## Changes in version 0.15.7 (15 June 2017)
 * Warnings given by detect() when events begin/ end on the first/ last day of the time series have been corrected.
 * Documentation in detect() about the use of percentiles with cold-spells has been made more clear
+
+## Changes in version 0.15.6 (6 March 2017)
+* Update README.Rmd to correct figure paths.
+ 
+## Changes in version 0.15.5 (6 March 2017)
+* Update to 'protoFunc' helper function within 'detect'; in the previous version
+it returned the error "Error: not compatible with STRSXP" under rare circumstances,
+the cause of which remains unknown.
+* Update the calculation of proto_gaps for the same reason.
+
+## Changes in version 0.15.4 (5 March 2017)
+* The detect() function now also produces a 'climatological' variance.
+* Improve documentation in a help file.
 
 ## Changes in version 0.15.3 (28 February 2017)
 * The detect() function may now be told to calculate climatologies only.

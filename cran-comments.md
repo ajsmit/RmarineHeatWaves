@@ -1,10 +1,13 @@
 # Update:
 
-Release of update 0.15.1.
+Release of update 0.15.6.
 
-Error reported:
-Possibly mis-spelled words in DESCRIPTION:
-  exceedences (20:19, 21:58)
-  
-Fix provided:  
-  changed to 'exceedance' throughout package.
+Issue:
+Found the following (possibly) invalid URLs:
+  URL: http://www.ncdc.noaa.gov/thredds/oisst-catalog.html (moved to https://www.ncdc.noaa.gov/thredds/oisst-catalog.html)
+    From: inst/doc/gridded-event-detection.html
+    Status: 503
+    Message: Service Unavailable
+
+Solution:
+An updated link provided.

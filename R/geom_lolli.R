@@ -1,11 +1,11 @@
 #' Visualise a Timeline of Several Event Metrics as 'Lollipops'.
 #'
 #' The function will return a graph of the intensity of the selected
-#' metric along the y-axis versus a time variable along the x-axis.
+#' metric along the *y*-axis versus a time variable along the *x*-axis.
 #' The number of top events (\code{n}) from the chosen metric may be highlighted
-#' in a brighter colour with the aesthetic value \code{coulour.n}.
+#' in a brighter colour with the aesthetic value \code{colour.n}.
 #' This function differs in use from \code{\link{lolli_plot}}
-#' in that it must be created as a ggplot 'geom' object. The benefit of this being
+#' in that it must be created as a ggplot2 'geom' object. The benefit of this being
 #' that one may add additional information layer by layer to the figure as
 #' geoms as necessary.
 #'
@@ -28,7 +28,7 @@
 #'   \item \code{shape}
 #'   \item \code{stroke}
 #'   \item \code{fill}
-#'   \item \code{colour.n} : While this value may be used as an aesthetic, it also
+#'   \item \code{colour.n}: While this value may be used as an aesthetic, it also
 #' works as a parameter for this function. If one chooses not to highlight
 #' any events, use \code{colour.n = NA} outside of \code{aes()}. One may
 #' also provide a non-static value to \code{colour.na} but remember that

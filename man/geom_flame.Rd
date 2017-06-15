@@ -58,9 +58,9 @@ the output will meet the specifications of Hobday et al. (2016) shown as
 'flame polygons'. If one wishes to plot polygons below a given threshold, and not
 above, switch the values being fed to the \code{y} and \code{y2}
 aesthetics. This function differs in use from \code{\link{event_line}}
-in that it must be created as a \code{ggplot()} 'geom' object. The benefit
+in that it must be created as a \code{ggplot} 'geom' object. The benefit
 of this being that one may add additional information to the figure as geom
-layers as may be necessary.
+layers to ggplot2 graphs as may be necessary.
 }
 \section{Aesthetics}{
 
