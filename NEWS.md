@@ -9,8 +9,8 @@ output: pdf_document
   occurs at the start/end of the time series.
 * Documentation in detect() about the use of percentiles with cold-spells has 
   been made more clear.
-* Dependency on some plyr functions have been started to be phsed out; this is 
-  to eventually ensure full compliance with the tidyverse suite of functions.
+* Dependency on some plyr functions have been started to be phased out; this is 
+  done to eventually ensure full compliance with the tidyverse suite of functions.
 
 ## Changes in version 0.15.6 (6 March 2017)
 * Update README.Rmd to correct figure paths.
