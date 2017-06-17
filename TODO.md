@@ -9,6 +9,8 @@ to interact with directly ...
 
 # TODO
 
+## Phase out plyr functions.
+
 ## The make_whole() function
 
 * provide helpful output (verbose = TRUE), such as 

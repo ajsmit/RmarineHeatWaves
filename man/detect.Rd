@@ -30,8 +30,8 @@ and extremes threshold are calculated. Default is \code{2012} (but see comment
 above).}
 
 \item{pctile}{Threshold percentile (\%) for detection of extreme values.
-Default is \code{90}th percentile for marine heat waves and \code{10}th
-percentile for marine cold spells.}
+Default is \code{90}th percentile. Please see \code{cold_spells} for more
+information about the calculation of marine cold spells.}
 
 \item{window_half_width}{Width of sliding window about day-of-year (to one
 side of the center day-of-year) used for the pooling of values and
@@ -66,7 +66,15 @@ greater than \code{max_pad_length} will be left as \code{NA}. Set as an
 integer. Default is \code{3} days.}
 
 \item{cold_spells}{Boolean specifying if the code should detect cold events
-instead of heat events. Default is \code{FALSE}.}
+instead of heat events. Default is \code{FALSE}. Please note that the
+climatological thresholds for cold-spells are calculated the same as for
+heatwaves, meaning that \code{pctile} should be set the same regardless
+if one is calculating heatwaves or cold-spells. For example, if one wants
+to calculate heatwaves above the 90th percentile threshold
+(the default) one sets \code{pctile} = 90. Likewise, if one would like
+identify the most intense cold-spells one must also set \code{pctile} = 90,
+even though cold spells are in fact simply the coldest extreme events in a
+time series, which statistically equate to values below the 10th percentile.}
 }
 \value{
 The function will return a list of two components, \code{clim} and
@@ -122,8 +130,8 @@ indicates the event intensity (relative to the climatology) was 1.5 times the
 value of the threshold (relative to climatology,
 i.e., threshold - climatology.)
 
-Note that \code{rate_onset} and \code{rate_decline} will return NA or
-NaN when the event occurs at the start or end of time series. This
+Note that \code{rate_onset} and \code{rate_decline} will return NA
+when the event begins/ ends on the first/ last day of the time series. This
 may be particularly evident when the function is applied to large gridded
 data sets. Although the other metrics do not contain any errors and
 provide sensible values, please take this into account in its
@@ -156,7 +164,12 @@ Feb 29 are then linearly interpolated from the values for Feb 28 and Mar 1.
 \item The calculation of onset and decline rates assumes that the events
 started a half-day before the start day and ended a half-day after the
 end-day. This is consistent with the duration definition as implemented,
-which assumes duration = end day - start day + 1.
+which assumes duration = end day - start day + 1. As of version 0.15.7, an
+event that is already present at the beginning of a time series, or an event
+that is still present at the end of a time series, will report the rate of
+onset or the rate of decline as \code{NA}, as it is impossible to know what
+the temperature half a day before or after the start or end of the event is.
+This may be a departure from the python marineHeatWaves function.
 \item For the purposes of event detection, any missing temperature values not
 interpolated over (through optional \code{max_pad_length}) will be set equal
 to the seasonal climatology. This means they will trigger the end/start of
