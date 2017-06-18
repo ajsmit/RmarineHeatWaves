@@ -493,7 +493,7 @@ detect <-
         )
       }
 
-      list(clim = dplyr::group_by(t_series, event_no),
-           event = dplyr::group_by(events, event_no))
+      list(clim = dplyr::group_by(t_series),
+           event = dplyr::group_by(events))
     }
   }

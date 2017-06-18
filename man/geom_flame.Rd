@@ -55,7 +55,7 @@ the default plot specification, e.g. \code{\link{borders}}.}
 This function will create polygons between two lines. If given a
 temperature and theshold time series, like that produced by \code{\link{detect}},
 the output will meet the specifications of Hobday et al. (2016) shown as
-'flame polygons'. If one wishes to plot polygons below a given threshold, and not
+'flame polygons.' If one wishes to plot polygons below a given threshold, and not
 above, switch the values being fed to the \code{y} and \code{y2}
 aesthetics. This function differs in use from \code{\link{event_line}}
 in that it must be created as a \code{ggplot} 'geom' object. The benefit

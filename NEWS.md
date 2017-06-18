@@ -3,14 +3,17 @@ output: pdf_document
 ---
 
 # VERSION CHANGES
-## Changes in version 0.15.7 (15 June 2017)
+## Changes in version 0.15.7 (18 June 2017)
 * Warnings given by detect() when events begin/end on the first/last day of the
   time series have been corrected --- it will now report an NA when the event
-  occurs at the start/end of the time series.
+  occurs at the start/end of the time series. This bug was highlighted by Juan Bazo.
 * Documentation in detect() about the use of percentiles with cold-spells has 
   been made more clear.
 * Dependency on some plyr functions have been started to be phased out; this is 
   done to eventually ensure full compliance with the tidyverse suite of functions.
+* Remove some unwanted attributes that resulted from dplyr::group_by on lines 496
+  and 497. The list containing 'event' and 'clim' is now uncluttered by unwanted
+  attributes.
 
 ## Changes in version 0.15.6 (6 March 2017)
 * Update README.Rmd to correct figure paths.
