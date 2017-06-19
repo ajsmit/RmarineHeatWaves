@@ -71,8 +71,8 @@ climatological thresholds for cold-spells are calculated the same as for
 heatwaves, meaning that \code{pctile} should be set the same regardless
 if one is calculating heatwaves or cold-spells. For example, if one wants
 to calculate heatwaves above the 90th percentile threshold
-(the default) one sets \code{pctile} = 90. Likewise, if one would like
-identify the most intense cold-spells one must also set \code{pctile} = 90,
+(the default) one sets \code{pctile = 90}. Likewise, if one would like
+identify the most intense cold-spells one must also set \code{pctile = 90},
 even though cold spells are in fact simply the coldest extreme events in a
 time series, which statistically equate to values below the 10th percentile.}
 }
@@ -130,8 +130,8 @@ indicates the event intensity (relative to the climatology) was 1.5 times the
 value of the threshold (relative to climatology,
 i.e., threshold - climatology.)
 
-Note that \code{rate_onset} and \code{rate_decline} will return NA
-when the event begins/ ends on the first/ last day of the time series. This
+Note that \code{rate_onset} and \code{rate_decline} will return \code{NA}
+when the event begins/ends on the first/last day of the time series. This
 may be particularly evident when the function is applied to large gridded
 data sets. Although the other metrics do not contain any errors and
 provide sensible values, please take this into account in its

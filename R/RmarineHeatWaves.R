@@ -4,8 +4,6 @@
 #' series of temperature along with a daily date vector.
 #'
 #' @importFrom magrittr %>%
-#' @importFrom stats sd
-#' @importFrom plyr .
 #' @param data A data frame with three columns. They are headed \code{doy},
 #' \code{date} and \code{temp.} \code{doy} is the Julian day running from 1
 #' to 366, but modified so that the day-of-year (doy) vector for non-leap-years
@@ -54,8 +52,8 @@
 #' heatwaves, meaning that \code{pctile} should be set the same regardless
 #' if one is calculating heatwaves or cold-spells. For example, if one wants
 #' to calculate heatwaves above the 90th percentile threshold
-#' (the default) one sets \code{pctile} = 90. Likewise, if one would like
-#' identify the most intense cold-spells one must also set \code{pctile} = 90,
+#' (the default) one sets \code{pctile = 90}. Likewise, if one would like
+#' identify the most intense cold-spells one must also set \code{pctile = 90},
 #' even though cold spells are in fact simply the coldest extreme events in a
 #' time series, which statistically equate to values below the 10th percentile.
 #'
@@ -160,8 +158,8 @@
 #' value of the threshold (relative to climatology,
 #' i.e., threshold - climatology.)
 #'
-#' Note that \code{rate_onset} and \code{rate_decline} will return NA
-#' when the event begins/ ends on the first/ last day of the time series. This
+#' Note that \code{rate_onset} and \code{rate_decline} will return \code{NA}
+#' when the event begins/ends on the first/last day of the time series. This
 #' may be particularly evident when the function is applied to large gridded
 #' data sets. Although the other metrics do not contain any errors and
 #' provide sensible values, please take this into account in its
@@ -231,7 +229,7 @@ detect <-
       tidyr::spread(date, temp)
 
     all_NA <- apply(tDat[59:61, ], 2, function(x) !all(is.na(x)))
-    no_NA <- names(all_NA[all_NA > 0]) # compatibility with zoo < 1.7.13...
+    no_NA <- names(all_NA[all_NA > 0])
     tDat[59:61, no_NA] <- zoo::na.approx(tDat[59:61, no_NA], maxgap = 1, na.rm = TRUE)
     tDat <- rbind(utils::tail(tDat, window_half_width),
                   tDat, utils::head(tDat, window_half_width))
@@ -252,7 +250,7 @@ detect <-
           names = FALSE
         )
       var_clim_year[i] <-
-        sd(
+        stats::sd(
           c(t(tDat[(i - (window_half_width)):(i + window_half_width), 2:ncol(tDat)])),
           na.rm = TRUE
         )
@@ -301,7 +299,7 @@ detect <-
         )
     }
 
-    if(clim_only) {
+    if (clim_only) {
       t_series <- merge(data, clim, by = "doy")
       t_series <- t_series[order(t_series$date),]
       return(t_series)
@@ -314,12 +312,12 @@ detect <-
       ind1 <- rep(seq_along(ex1$lengths), ex1$lengths)
       s1 <- split(zoo::index(t_series$thresh_criterion), ind1)
       proto_events <- s1[ex1$values == TRUE]
-      index_stop <- index_start <- NULL ###
+      index_stop <- index_start <- NULL
       proto_events_rng <-
         lapply(proto_events, function(x)
           data.frame(index_start = min(x), index_stop = max(x)))
 
-      duration <- NULL ###
+      duration <- NULL
 
       protoFunc <- function(proto_data) {
         out <- proto_data %>%
@@ -374,7 +372,7 @@ detect <-
       ind3 <- rep(seq_along(ex3$lengths), ex3$lengths)
       s3 <- split(zoo::index(t_series$event), ind3)
       events <- s3[ex3$values == TRUE]
-      event_no <- NULL ###
+      event_no <- NULL
       events_rng <-
         lapply(events, function(x)
           data.frame(index_start = min(x), index_stop = max(x)))
@@ -388,6 +386,12 @@ detect <-
         t_series$event_no[events$index_start[i]:events$index_stop[i]] <-
           rep(i, length = events$duration[i])
       }
+
+      int_mean <- int_max <- int_cum <- int_mean_rel_thresh <-
+        int_max_rel_thresh <- int_cum_rel_thresh <- int_mean_abs <-
+        int_max_abs <- int_cum_abs <- int_mean_norm <- int_max_norm <-
+        temp <- rate_onset <- rate_decline <- mhw_rel_thresh <-
+        rel_thresh_norm <- mhw_rel_seas <- NULL
 
       events_list <- plyr::dlply(events, c("event_no"), function(x)
         with(
@@ -405,41 +409,27 @@ detect <-
         )
       )
 
-      int_mean <- int_max <- int_cum <- int_mean_rel_thresh <-
-        int_max_rel_thresh <- int_cum_rel_thresh <- int_mean_abs <-
-        int_max_abs <- int_cum_abs <- int_mean_norm <- int_max_norm <-
-        temp <- doy <- rate_onset <- rate_decline <- NULL ###
-      events$date_peak <-
-        plyr::ldply(events_list, function(x)
-          x$date[x$mhw_rel_seas == max(x$mhw_rel_seas)][1])[, 2]
-      events$int_mean <-
-        plyr::ldply(events_list, function(x) mean(x$mhw_rel_seas))[, 2]
-      events$int_max <-
-        plyr::ldply(events_list, function(x) max(x$mhw_rel_seas))[, 2]
-      events$int_var <-
-        plyr::ldply(events_list, function(x) sqrt(stats::var(x$mhw_rel_seas)))[, 2]
-      events$int_cum <-
-        plyr::ldply(events_list, function(x) max(cumsum(x$mhw_rel_seas)))[, 2]
-      events$int_mean_rel_thresh <-
-        plyr::ldply(events_list, function(x) mean(x$mhw_rel_thresh))[, 2]
-      events$int_max_rel_thresh <-
-        plyr::ldply(events_list, function(x) max(x$mhw_rel_thresh))[, 2]
-      events$int_var_rel_thresh <-
-        plyr::ldply(events_list, function(x) sqrt(stats::var(x$mhw_rel_thresh)))[, 2]
-      events$int_cum_rel_thresh <-
-        plyr::ldply(events_list, function(x) max(cumsum(x$mhw_rel_thresh)))[, 2]
-      events$int_mean_abs <-
-        plyr::ldply(events_list, function(x) mean(x$temp))[, 2]
-      events$int_max_abs <-
-        plyr::ldply(events_list, function(x) max(x$temp))[, 2]
-      events$int_var_abs <-
-        plyr::ldply(events_list, function(x) sqrt(stats::var(x$temp)))[, 2]
-      events$int_cum_abs <-
-        plyr::ldply(events_list, function(x) max(cumsum(x$temp)))[, 2]
-      events$int_mean_norm <-
-        plyr::ldply(events_list, function(x) mean(x$rel_thresh_norm))[, 2]
-      events$int_max_norm <-
-        plyr::ldply(events_list, function(x) max(x$rel_thresh_norm))[, 2]
+      events <- cbind(events,
+                      events_list %>%
+                        dplyr::bind_rows(.id = "event_no") %>%
+                        dplyr::group_by(event_no) %>%
+                        dplyr::summarise(date_peak = date[mhw_rel_seas == max(mhw_rel_seas)][1],
+                                         int_mean = mean(mhw_rel_seas),
+                                         int_max = max(mhw_rel_seas),
+                                         int_var = sqrt(stats::var(mhw_rel_seas)),
+                                         int_cum = max(cumsum(mhw_rel_seas)),
+                                         int_mean_rel_thresh = mean(mhw_rel_thresh),
+                                         int_max_rel_thresh = max(mhw_rel_thresh),
+                                         int_var_rel_thresh = sqrt(stats::var(mhw_rel_thresh)),
+                                         int_cum_rel_thresh = max(cumsum(mhw_rel_thresh)),
+                                         int_mean_abs = mean(temp),
+                                         int_max_abs = max(temp),
+                                         int_var_abs = sqrt(stats::var(temp)),
+                                         int_cum_abs = max(cumsum(temp)),
+                                         int_mean_norm = mean(rel_thresh_norm),
+                                         int_max_norm = max(rel_thresh_norm)) %>%
+                        dplyr::arrange(as.numeric(event_no)) %>%
+                        dplyr::select(-event_no))
 
       mhw_rel_seas <- t_series$temp - t_series$seas_clim_year
       A <- mhw_rel_seas[events$index_start]
@@ -453,7 +443,7 @@ detect <-
 
       events$rate_onset <- ifelse(
         events$index_start > 1,
-        (events$int_max - mhw_rel_seas_start) / (as.numeric( ## RWS: The other part of the calculation
+        (events$int_max - mhw_rel_seas_start) / (as.numeric(
           difftime(events$date_peak, events$date_start, units = "days")) + 0.5),
         NA
         )
@@ -493,7 +483,7 @@ detect <-
         )
       }
 
-      list(clim = dplyr::group_by(t_series),
-           event = dplyr::group_by(events))
+      list(clim = t_series,
+           event = events)
     }
   }

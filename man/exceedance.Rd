@@ -28,7 +28,7 @@ consecutive days above the \code{threshold} variable are calculated.}
 \item{min_duration}{Minimum duration that temperatures must be in exceedance
 of the \code{threshold} variable. Default is \code{5} days.}
 
-\item{join_across_gaps}{A TRUE/ FALSE statement that indicates whether
+\item{join_across_gaps}{A TRUE/FALSE statement that indicates whether
 or not to join consecutive days of temperatures in exceedance of the
 \code{threshold} across a small gap between groups before/after a short
 gap as specified by \code{max_gap}. Default is \code{TRUE}.}

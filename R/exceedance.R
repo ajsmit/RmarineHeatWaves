@@ -18,7 +18,7 @@
 #' consecutive days above the \code{threshold} variable are calculated.
 #' @param min_duration Minimum duration that temperatures must be in exceedance
 #' of the \code{threshold} variable. Default is \code{5} days.
-#' @param join_across_gaps A TRUE/ FALSE statement that indicates whether
+#' @param join_across_gaps A TRUE/FALSE statement that indicates whether
 #' or not to join consecutive days of temperatures in exceedance of the
 #' \code{threshold} across a small gap between groups before/after a short
 #' gap as specified by \code{max_gap}. Default is \code{TRUE}.
@@ -242,7 +242,7 @@ exceedance <-
         rep(i, length = exceedances$duration[i])
     }
 
-    exceedances_list <- plyr::dlply(exceedances, .(exceedance_no), function(x)
+    exceedances_list <- plyr::dlply(exceedances, c(exceedance_no), function(x)
       with(
         t_series,
         data.frame(
@@ -254,7 +254,7 @@ exceedance <-
       )
     )
 
-    thresh <- int_mean <- int_max <- int_cum <-
+    thresh <- int_mean <- int_max <- int_cum <- exceedance_rel_thresh <-
       int_mean_abs <- int_max_abs <- int_cum_abs <- temp <- NULL ###
 
     exceedances$date_peak <-
@@ -345,6 +345,6 @@ exceedance <-
       )
     }
 
-    list(threshold = dplyr::group_by(t_series, exceedance_no),
-         exceedance = dplyr::group_by(exceedances, exceedance_no))
+    list(threshold = t_series,
+         exceedance = exceedances)
   }

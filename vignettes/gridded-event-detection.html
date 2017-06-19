@@ -12,7 +12,7 @@
 
 <meta name="author" content="AJ Smit" />
 
-<meta name="date" content="2017-06-07" />
+<meta name="date" content="2017-06-19" />
 
 <title>Extreme event detection in gridded data</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Extreme event detection in gridded data</h1>
 <h4 class="author"><em>AJ Smit</em></h4>
-<h4 class="date"><em>2017-06-07</em></h4>
+<h4 class="date"><em>2017-06-19</em></h4>
 
 
 
@@ -108,7 +108,7 @@ sst$t &lt;-<span class="st"> </span><span class="kw">as.Date</span>(sst$t, <span
   events &lt;-<span class="st"> </span>mhw$event
   <span class="kw">return</span>(events)
   }</code></pre></div>
-<p>And now I apply the <code>OISST_detect()</code> function to the SST data and save the results as a .Rdata file.</p>
+<p>And now I apply the <code>OISST_detect()</code> function to the SST data and save the results as an intermediate .Rdata file.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># it takes a long time...</span>
 <span class="kw">system.time</span>(OISST_events &lt;-<span class="st"> </span><span class="kw">ddply</span>(sst1, .(lon, lat), OISST_detect, <span class="dt">.parallel =</span> <span class="ot">TRUE</span>))
  <span class="co">#   user  system elapsed </span>

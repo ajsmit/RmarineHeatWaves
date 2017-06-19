@@ -78,7 +78,7 @@ OISST_detect <- function(dat) {
   }
 ```
 
-And now I apply the `OISST_detect()` function to the SST data and save the results as a .Rdata file.
+And now I apply the `OISST_detect()` function to the SST data and save the results as an intermediate .Rdata file.
 
 ```{r apply-detect-fun, echo = TRUE, eval = FALSE}
 # it takes a long time...

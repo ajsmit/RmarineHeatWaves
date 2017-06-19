@@ -7,9 +7,8 @@
 #' @details Although the title of the package refers to marine heat waves (MHW),
 #' it is equally capable of detecting marine cold spells (MCS). This
 #' functionality is also present in the python package, where it was
-#' implemented as a result of the publication Schlegel et al. (submitted for
-#' review in April 2016) that discusses the quantification and detection of the
-#' anomalously cold events.
+#' implemented as a result of the publication Schlegel et al. (2017)
+#' that discusses the quantification and detection of anomalously cold events.
 #'
 #' The main function is the detection function \code{\link{detect}} which takes as
 #' input a time series of temperature (and a corresponding series of dates)
@@ -18,7 +17,8 @@
 #' various helper functions to fascilitate developing an uninterrupted time
 #' series of temperatures (e.g. \code{\link{make_whole}}) and some options to produce
 #' graphical summaries and representations of the detected events such as
-#' \code{\link{event_line}} and \code{\link{lolli_plot}}.
+#' \code{\link{event_line}} and \code{\link{lolli_plot}}, or the ggplot2
+#' equivalents, \code{\link{geom_flame}} and \code{\link{geom_lolli}}.
 #'
 #' This package is demonstrated by applying the MHW definition to observed SST
 #' records and showing how it identifies three historical MHWs: the 2011

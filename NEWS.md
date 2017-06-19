@@ -3,6 +3,9 @@ output: pdf_document
 ---
 
 # VERSION CHANGES
+## Changes in version 0.15.8 (18 June 2017)
+* Further remove need for plyr functions --- use dplyr instead.
+
 ## Changes in version 0.15.7 (18 June 2017)
 * Warnings given by detect() when events begin/end on the first/last day of the
   time series have been corrected --- it will now report an NA when the event

@@ -56,7 +56,7 @@
 #'   spread(date, temp) %>%
 #'   filter(doy >= 55 & doy <= 65)
 make_whole <- function(data) {
-  temp <- NULL ###
+  temp <- NULL
   data <- data %>%
     dplyr::group_by(t) %>%
     dplyr::summarise(temp = mean(temp, na.rm = TRUE))
@@ -80,4 +80,5 @@ make_whole <- function(data) {
       ifelse(doy > feb28, doy + 1, doy),
       doy
     ))
+  # print(tSeries[1,])
 }
