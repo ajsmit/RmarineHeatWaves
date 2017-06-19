@@ -242,7 +242,7 @@ exceedance <-
         rep(i, length = exceedances$duration[i])
     }
 
-    exceedances_list <- plyr::dlply(exceedances, c(exceedance_no), function(x)
+    exceedances_list <- plyr::dlply(exceedances, c("exceedance_no"), function(x)
       with(
         t_series,
         data.frame(
@@ -280,56 +280,31 @@ exceedance <-
     A <- exceedance_rel_thresh[exceedances$index_start]
     B <- t_series$temp[exceedances$index_start - 1]
     C <- t_series$thresh[exceedances$index_start - 1]
-    exceedance_rel_thresh_start <- 0.5 * (A + B - C)
-    start_type <- ifelse(
-      exceedances$index_start > 1,
-      "case1",
-      ifelse(
-        exceedances$index_start == 1 &
-          difftime(exceedances$date_peak, exceedances$date_start, units = "days") > 0,
-        "case2",
-        "case3"
-      )
-    )[1]
-    rateOnset <- function(x, type) {
-      switch(
-        type,
-        case1 = (x$int_max - exceedance_rel_thresh_start) / (as.numeric(
-          difftime(x$date_peak, x$date_start, units = "days")
-        ) + 0.5),
-        case2 = (x$int_max - A) / 1,
-        case3 = (x$int_max - A) / as.numeric(difftime(x$date_peak, x$date_start, units = "days"))
-      )
+    if (length(B) + 1 == length(A)) {
+      B <- c(NA, B)
+      C <- c(NA, C)
     }
-    exceedances$rate_onset <- rateOnset(exceedances, start_type)
+    exceedance_rel_thresh_start <- 0.5 * (A + B - C)
 
+    exceedances$rate_onset <- ifelse(
+      exceedances$index_start > 1,
+      (exceedances$int_max - exceedance_rel_thresh_start) / (as.numeric(
+        difftime(exceedances$date_peak, exceedances$date_start, units = "days")) + 0.5),
+      NA
+    )
+    
     D <- exceedance_rel_thresh[exceedances$index_stop]
     E <- t_series$temp[exceedances$index_stop + 1]
     F <- t_series$thresh[exceedances$index_stop + 1]
     exceedance_rel_thresh_end <- 0.5 * (D + E - F)
-    stop_type <- ifelse(
+    
+    exceedances$rate_decline <- ifelse(
       exceedances$index_stop < nrow(t_series),
-      "case4",
-      ifelse(
-        exceedances$index_stop == nrow(t_series) &
-          difftime(exceedances$date_peak, t_series[nrow(t_series), "date"], units = "days") < 0,
-        "case5",
-        "case6"
-      )
-    )[nrow(exceedances)]
-
-    rateDecline <- function(x, type) {
-      switch(
-        type,
-        case4 = (x$int_max - exceedance_rel_thresh_end) / (as.numeric(
-          difftime(x$date_stop, x$date_peak, units = "days")
-        ) + 0.5),
-        case5 = (x$int_max - exceedance_rel_thresh_end) / 1,
-        case6 = (x$int_max - exceedance_rel_thresh_end) / as.numeric(difftime(x$date_stop, x$date_peak, units = "days"))
-      )
-    }
-    exceedances$rate_decline <- rateDecline(exceedances, stop_type)
-
+      (exceedances$int_max - exceedance_rel_thresh_end) / (as.numeric(
+        difftime(exceedances$date_stop, exceedances$date_peak, units = "days")) + 0.5),
+      NA
+    )
+    
     if (below) {
       exceedances <- exceedances %>% dplyr::mutate(
         int_mean = -int_mean,
