@@ -3,6 +3,11 @@ output: pdf_document
 ---
 
 # VERSION CHANGES
+## Changes in version 0.15.9 (19 June 2017)
+* Warnings given by exceedance() when exceedances begin/end on the first/last day of the
+  time series have been corrected --- it will now report an NA when the exceedance
+  occurs at the start/end of the time series. 
+  
 ## Changes in version 0.15.8 (18 June 2017)
 * Further remove need for plyr functions --- use dplyr instead.
 
