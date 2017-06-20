@@ -257,6 +257,25 @@ exceedance <-
     thresh <- int_mean <- int_max <- int_cum <- exceedance_rel_thresh <-
       int_mean_abs <- int_max_abs <- int_cum_abs <- temp <- NULL ###
 
+    ## This code to replace the plyr bits, below. RWS to first find the problem with int_mean,
+    ## int_max, int_var, int_cum, int_mean_abs, int_max_abs, int_var_abs and int_cum_abs being
+    ## incorrectly reported (all show identical values...)
+    # exceedances <- cbind(exceedances,
+    #                      exceedances_list %>%
+    #                        dplyr::bind_rows(.id = "exceedance_no") %>%
+    #                        dplyr::group_by(exceedance_no) %>%
+    #                        dplyr::summarise(date_peak = date[temp == max(temp)][1],
+    #                                         int_mean = mean(exceedance_rel_thresh),
+    #                                         int_max = max(exceedance_rel_thresh),
+    #                                         int_var = sqrt(stats::var(exceedance_rel_thresh)),
+    #                                         int_cum = max(cumsum(exceedance_rel_thresh)),
+    #                                         int_mean_abs = mean(temp),
+    #                                         int_max_abs = max(temp),
+    #                                         int_var_abs = sqrt(stats::var(temp)),
+    #                                         int_cum_abs = max(cumsum(temp))) %>%
+    #                        dplyr::arrange(as.numeric(exceedance_no)) %>%
+    #                        dplyr::select(-exceedance_no))
+
     exceedances$date_peak <-
       plyr::ldply(exceedances_list, function(x) x$date[x$temp == max(x$temp)][1])[, 2]
     exceedances$int_mean <-

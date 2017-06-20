@@ -44,7 +44,7 @@ Alternatively, you can install it from GitHub by issuing the following command:
 |`block_average()`    |Calculates annual means for event metrics.|
 |`event_line()`       |Creates a line plot of marine heat waves or cold spells.|
 |`lolli_plot()`       |Creates a timeline of selected event metrics.|
-|`exceedance()`       |A function similar to `detect()` but that detects consecutive days above/ below a given threshold.|
+|`exceedance()`       |A function similar to `detect()` but that detects consecutive days above/below a given threshold.|
 |`geom_flame()`       |Creates flame polygons of marine heat waves or cold spells.|
 |`geom_lolli()`       |Creates a lolliplot timeline of selected event metric.|
 
