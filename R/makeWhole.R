@@ -80,5 +80,20 @@ make_whole <- function(data) {
       ifelse(doy > feb28, doy + 1, doy),
       doy
     ))
-  # print(tSeries[1,])
+
+  # property <- c("start date",
+  #               "end date",
+  #               "no. NAs")
+  #               # "% NAs",
+  #               # "mean no. NAs/year",
+  #               # "min. no. NAs/year",
+  #               # "max. no. NAs/year")
+  # value <- c(as.Date(tSeries$date[1]),
+  #            as.Date(tSeries$date[length(tSeries$date)]),
+  #            sum(is.na(tSeries$temp))
+  #            )
+  # print(kable(cbind(property, value)))
+  # print(paste("start date: ", tSeries$date[1]))
+  # print(paste("end date: ", tSeries$date[length(tSeries$date)]))
+  # return(tSeries)
 }
