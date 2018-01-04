@@ -53,7 +53,7 @@
 #'
 #' \dontrun{
 #' require(ggplot2)
-#' ggplot(mhw, aes(x = date, y = temp)) +
+#' ggplot(mhw, aes(x = t, y = temp)) +
 #'   geom_flame(aes(y2 = thresh_clim_year)) +
 #'   geom_text(aes(x = as.Date("2011-02-01"), y = 28,
 #'   label = "That's not a heatwave.\nThis, is a heatwave.")) +

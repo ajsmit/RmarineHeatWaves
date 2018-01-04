@@ -516,7 +516,7 @@ detect <-
           rate_decline = -rate_decline
         )
         t_series <- t_series %>% dplyr::mutate(
-          temp = -temp,
+          ts.y = -ts.y,
           seas_clim_year = -seas_clim_year,
           thresh_clim_year = -thresh_clim_year
         )
