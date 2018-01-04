@@ -111,12 +111,12 @@
 #' @export
 #'
 #' @examples
-#' t_dat <- make_whole(sst_WA)
-#' res <- exceedance(t_dat, threshold = 25)
+#' # t_dat <- make_whole(sst_WA)
+#' # res <- exceedance(t_dat, threshold = 25)
 #' # show first ten days of daily data:
-#' res$threshold[1:10, ]
+#' # res$threshold[1:10, ]
 #' # show first five exceedances:
-#' res$exceedance[1:5, ]
+#' # res$exceedance[1:5, ]
 exceedance <-
   function(data,
            threshold = 20,

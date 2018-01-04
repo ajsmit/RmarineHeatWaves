@@ -4,14 +4,25 @@
 #' series of temperature along with a daily date vector.
 #'
 #' @importFrom magrittr %>%
-#' @param data A data frame with three columns. They are headed \code{doy},
-#' \code{date} and \code{temp.} \code{doy} is the Julian day running from 1
-#' to 366, but modified so that the day-of-year (doy) vector for non-leap-years
-#' runs 1...59 and then 61...366. For leap years the 60th day is February 29.
-#' The \code{date} column is a vector of dates of class \code{Date}, while
-#' \code{temp} is the temperature. Data of the appropriate format are created
-#' by the function \code{\link{make_whole}}, but your own data can be supplied
+#' @param data A data frame with three columns. In the default setting (i.e. ommitting
+#' the arguments \code{doy}, \code{x} and \code{y}; see immediately below), the
+#' data set is expected to have the headers \code{doy}, \code{t} and \code{temp}.
+#' \code{doy} is the Julian day running from 1 to 366, but modified so that the
+#' day-of-year (doy) vector for non-leap-years runs 1...59 and then 61...366.
+#' For leap years the 60th day is February 29. The \code{t} column is a vector
+#' of dates of class \code{Date}, while \code{temp} is the measured variable (by
+#' default it is assumed to be temperature). Data of the appropriate format are
+#' created by the function \code{\link{make_whole}}, but your own data can be supplied
 #' if they meet the criteria specified by \code{\link{make_whole}}.
+#' @param doy If a column headed \code{doy} is not available, another column with
+#' Julian dates can be supplied. This argument accepts the name of that column. The
+#' default name is, of course, \code{doy}.
+#' @param x This column is expected to contain a vector of dates as per the
+#' specification of \code{make_whole}. If a column headed \code{t} is present in
+#' the dataframe, this argument may be ommitted; otherwise, specify the name of
+#' the column with dates here.
+#' @param y This is a column containing the measurement variables. If the column
+#' name differs from the default (i.e. \code{temp}), specify the name here.
 #' @param climatology_start The first full year from which the (varying by
 #' day-of-year) seasonal cycle and extremes threshold are calculated (full being
 #' 366 days if leap year, else 365 days). Note that a default value is provided
@@ -109,11 +120,20 @@
 #' \code{event}, which are the climatology and MHW (or MCS) events, respectively.
 #' The climatology contains the full time series of daily temperatures, as well
 #' as the the seasonal climatology, the threshold and various aspects of the
-#' events that were detected:
+#' events that were detected. The software was designed for detecting extreme
+#' thermal events, and the units specified below reflect that intended purpose.
+#' However, the various other kinds of extreme events may be detected according
+#' to the 'marine heat wave' specifications, and if that is the case, the appropriate
+#' units need to be determined by the user.
 #'   \item{doy}{Julian day (day-of-year). For non-leap years it runs 1...59 and
-#'   61...366, while leap years run 1...366.}
-#'   \item{date}{The date of the temperature measurement.}
-#'   \item{temp}{Seawater temperature on the specified date [deg. C].}
+#'   61...366, while leap years run 1...366. This column will be named differently if
+#'   another name was specified to the \code{doy} argument.}
+#'   \item{t}{The date of the temperature measurement. This column will be
+#'   named differently if another name was specified to the \code{x} argument.}
+#'   \item{temp}{If the software was used for the purpose for which it was designed,
+#'   seawater temperature [deg. C] on the specified date will be returned. This
+#'   column will of course be named differently if another kind of measurement was
+#'   specified to the \code{y} argument.}
 #'   \item{seas_clim_year}{Climatological seasonal cycle [deg. C].}
 #'   \item{thresh_clim_year}{Seasonally varying threshold (e.g., 90th
 #'   percentile) [deg. C].}
@@ -186,6 +206,9 @@
 #' res$event[1:5, 1:10]
 detect <-
   function(data,
+           doy,
+           x,
+           y,
            climatology_start = 1983,
            climatology_end = 2012,
            pctile = 90,
@@ -199,10 +222,26 @@ detect <-
            max_pad_length = 3,
            cold_spells = FALSE
            # verbose = TRUE, # to be implemented
-           ) {
+  ) {
 
-    t_series <- data
-    t_series$temp <- zoo::na.approx(t_series$temp, maxgap = max_pad_length)
+    if (missing(doy)) {
+      doy <- "doy"
+    }
+
+    if (missing(x)) {
+      x <- "t"
+    }
+
+    if (missing(y)) {
+      y <- "temp"
+    }
+
+    t_series <- data.frame(data[, doy],
+                           data[, x],
+                           data[, y])
+    colnames(t_series) <- c("doy", "ts.x", "ts.y")
+
+    t_series$ts.y <- zoo::na.approx(t_series$ts.y, maxgap = max_pad_length)
 
     if (missing(climatology_start))
       stop("Oops! Please provide a complete year for the start of the climatology.")
@@ -211,22 +250,22 @@ detect <-
       stop("Bummer! Please provide a complete year for the end of the climatology.")
 
     clim_start <- paste(climatology_start, "01", "01", sep = "-")
-    if (t_series$date[1] > clim_start)
+    if (t_series$ts.x[1] > clim_start)
       stop(paste("The specified start date precedes the first day of series, which is",
-                 t_series$date[1]))
+                 t_series$ts.x[1]))
 
     clim_end <- paste(climatology_end, "12", "31", sep = "-")
-    if (clim_end > t_series$date[nrow(t_series)])
+    if (clim_end > t_series$ts.x[nrow(t_series)])
       stop(paste("The specified end date follows the last day of series, which is",
-                 t_series$date[nrow(t_series)]))
+                 t_series$ts.x[nrow(t_series)]))
 
     if (cold_spells)
-      t_series$temp <- -t_series$temp
+      t_series$ts.y <- -t_series$ts.y
 
     tDat <- t_series %>%
-      dplyr::filter(date >= clim_start & date <= clim_end) %>%
-      dplyr::mutate(date = lubridate::year(date)) %>%
-      tidyr::spread(date, temp)
+      dplyr::filter(ts.x >= clim_start & ts.x <= clim_end) %>%
+      dplyr::mutate(ts.x = lubridate::year(ts.x)) %>%
+      tidyr::spread(ts.x, ts.y)
 
     all_NA <- apply(tDat[59:61, ], 2, function(x) !all(is.na(x)))
     no_NA <- names(all_NA[all_NA > 0])
@@ -301,13 +340,13 @@ detect <-
 
     if (clim_only) {
       t_series <- merge(data, clim, by = "doy")
-      t_series <- t_series[order(t_series$date),]
+      t_series <- t_series[order(t_series$ts.x),]
       return(t_series)
 
     } else {
       t_series %<>% dplyr::inner_join(clim, by = "doy")
-      t_series$temp[is.na(t_series$temp)] <- t_series$seas_clim_year[is.na(t_series$temp)]
-      t_series$thresh_criterion <- t_series$temp > t_series$thresh_clim_year
+      t_series$ts.y[is.na(t_series$ts.y)] <- t_series$seas_clim_year[is.na(t_series$ts.y)]
+      t_series$thresh_criterion <- t_series$ts.y > t_series$thresh_clim_year
       ex1 <- rle(t_series$thresh_criterion)
       ind1 <- rep(seq_along(ex1$lengths), ex1$lengths)
       s1 <- split(zoo::index(t_series$thresh_criterion), ind1)
@@ -323,8 +362,8 @@ detect <-
         out <- proto_data %>%
           dplyr::mutate(duration = index_stop - index_start + 1) %>%
           dplyr::filter(duration >= min_duration) %>%
-          dplyr::mutate(date_start = t_series$date[index_start]) %>%
-          dplyr::mutate(date_stop = t_series$date[index_stop])
+          dplyr::mutate(date_start = t_series$ts.x[index_start]) %>%
+          dplyr::mutate(date_stop = t_series$ts.x[index_stop])
       }
 
       proto_events <- do.call(rbind, proto_events_rng) %>%
@@ -351,8 +390,8 @@ detect <-
 
       if (any(proto_gaps$duration >= 1 & proto_gaps$duration <= max_gap)) {
         proto_gaps %<>%
-          dplyr::mutate(date_start = t_series$date[index_start]) %>%
-          dplyr::mutate(date_stop = t_series$date[index_stop]) %>%
+          dplyr::mutate(date_start = t_series$ts.x[index_start]) %>%
+          dplyr::mutate(date_stop = t_series$ts.x[index_stop]) %>%
           dplyr::filter(duration >= 1 & duration <= max_gap)
       } else {
         join_across_gaps <- FALSE
@@ -393,18 +432,18 @@ detect <-
         temp <- rate_onset <- rate_decline <- mhw_rel_thresh <-
         rel_thresh_norm <- mhw_rel_seas <- NULL
 
-      events_list <- plyr::dlply(events, c("event_no"), function(x)
+      events_list <- plyr::dlply(events, c("event_no"), function(df)
         with(
           t_series,
           data.frame(
-            date = c(date[x$index_start:x$index_stop]),
-            temp = c(temp[x$index_start:x$index_stop]),
-            seas_clim_year = c(seas_clim_year[x$index_start:x$index_stop]),
-            thresh_clim_year = c(thresh_clim_year[x$index_start:x$index_stop]),
-            mhw_rel_seas = c(temp[x$index_start:x$index_stop]) - c(seas_clim_year[x$index_start:x$index_stop]),
-            mhw_rel_thresh = c(temp[x$index_start:x$index_stop]) - c(thresh_clim_year[x$index_start:x$index_stop]),
-            rel_thresh_norm = c(temp[x$index_start:x$index_stop]) - c(thresh_clim_year[x$index_start:x$index_stop]) /
-              c(thresh_clim_year[x$index_start:x$index_stop]) - c(seas_clim_year[x$index_start:x$index_stop])
+            ts.x = c(ts.x[df$index_start:df$index_stop]),
+            ts.y = c(ts.y[df$index_start:df$index_stop]),
+            seas_clim_year = c(seas_clim_year[df$index_start:df$index_stop]),
+            thresh_clim_year = c(thresh_clim_year[df$index_start:df$index_stop]),
+            mhw_rel_seas = c(ts.y[df$index_start:df$index_stop]) - c(seas_clim_year[df$index_start:df$index_stop]),
+            mhw_rel_thresh = c(ts.y[df$index_start:df$index_stop]) - c(thresh_clim_year[df$index_start:df$index_stop]),
+            rel_thresh_norm = c(ts.y[df$index_start:df$index_stop]) - c(thresh_clim_year[df$index_start:df$index_stop]) /
+              c(thresh_clim_year[df$index_start:df$index_stop]) - c(seas_clim_year[df$index_start:df$index_stop])
           )
         )
       )
@@ -413,7 +452,7 @@ detect <-
                       events_list %>%
                         dplyr::bind_rows(.id = "event_no") %>%
                         dplyr::group_by(event_no) %>%
-                        dplyr::summarise(date_peak = date[mhw_rel_seas == max(mhw_rel_seas)][1],
+                        dplyr::summarise(date_peak = ts.x[mhw_rel_seas == max(mhw_rel_seas)][1],
                                          int_mean = mean(mhw_rel_seas),
                                          int_max = max(mhw_rel_seas),
                                          int_var = sqrt(stats::var(mhw_rel_seas)),
@@ -422,18 +461,18 @@ detect <-
                                          int_max_rel_thresh = max(mhw_rel_thresh),
                                          int_var_rel_thresh = sqrt(stats::var(mhw_rel_thresh)),
                                          int_cum_rel_thresh = max(cumsum(mhw_rel_thresh)),
-                                         int_mean_abs = mean(temp),
-                                         int_max_abs = max(temp),
-                                         int_var_abs = sqrt(stats::var(temp)),
-                                         int_cum_abs = max(cumsum(temp)),
+                                         int_mean_abs = mean(ts.y),
+                                         int_max_abs = max(ts.y),
+                                         int_var_abs = sqrt(stats::var(ts.y)),
+                                         int_cum_abs = max(cumsum(ts.y)),
                                          int_mean_norm = mean(rel_thresh_norm),
                                          int_max_norm = max(rel_thresh_norm)) %>%
                         dplyr::arrange(as.numeric(event_no)) %>%
                         dplyr::select(-event_no))
 
-      mhw_rel_seas <- t_series$temp - t_series$seas_clim_year
+      mhw_rel_seas <- t_series$ts.y - t_series$seas_clim_year
       A <- mhw_rel_seas[events$index_start]
-      B <- t_series$temp[events$index_start - 1]
+      B <- t_series$ts.y[events$index_start - 1]
       C <- t_series$seas_clim_year[events$index_start - 1]
       if (length(B) + 1 == length(A)) {
         B <- c(NA, B)
@@ -446,10 +485,10 @@ detect <-
         (events$int_max - mhw_rel_seas_start) / (as.numeric(
           difftime(events$date_peak, events$date_start, units = "days")) + 0.5),
         NA
-        )
+      )
 
       D <- mhw_rel_seas[events$index_stop]
-      E <- t_series$temp[events$index_stop + 1]
+      E <- t_series$ts.y[events$index_stop + 1]
       F <- t_series$seas_clim_year[events$index_stop + 1]
       mhw_rel_seas_end <- 0.5 * (D + E - F)
 
@@ -482,6 +521,10 @@ detect <-
           thresh_clim_year = -thresh_clim_year
         )
       }
+
+      names(t_series)[1] <- doy
+      names(t_series)[2] <- x
+      names(t_series)[3] <- y
 
       list(clim = t_series,
            event = events)

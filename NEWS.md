@@ -3,6 +3,10 @@ output: pdf_document
 ---
 
 # VERSION CHANGES
+## Changes in version 0.16.0 (30 December 2017)
+* The make_whole() function now handles any arbitrary column names, which are specified 
+via arguments to the function.
+
 ## Changes in version 0.15.9 (19 June 2017)
 * Warnings given by exceedance() when exceedances begin/end on the first/last day of the
   time series have been corrected --- it will now report an NA when the exceedance

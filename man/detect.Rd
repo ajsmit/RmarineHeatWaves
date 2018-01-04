@@ -4,21 +4,35 @@
 \alias{detect}
 \title{Detect Marine Heat Waves and Marine Cold Spells.}
 \usage{
-detect(data, climatology_start = 1983, climatology_end = 2012,
+detect(data, doy, x, y, climatology_start = 1983, climatology_end = 2012,
   pctile = 90, window_half_width = 5, smooth_percentile = TRUE,
   smooth_percentile_width = 31, clim_only = FALSE, min_duration = 5,
   join_across_gaps = TRUE, max_gap = 2, max_pad_length = 3,
   cold_spells = FALSE)
 }
 \arguments{
-\item{data}{A data frame with three columns. They are headed \code{doy},
-\code{date} and \code{temp.} \code{doy} is the Julian day running from 1
-to 366, but modified so that the day-of-year (doy) vector for non-leap-years
-runs 1...59 and then 61...366. For leap years the 60th day is February 29.
-The \code{date} column is a vector of dates of class \code{Date}, while
-\code{temp} is the temperature. Data of the appropriate format are created
-by the function \code{\link{make_whole}}, but your own data can be supplied
+\item{data}{A data frame with three columns. In the default setting (i.e. ommitting
+the arguments \code{doy}, \code{x} and \code{y}; see immediately below), the
+data set is expected to have the headers \code{doy}, \code{t} and \code{temp}.
+\code{doy} is the Julian day running from 1 to 366, but modified so that the
+day-of-year (doy) vector for non-leap-years runs 1...59 and then 61...366.
+For leap years the 60th day is February 29. The \code{t} column is a vector
+of dates of class \code{Date}, while \code{temp} is the measured variable (by
+default it is assumed to be temperature). Data of the appropriate format are
+created by the function \code{\link{make_whole}}, but your own data can be supplied
 if they meet the criteria specified by \code{\link{make_whole}}.}
+
+\item{doy}{If a column headed \code{doy} is not available, another column with
+Julian dates can be supplied. This argument accepts the name of that column. The
+default name is, of course, \code{doy}.}
+
+\item{x}{This column is expected to contain a vector of dates as per the
+specification of \code{make_whole}. If a column headed \code{t} is present in
+the dataframe, this argument may be ommitted; otherwise, specify the name of
+the column with dates here.}
+
+\item{y}{This is a column containing the measurement variables. If the column
+name differs from the default (i.e. \code{temp}), specify the name here.}
 
 \item{climatology_start}{The first full year from which the (varying by
 day-of-year) seasonal cycle and extremes threshold are calculated (full being
@@ -81,11 +95,20 @@ The function will return a list of two components, \code{clim} and
 \code{event}, which are the climatology and MHW (or MCS) events, respectively.
 The climatology contains the full time series of daily temperatures, as well
 as the the seasonal climatology, the threshold and various aspects of the
-events that were detected:
+events that were detected. The software was designed for detecting extreme
+thermal events, and the units specified below reflect that intended purpose.
+However, the various other kinds of extreme events may be detected according
+to the 'marine heat wave' specifications, and if that is the case, the appropriate
+units need to be determined by the user.
   \item{doy}{Julian day (day-of-year). For non-leap years it runs 1...59 and
-  61...366, while leap years run 1...366.}
-  \item{date}{The date of the temperature measurement.}
-  \item{temp}{Seawater temperature on the specified date [deg. C].}
+  61...366, while leap years run 1...366. This column will be named differently if
+  another name was specified to the \code{doy} argument.}
+  \item{t}{The date of the temperature measurement. This column will be
+  named differently if another name was specified to the \code{x} argument.}
+  \item{temp}{If the software was used for the purpose for which it was designed,
+  seawater temperature [deg. C] on the specified date will be returned. This
+  column will of course be named differently if another kind of measurement was
+  specified to the \code{y} argument.}
   \item{seas_clim_year}{Climatological seasonal cycle [deg. C].}
   \item{thresh_clim_year}{Seasonally varying threshold (e.g., 90th
   percentile) [deg. C].}
