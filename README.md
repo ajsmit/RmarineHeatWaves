@@ -106,16 +106,23 @@ The `event_line()` and `lolli_plot()` functions were designed to work directly o
 mhw2 <- mhw$clim # find the climatology dataframe
 mhw2 <- mhw2[10580:10690,] # identify the region of the time series of interest
 
-# ggplot(mhw2, aes(x = date, y = temp, y2 = thresh_clim_year)) +
-#   geom_flame() +
-#   geom_text(aes(x = as.Date("2011-02-01"), y = 28, label = "The MHW that launched\na thousand papers."))
-# 
-# ggplot(mhw$event, aes(x = date_start, y = int_max)) +
-#   geom_lolli(colour = "salmon", colour.n = "red", n = 3) +
-#   geom_text(aes(x = as.Date("2006-10-01"), y = 5, 
-#                 label = "The distribution of events\nis skewed towards the\nend of the time series."),
-#             colour = "black")
+ggplot(mhw2, aes(x = t, y = temp, y2 = thresh_clim_year)) +
+  geom_flame() +
+  geom_text(aes(x = as.Date("2011-02-01"), y = 28, label = "The MHW that launched\na thousand papers."))
 ```
+
+![](tools/fig-example3-1.png)
+
+``` r
+
+ggplot(mhw$event, aes(x = date_start, y = int_max)) +
+  geom_lolli(colour = "salmon", colour.n = "red", n = 3) +
+  geom_text(aes(x = as.Date("2006-10-01"), y = 5,
+                label = "The distribution of events\nis skewed towards the\nend of the time series."),
+            colour = "black")
+```
+
+![](tools/fig-example3-2.png)
 
 The default output of these function may not be to your liking. If so, not to worry. As **ggplot2** geoms, they are highly maleable. For example, if we were to choose to reproduce the format of the MHWs as seen in Hobday et al. (2016), the code would look something like this:
 
