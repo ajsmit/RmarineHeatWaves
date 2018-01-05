@@ -224,23 +224,13 @@ detect <-
            # verbose = TRUE, # to be implemented
   ) {
 
-    if (missing(doy)) {
-      doy <- "doy"
-    }
-
-    if (missing(x)) {
-      x <- "t"
-    }
-
-    if (missing(y)) {
-      y <- "temp"
-    }
-
-    t_series <- data.frame(data[, doy],
-                           data[, x],
-                           data[, y])
-    colnames(t_series) <- c("doy", "ts.x", "ts.y")
-
+    nd <- eval(substitute(doy), data)
+    ts.x <- eval(substitute(x), data)
+    ts.y <- eval(substitute(y), data)
+    t_series <- tibble(nd,
+                       ts.x,
+                       ts.y)
+    rm(nd); rm(ts.x); rm(ts.y)
     t_series$ts.y <- zoo::na.approx(t_series$ts.y, maxgap = max_pad_length)
 
     if (missing(climatology_start))
@@ -298,7 +288,7 @@ detect <-
     len_clim_year <- 366
     clim <-
       data.frame(
-        doy = tDat[(window_half_width + 1):((window_half_width) + len_clim_year), 1],
+        nd = tDat[(window_half_width + 1):((window_half_width) + len_clim_year), 1],
         seas_clim_year = seas_clim_year[(window_half_width + 1):((window_half_width) + len_clim_year)],
         thresh_clim_year = thresh_clim_year[(window_half_width + 1):((window_half_width) + len_clim_year)],
         var_clim_year = var_clim_year[(window_half_width + 1):((window_half_width) + len_clim_year)]
@@ -339,12 +329,12 @@ detect <-
     }
 
     if (clim_only) {
-      t_series <- merge(data, clim, by = "doy")
+      t_series <- merge(data, clim, by = "nd")
       t_series <- t_series[order(t_series$ts.x),]
       return(t_series)
 
     } else {
-      t_series %<>% dplyr::inner_join(clim, by = "doy")
+      t_series %<>% dplyr::inner_join(clim, by = "nd")
       t_series$ts.y[is.na(t_series$ts.y)] <- t_series$seas_clim_year[is.na(t_series$ts.y)]
       t_series$thresh_criterion <- t_series$ts.y > t_series$thresh_clim_year
       ex1 <- rle(t_series$thresh_criterion)
@@ -522,9 +512,9 @@ detect <-
         )
       }
 
-      names(t_series)[1] <- doy
-      names(t_series)[2] <- x
-      names(t_series)[3] <- y
+      names(t_series)[1] <- "doy"
+      names(t_series)[2] <- "t"
+      names(t_series)[3] <- "response"
 
       list(clim = t_series,
            event = events)
