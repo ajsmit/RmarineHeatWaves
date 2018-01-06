@@ -76,12 +76,12 @@
 #' in the \code{doy} column, this column will appear in the output.
 #'
 #' The information shown in the \code{threshold} component is:
-#'   \item{t}{The date of the temperature measurement.} This variable may named
+#'   \item{t}{The date of the temperature measurement. This variable may named
 #'   differently if an alternative name is supplied to the function's \code{x}
-#'   argument.
-#'   \item{temp}{Temperature on the specified date [deg. C].} This variable may
+#'   argument.}
+#'   \item{temp}{Temperature on the specified date [deg. C]. This variable may
 #'   named differently if an alternative name is supplied to the function's \code{y}
-#'   argument.
+#'   argument.}
 #'   \item{thresh}{The static \code{threshold} chosen by the user [deg. C].}
 #'   \item{thresh_criterion}{Boolean indicating if \code{temp} exceeds
 #'   \code{threshold}.}
@@ -114,10 +114,6 @@
 #' rather than relative to the threshold.
 #'
 #' @author Robert W. Schlegel, Albertus J. Smit
-#'
-#' @references Hobday, A.J. et al. (2016). A hierarchical approach to defining
-#' marine heatwaves, Progress in Oceanography, 141, pp. 227-238,
-#' doi:10.1016/j.pocean.2015.12.014
 #'
 #' @export
 #'

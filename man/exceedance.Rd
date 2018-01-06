@@ -65,12 +65,12 @@ columns left in the data frame given to this function will be output in the
 in the \code{doy} column, this column will appear in the output.
 
 The information shown in the \code{threshold} component is:
-  \item{t}{The date of the temperature measurement.} This variable may named
+  \item{t}{The date of the temperature measurement. This variable may named
   differently if an alternative name is supplied to the function's \code{x}
-  argument.
-  \item{temp}{Temperature on the specified date [deg. C].} This variable may
+  argument.}
+  \item{temp}{Temperature on the specified date [deg. C]. This variable may
   named differently if an alternative name is supplied to the function's \code{y}
-  argument.
+  argument.}
   \item{thresh}{The static \code{threshold} chosen by the user [deg. C].}
   \item{thresh_criterion}{Boolean indicating if \code{temp} exceeds
   \code{threshold}.}
@@ -139,11 +139,6 @@ res <- exceedance(ts_dat, threshold = 25)
 res$threshold[1:10, ]
 # show first five exceedances:
 res$exceedance[1:5, ]
-}
-\references{
-Hobday, A.J. et al. (2016). A hierarchical approach to defining
-marine heatwaves, Progress in Oceanography, 141, pp. 227-238,
-doi:10.1016/j.pocean.2015.12.014
 }
 \author{
 Robert W. Schlegel, Albertus J. Smit
