@@ -4,7 +4,7 @@
 \alias{make_whole}
 \title{Constructs a Continuous, Uninterrupted Time Series of Temperatures.}
 \usage{
-make_whole(data, x, y)
+make_whole(data, x = t, y = temp)
 }
 \arguments{
 \item{data}{A data frame with columns for date and temperature data.

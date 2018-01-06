@@ -188,24 +188,22 @@ ggplot(mcs$event, aes(x = date_start, y = int_cum)) +
 In addition to the calculation of extreme events, consecutive days over a given static threshold may be calculated with the `exceedance()` function.
 
 ```{r exceedance-example1, message = FALSE, warning = FALSE}
-# the exceedance function is currently dead...
-# exc <- exceedance(ts, threshold = 25)
-# exc$exceedance %>% 
-#   ungroup() %>%
-#   select(exceedance_no, duration, date_start, date_peak, int_mean, int_max, int_cum) %>% 
-#   dplyr::arrange(-int_cum) %>% 
-#   head(5)
+exc <- exceedance(ts, threshold = 25)
+exc$exceedance %>%
+  ungroup() %>%
+  select(exceedance_no, duration, date_start, date_peak, int_mean, int_max, int_cum) %>%
+  dplyr::arrange(-int_cum) %>%
+  head(5)
 ```
 
 The same function may be used to calculate consecutive days below a threshold, too.
 
 ```{r exceedance-example2, message = FALSE, warning = FALSE}
-# the exceedance function is currently dead...
-# exc <- exceedance(ts, threshold = 19, below = TRUE)
-# exc$exceedance %>%
-#   dplyr::ungroup() %>%
-#   dplyr::select(exceedance_no, duration, date_start, date_peak, int_mean, int_max, int_cum) %>%
-#   dplyr::arrange(int_cum)
+exc <- exceedance(ts, threshold = 19, below = TRUE)
+exc$exceedance %>%
+  dplyr::ungroup() %>%
+  dplyr::select(exceedance_no, duration, date_start, date_peak, int_mean, int_max, int_cum) %>%
+  dplyr::arrange(int_cum)
 ```
 
 # Working with gridded SST data

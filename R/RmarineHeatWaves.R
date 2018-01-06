@@ -3,7 +3,8 @@
 #' Applies the Hobday et al. (2016) marine heat wave definition to an input time
 #' series of temperature along with a daily date vector.
 #'
-#' @importFrom magrittr %>%
+#' @importFrom tidyr %>%
+#'
 #' @param data A data frame with three columns. In the default setting (i.e. ommitting
 #' the arguments \code{doy}, \code{x} and \code{y}; see immediately below), the
 #' data set is expected to have the headers \code{doy}, \code{t} and \code{temp}.
@@ -21,7 +22,7 @@
 #' specification of \code{make_whole}. If a column headed \code{t} is present in
 #' the dataframe, this argument may be ommitted; otherwise, specify the name of
 #' the column with dates here.
-#' @param y This is a column containing the measurement variables. If the column
+#' @param y This is a column containing the measurement variable. If the column
 #' name differs from the default (i.e. \code{temp}), specify the name here.
 #' @param climatology_start The first full year from which the (varying by
 #' day-of-year) seasonal cycle and extremes threshold are calculated (full being
@@ -198,17 +199,17 @@
 #' @export
 #'
 #' @examples
-#' t_dat <- make_whole(sst_WA)
-#' res <- detect(t_dat, climatology_start = 1983, climatology_end = 2012)
+#' ts_dat <- make_whole(sst_WA)
+#' res <- detect(ts_dat, climatology_start = 1983, climatology_end = 2012)
 #' # show a portion of the climatology:
 #' res$clim[1:10, ]
 #' # show some of the heat waves:
 #' res$event[1:5, 1:10]
 detect <-
   function(data,
-           doy,
-           x,
-           y,
+           doy = doy,
+           x = t,
+           y = temp,
            climatology_start = 1983,
            climatology_end = 2012,
            pctile = 90,
@@ -224,13 +225,15 @@ detect <-
            # verbose = TRUE, # to be implemented
   ) {
 
-    nd <- eval(substitute(doy), data)
+    temp <- NULL
+
+    doy <- eval(substitute(doy), data)
     ts.x <- eval(substitute(x), data)
     ts.y <- eval(substitute(y), data)
-    t_series <- tibble(nd,
-                       ts.x,
-                       ts.y)
-    rm(nd); rm(ts.x); rm(ts.y)
+    t_series <- tibble::tibble(doy,
+                               ts.x,
+                               ts.y)
+    rm(doy); rm(ts.x); rm(ts.y)
     t_series$ts.y <- zoo::na.approx(t_series$ts.y, maxgap = max_pad_length)
 
     if (missing(climatology_start))
@@ -288,14 +291,14 @@ detect <-
     len_clim_year <- 366
     clim <-
       data.frame(
-        nd = tDat[(window_half_width + 1):((window_half_width) + len_clim_year), 1],
+        doy = tDat[(window_half_width + 1):((window_half_width) + len_clim_year), 1],
         seas_clim_year = seas_clim_year[(window_half_width + 1):((window_half_width) + len_clim_year)],
         thresh_clim_year = thresh_clim_year[(window_half_width + 1):((window_half_width) + len_clim_year)],
         var_clim_year = var_clim_year[(window_half_width + 1):((window_half_width) + len_clim_year)]
       )
 
     if (smooth_percentile) {
-      clim %<>%
+      clim <- clim %>%
         dplyr::mutate(
           seas_clim_year = raster::movingFun(
             seas_clim_year,
@@ -329,12 +332,13 @@ detect <-
     }
 
     if (clim_only) {
-      t_series <- merge(data, clim, by = "nd")
+      t_series <- merge(data, clim, by = "doy")
       t_series <- t_series[order(t_series$ts.x),]
       return(t_series)
 
     } else {
-      t_series %<>% dplyr::inner_join(clim, by = "nd")
+      t_series <- t_series %>%
+        dplyr::inner_join(clim, by = "doy")
       t_series$ts.y[is.na(t_series$ts.y)] <- t_series$seas_clim_year[is.na(t_series$ts.y)]
       t_series$thresh_criterion <- t_series$ts.y > t_series$thresh_clim_year
       ex1 <- rle(t_series$thresh_criterion)
@@ -379,7 +383,7 @@ detect <-
         dplyr::mutate(duration = index_stop - index_start + 1)
 
       if (any(proto_gaps$duration >= 1 & proto_gaps$duration <= max_gap)) {
-        proto_gaps %<>%
+        proto_gaps <- proto_gaps %>%
           dplyr::mutate(date_start = t_series$ts.x[index_start]) %>%
           dplyr::mutate(date_stop = t_series$ts.x[index_stop]) %>%
           dplyr::filter(duration >= 1 & duration <= max_gap)
@@ -419,7 +423,7 @@ detect <-
       int_mean <- int_max <- int_cum <- int_mean_rel_thresh <-
         int_max_rel_thresh <- int_cum_rel_thresh <- int_mean_abs <-
         int_max_abs <- int_cum_abs <- int_mean_norm <- int_max_norm <-
-        temp <- rate_onset <- rate_decline <- mhw_rel_thresh <-
+        rate_onset <- rate_decline <- mhw_rel_thresh <-
         rel_thresh_norm <- mhw_rel_seas <- NULL
 
       events_list <- plyr::dlply(events, c("event_no"), function(df)
@@ -512,9 +516,9 @@ detect <-
         )
       }
 
-      names(t_series)[1] <- "doy"
-      names(t_series)[2] <- "t"
-      names(t_series)[3] <- "response"
+      names(t_series)[1] <- paste(substitute(doy))
+      names(t_series)[2] <- paste(substitute(x))
+      names(t_series)[3] <- paste(substitute(y))
 
       list(clim = t_series,
            event = events)

@@ -4,11 +4,11 @@
 \alias{detect}
 \title{Detect Marine Heat Waves and Marine Cold Spells.}
 \usage{
-detect(data, doy, x, y, climatology_start = 1983, climatology_end = 2012,
-  pctile = 90, window_half_width = 5, smooth_percentile = TRUE,
-  smooth_percentile_width = 31, clim_only = FALSE, min_duration = 5,
-  join_across_gaps = TRUE, max_gap = 2, max_pad_length = 3,
-  cold_spells = FALSE)
+detect(data, doy = doy, x = t, y = temp, climatology_start = 1983,
+  climatology_end = 2012, pctile = 90, window_half_width = 5,
+  smooth_percentile = TRUE, smooth_percentile_width = 31,
+  clim_only = FALSE, min_duration = 5, join_across_gaps = TRUE,
+  max_gap = 2, max_pad_length = 3, cold_spells = FALSE)
 }
 \arguments{
 \item{data}{A data frame with three columns. In the default setting (i.e. ommitting
@@ -31,7 +31,7 @@ specification of \code{make_whole}. If a column headed \code{t} is present in
 the dataframe, this argument may be ommitted; otherwise, specify the name of
 the column with dates here.}
 
-\item{y}{This is a column containing the measurement variables. If the column
+\item{y}{This is a column containing the measurement variable. If the column
 name differs from the default (i.e. \code{temp}), specify the name here.}
 
 \item{climatology_start}{The first full year from which the (varying by
@@ -213,8 +213,8 @@ of our preparation of Schlegel et al. (submitted), wherein the cold events
 receive a brief overview.
 }
 \examples{
-t_dat <- make_whole(sst_WA)
-res <- detect(t_dat, climatology_start = 1983, climatology_end = 2012)
+ts_dat <- make_whole(sst_WA)
+res <- detect(ts_dat, climatology_start = 1983, climatology_end = 2012)
 # show a portion of the climatology:
 res$clim[1:10, ]
 # show some of the heat waves:

@@ -1,15 +1,22 @@
 #' Detect consecutive days in exceedance of a given threshold.
 #'
-#' @importFrom magrittr %>%
-#' @importFrom plyr .
+#' @importFrom tidyr %>%
+#'
 #' @param data A data frame with at least the two following columns:
-#' a \code{date} column which is a vector of dates of class \code{Date},
+#' a \code{t} column which is a vector of dates of class \code{Date},
 #' and a \code{temp} column, which is the temperature on those given
-#' dates. The function will not accurately detect consecutive days of
-#' temperatures in exceedance of the \code{threshold} if missing days of
+#' dates. If columns are named differently, their names can be supplied as \code{x}
+#' and \code{y} (see below). The function will not accurately detect consecutive
+#' days of temperatures in exceedance of the \code{threshold} if missing days of
 #' data are not filled in with \code{NA}. Data of the appropriate format are created
 #' by the function \code{\link{make_whole}}, but your own data may be used
 #' directly if they meet the given criteria.
+#' @param x This column is expected to contain a vector of dates as per the
+#' specification of \code{make_whole}. If a column headed \code{t} is present in
+#' the dataframe, this argument may be ommitted; otherwise, specify the name of
+#' the column with dates here.
+#' @param y This is a column containing the measurement variable. If the column
+#' name differs from the default (i.e. \code{temp}), specify the name here.
 #' @param threshold The static threshold used to determine how many consecutive
 #' days are in exceedance of the temperature of interest. Default is
 #' \code{20} degrees.
@@ -69,8 +76,12 @@
 #' in the \code{doy} column, this column will appear in the output.
 #'
 #' The information shown in the \code{threshold} component is:
-#'   \item{date}{The date of the temperature measurement.}
-#'   \item{temp}{Temperature on the specified date [deg. C].}
+#'   \item{t}{The date of the temperature measurement.} This variable may named
+#'   differently if an alternative name is supplied to the function's \code{x}
+#'   argument.
+#'   \item{temp}{Temperature on the specified date [deg. C].} This variable may
+#'   named differently if an alternative name is supplied to the function's \code{y}
+#'   argument.
 #'   \item{thresh}{The static \code{threshold} chosen by the user [deg. C].}
 #'   \item{thresh_criterion}{Boolean indicating if \code{temp} exceeds
 #'   \code{threshold}.}
@@ -102,7 +113,7 @@
 #' \code{int_cum_abs} are as above except as absolute magnitudes
 #' rather than relative to the threshold.
 #'
-#' @author Robert W. Schlegel, Albertus J. Smit, Eric C. J. Oliver
+#' @author Robert W. Schlegel, Albertus J. Smit
 #'
 #' @references Hobday, A.J. et al. (2016). A hierarchical approach to defining
 #' marine heatwaves, Progress in Oceanography, 141, pp. 227-238,
@@ -111,14 +122,16 @@
 #' @export
 #'
 #' @examples
-#' # t_dat <- make_whole(sst_WA)
-#' # res <- exceedance(t_dat, threshold = 25)
+#' ts_dat <- make_whole(sst_WA)
+#' res <- exceedance(ts_dat, threshold = 25)
 #' # show first ten days of daily data:
-#' # res$threshold[1:10, ]
+#' res$threshold[1:10, ]
 #' # show first five exceedances:
-#' # res$exceedance[1:5, ]
+#' res$exceedance[1:5, ]
 exceedance <-
   function(data,
+           x = t,
+           y = temp,
            threshold = 20,
            below = FALSE,
            min_duration = 5,
@@ -126,30 +139,37 @@ exceedance <-
            max_gap = 2,
            max_pad_length = 3) {
 
-    t_series <- data
-    t_series$temp <- zoo::na.approx(t_series$temp, maxgap = max_pad_length)
+    temp <- NULL
+
+    ts.x <- eval(substitute(x), data)
+    ts.y <- eval(substitute(y), data)
+    t_series <- tibble::tibble(ts.x,
+                               ts.y)
+    rm(ts.x); rm(ts.y)
+
+    t_series$ts.y <- zoo::na.approx(t_series$ts.y, maxgap = max_pad_length)
 
     if (missing(threshold))
       stop("Oh no! Please provide a threshold against which to calculate exceedances.")
 
-    if (threshold > max(t_series$temp, na.rm = T)) {
+    if (threshold > max(t_series$ts.y, na.rm = T)) {
       stop(paste("The given threshold value of ", threshold, " is greater than the maximum temperature of ",
-                 max(t_series$temp, na.rm = T), " present in this time series.", sep = ""))
+                 max(t_series$ts.y, na.rm = T), " present in this time series.", sep = ""))
     }
 
-    if (threshold < min(t_series$temp, na.rm = T)) {
+    if (threshold < min(t_series$ts.y, na.rm = T)) {
       stop(paste("The given threshold value of ", threshold, " is less than the minimum temperature of ",
-                 min(t_series$temp, na.rm = T), " present in this time series.", sep = ""))
+                 min(t_series$ts.y, na.rm = T), " present in this time series.", sep = ""))
     }
 
     if (below) {
-      t_series$temp <- -t_series$temp
+      t_series$ts.y <- -t_series$ts.y
       threshold <- -threshold
     }
 
     t_series$thresh <- rep(threshold, nrow(t_series))
 
-    t_series$thresh_criterion <- t_series$temp >= t_series$thresh
+    t_series$thresh_criterion <- t_series$ts.y >= t_series$thresh
     ex1 <- rle(t_series$thresh_criterion)
     ind1 <- rep(seq_along(ex1$lengths), ex1$lengths)
     s1 <- split(zoo::index(t_series$thresh_criterion), ind1)
@@ -165,8 +185,8 @@ exceedance <-
       out <- proto_data %>%
         dplyr::mutate(duration = index_stop - index_start + 1) %>%
         dplyr::filter(duration >= min_duration) %>%
-        dplyr::mutate(date_start = t_series[index_start, "date"]) %>%
-        dplyr::mutate(date_stop = t_series[index_stop, "date"])
+        dplyr::mutate(date_start = t_series$ts.x[index_start]) %>%
+        dplyr::mutate(date_stop = t_series$ts.x[index_stop])
     }
 
     proto_exceedances <- do.call(rbind, proto_exceedances_rng) %>%
@@ -199,9 +219,9 @@ exceedance <-
       dplyr::mutate(duration = index_stop - index_start + 1)
 
     if (any(proto_gaps$duration >= 1 & proto_gaps$duration <= max_gap)) {
-      proto_gaps %<>%
-        dplyr::mutate(date_start = t_series[index_start, "date"]) %>%
-        dplyr::mutate(date_stop = t_series[index_stop, "date"]) %>%
+      proto_gaps <- proto_gaps %>%
+        dplyr::mutate(date_start = t_series$ts.x[index_start]) %>%
+        dplyr::mutate(date_stop = t_series$ts.x[index_stop]) %>%
         dplyr::filter(duration >= 1 & duration <= max_gap)
     } else {
       join_across_gaps <- FALSE
@@ -246,36 +266,36 @@ exceedance <-
       with(
         t_series,
         data.frame(
-          date = c(date[x$index_start:x$index_stop]),
-          temp = c(temp[x$index_start:x$index_stop]),
+          ts.x = c(ts.x[x$index_start:x$index_stop]),
+          ts.y = c(ts.y[x$index_start:x$index_stop]),
           thresh = c(thresh[x$index_start:x$index_stop]),
-          exceedance_rel_thresh = c(temp[x$index_start:x$index_stop]) - c(thresh[x$index_start:x$index_stop])
+          exceedance_rel_thresh = c(ts.y[x$index_start:x$index_stop]) - c(thresh[x$index_start:x$index_stop])
         )
       )
     )
 
     thresh <- int_mean <- int_max <- int_cum <- exceedance_rel_thresh <-
-      int_mean_abs <- int_max_abs <- int_cum_abs <- temp <- NULL ###
+      int_mean_abs <- int_max_abs <- int_cum_abs <- ts.y <- NULL ###
 
     exceedances <- cbind(exceedances,
                          exceedances_list %>%
                            dplyr::bind_rows(.id = "exceedance_no") %>%
                            dplyr::group_by(exceedance_no) %>%
-                           dplyr::summarise(date_peak = date[temp == max(temp)][1],
+                           dplyr::summarise(date_peak = ts.x[ts.y == max(ts.y)][1],
                                             int_mean = mean(exceedance_rel_thresh),
                                             int_max = max(exceedance_rel_thresh),
                                             int_var = sqrt(stats::var(exceedance_rel_thresh)),
                                             int_cum = max(cumsum(exceedance_rel_thresh)),
-                                            int_mean_abs = mean(temp),
-                                            int_max_abs = max(temp),
-                                            int_var_abs = sqrt(stats::var(temp)),
-                                            int_cum_abs = max(cumsum(temp))) %>%
+                                            int_mean_abs = mean(ts.y),
+                                            int_max_abs = max(ts.y),
+                                            int_var_abs = sqrt(stats::var(ts.y)),
+                                            int_cum_abs = max(cumsum(ts.y))) %>%
                            dplyr::arrange(as.numeric(exceedance_no)) %>%
                            dplyr::select(-exceedance_no))
 
-    exceedance_rel_thresh <- t_series$temp - t_series$thresh
+    exceedance_rel_thresh <- t_series$ts.y - t_series$thresh
     A <- exceedance_rel_thresh[exceedances$index_start]
-    B <- t_series$temp[exceedances$index_start - 1]
+    B <- t_series$ts.y[exceedances$index_start - 1]
     C <- t_series$thresh[exceedances$index_start - 1]
     if (length(B) + 1 == length(A)) {
       B <- c(NA, B)
@@ -291,7 +311,7 @@ exceedance <-
     )
 
     D <- exceedance_rel_thresh[exceedances$index_stop]
-    E <- t_series$temp[exceedances$index_stop + 1]
+    E <- t_series$ts.y[exceedances$index_stop + 1]
     F <- t_series$thresh[exceedances$index_stop + 1]
     exceedance_rel_thresh_end <- 0.5 * (D + E - F)
 
@@ -312,10 +332,13 @@ exceedance <-
         int_cum_abs = -int_cum_abs
       )
       t_series <- t_series %>% dplyr::mutate(
-        temp = -temp,
+        ts.y = -ts.y,
         thresh = -thresh
       )
     }
+
+    names(t_series)[1] <- paste(substitute(x))
+    names(t_series)[2] <- paste(substitute(y))
 
     list(threshold = t_series,
          exceedance = exceedances)

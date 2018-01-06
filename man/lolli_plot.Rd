@@ -30,8 +30,8 @@ that one must not have any prior knowledge of ggplot2 to create the figure.
 Visualise a timeline of several event metrics as 'lollipop' graphs.
 }
 \examples{
-t_dat <- make_whole(sst_NW_Atl)
-res <- detect(t_dat, climatology_start = 1983, climatology_end = 2012) # using default values
+ts_dat <- make_whole(sst_NW_Atl)
+res <- detect(ts_dat, climatology_start = 1983, climatology_end = 2012) # using default values
 
 \dontrun{
 lolli_plot(res, metric = "int_cum", event_count = 3, xaxis = "date_peak")

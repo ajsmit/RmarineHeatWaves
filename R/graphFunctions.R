@@ -7,7 +7,7 @@
 #' scale_fill_manual scale_x_date xlab ylab theme theme_grey element_text
 #' element_blank element_rect element_line
 #' @importFrom grid unit
-#' @importFrom magrittr %>%
+#' @importFrom plyr .
 #'
 #' @param data The function receives the output from the \code{\link{detect}} function.
 #' @param min_duration The minimum duration that an event has to for it to
@@ -49,8 +49,8 @@
 #' @export
 #'
 #' @examples
-#' t_dat <- make_whole(sst_WA)
-#' res <- detect(t_dat, climatology_start = 1983, climatology_end = 2012) # using default values
+#' ts_dat <- make_whole(sst_WA)
+#' res <- detect(ts_dat, climatology_start = 1983, climatology_end = 2012) # using default values
 #'
 #' \dontrun{
 #' event_line(res, spread = 200, metric = "int_cum",
@@ -194,7 +194,6 @@ event_line <- function(data,
 #'
 #' Visualise a timeline of several event metrics as 'lollipop' graphs.
 #'
-#' @importFrom magrittr %<>%
 #' @importFrom ggplot2 aes_string geom_segment geom_point scale_x_continuous
 #' element_rect element_line
 #'
@@ -217,8 +216,8 @@ event_line <- function(data,
 #' @export
 #'
 #' @examples
-#' t_dat <- make_whole(sst_NW_Atl)
-#' res <- detect(t_dat, climatology_start = 1983, climatology_end = 2012) # using default values
+#' ts_dat <- make_whole(sst_NW_Atl)
+#' res <- detect(ts_dat, climatology_start = 1983, climatology_end = 2012) # using default values
 #'
 #' \dontrun{
 #' lolli_plot(res, metric = "int_cum", event_count = 3, xaxis = "date_peak")
@@ -233,7 +232,7 @@ lolli_plot <- function(data,
 
   peak_sort <- NULL
   expr <- lazyeval::interp(~abs(x), x = as.name(metric))
-  event %<>%
+  event <- event %>%
     dplyr::select_("event_no", "date_start", "date_peak", metric) %>%
     dplyr::ungroup() %>%
     dplyr::mutate_(.dots = stats::setNames(list(expr), "peak_sort")) %>%
