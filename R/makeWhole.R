@@ -3,6 +3,8 @@
 #' Takes a series of dates and temperatures, and if irregular (but ordered), inserts
 #' missing dates and fills correpsonding temperatures with NAs.
 #'
+#' @importFrom tidyr %>%
+#'
 #' @param data A data frame with columns for date and temperature data.
 #' Ordered daily data are expected, and although missing values (NA) can be
 #' accommodated, the function is only recommended when NAs occur infrequently,
@@ -64,44 +66,45 @@
 #'   mutate(t = year(t)) %>%
 #'   spread(t, temp) %>%
 #'   filter(doy >= 55 & doy <= 65)
-make_whole <- function(data, x, y) {
-  if (missing(x)) {
-    x <- "t"
-  } else {
-    x <- x
-  }
-  if (missing(y)) {
-    y <- "temp"
-  } else {
-    y <- y
-  }
-  dat <- data.frame(x = data[, x],
-                    y = data[, y])
+make_whole <- function(data, x = t, y = temp) {
+
+  temp <- NULL
+
+  ts.x <- eval(substitute(x), data)
+  ts.y <- eval(substitute(y), data)
+  dat <- tibble::tibble(ts.x,
+                        ts.y)
+  rm(ts.x); rm(ts.y)
+
   dat <- dat %>%
-    dplyr::group_by(x) %>%
-    dplyr::summarise(y = mean(y, na.rm = TRUE)) %>%
+    dplyr::group_by(ts.x) %>%
+    dplyr::summarise(ts.y = mean(ts.y, na.rm = TRUE)) %>%
     dplyr::ungroup()
-  tSeries <- zoo::zoo(dat$y, dat$x)
+  t_series <- zoo::zoo(dat$ts.y, dat$ts.x)
   ser <-
-    data.frame(x = seq(stats::start(tSeries), stats::end(tSeries), by = "1 day"))
-  ser <- zoo::zoo(rep(NA, length(ser$x)), order.by = ser$x)
-  tSeries <- merge(ser, tSeries)[, 2]
+    data.frame(ts.x = seq(stats::start(t_series), stats::end(t_series), by = "1 day"))
+  ser <- zoo::zoo(rep(NA, length(ser$ts.x)), order.by = ser$ts.x)
+  t_series <- merge(ser, t_series)[, 2]
 
   feb28 <- 59
   doy <- NULL ###
-  tSeries <-
+  t_series <-
     data.frame(
-      doy = lubridate::yday(tSeries),
-      date = as.Date(as.POSIXct(tSeries)),
-      y = tSeries,
+      doy = lubridate::yday(t_series),
+      date = as.Date(as.POSIXct(t_series)),
+      ts.y = t_series,
       row.names = NULL ###
     ) %>%
     dplyr::mutate(doy = ifelse(
-      lubridate::leap_year(lubridate::year(tSeries)) == FALSE,
+      lubridate::leap_year(lubridate::year(t_series)) == FALSE,
       ifelse(doy > feb28, doy + 1, doy),
       doy
     ))
-  colnames(tSeries) <- c("doy", x, y)
-  return(tSeries)
+
+  names(t_series)[1] <- "doy"
+  names(t_series)[2] <- paste(substitute(x))
+  names(t_series)[3] <- paste(substitute(y))
+
+  return(t_series)
 }
 

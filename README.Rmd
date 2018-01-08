@@ -62,9 +62,10 @@ library(RmarineHeatWaves); library(plyr); library(dplyr); library(ggplot2)
 ts <- make_whole(sst_WA)
 mhw <- detect(ts, climatology_start = 1983, climatology_end = 2012)
 mhw$event %>% 
-  ungroup() %>%
-  select(event_no, duration, date_start, date_peak, int_mean, int_max, int_cum) %>% 
-  dplyr::arrange(-int_cum)
+  dplyr::ungroup() %>%
+  dplyr::select(event_no, duration, date_start, date_peak, int_mean, int_max, int_cum) %>% 
+  dplyr::arrange(-int_cum) %>% 
+  head(5)
 ```
 
 The corresponding `event_line()` and `lolli_plot()`, which represent the massive Western Australian heatwave of 2011, look like this:
@@ -88,15 +89,15 @@ The `event_line()` and `lolli_plot()` functions were designed to work directly o
 mhw2 <- mhw$clim # find the climatology dataframe
 mhw2 <- mhw2[10580:10690,] # identify the region of the time series of interest
 
-# ggplot(mhw2, aes(x = date, y = temp, y2 = thresh_clim_year)) +
-#   geom_flame() +
-#   geom_text(aes(x = as.Date("2011-02-01"), y = 28, label = "The MHW that launched\na thousand papers."))
-# 
-# ggplot(mhw$event, aes(x = date_start, y = int_max)) +
-#   geom_lolli(colour = "salmon", colour.n = "red", n = 3) +
-#   geom_text(aes(x = as.Date("2006-10-01"), y = 5, 
-#                 label = "The distribution of events\nis skewed towards the\nend of the time series."),
-#             colour = "black")
+ggplot(mhw2, aes(x = t, y = temp, y2 = thresh_clim_year)) +
+  geom_flame() +
+  geom_text(aes(x = as.Date("2011-02-01"), y = 28, label = "The MHW that launched\na thousand papers."))
+
+ggplot(mhw$event, aes(x = date_start, y = int_max)) +
+  geom_lolli(colour = "salmon", colour.n = "red", n = 3) +
+  geom_text(aes(x = as.Date("2006-10-01"), y = 5,
+                label = "The distribution of events\nis skewed towards the\nend of the time series."),
+            colour = "black")
 ```
 
 The default output of these function may not be to your liking. If so, not to worry. As **ggplot2** geoms, they are highly maleable. For example, if we were to choose to reproduce the format of the MHWs as seen in Hobday et al. (2016), the code would look something like this:
@@ -105,7 +106,7 @@ The default output of these function may not be to your liking. If so, not to wo
 # It is necessary to give geom_flame() at least one row on either side of the event in order to calculate the polygon corners smoothly
 mhw_top <- mhw2[49:110,]
 
-ggplot(data = mhw2, aes(x = date)) +
+ggplot(data = mhw2, aes(x = t)) +
   geom_flame(aes(y = temp, y2 = thresh_clim_year, fill = "all"), show.legend = T) +
   geom_flame(data = mhw_top, aes(y = temp, y2 = thresh_clim_year, fill = "top"), show.legend = T) +
   geom_line(aes(y = temp, colour = "temp")) +
@@ -136,14 +137,16 @@ The calculation and visualisation of marine cold spells is also accommodated wit
 ```{r detect-example2, message = FALSE, warning = FALSE}
 mcs <- detect(ts, climatology_start = 1983, climatology_end = 2012, cold_spells = TRUE)
 mcs$event %>% 
-  ungroup() %>%
-  select(event_no, duration, date_start, date_peak, int_mean, int_max, int_cum) %>% 
-  dplyr::arrange(int_cum)
+  dplyr::ungroup() %>%
+  dplyr::select(event_no, duration, date_start, date_peak, int_mean, int_max, int_cum) %>% 
+  dplyr::arrange(int_cum) %>% 
+  head(5)
 ```
 
 The plots showing the marine cold spells look like this:
 
 ```{r fig-example6, fig.height = 3, fig.width = 8, eval=FALSE}
+# this function needs to be updated as it currently only works when 't' is the column name for date
 event_line(mcs, spread = 200, metric = "int_cum",
            start_date = "1990-01-01", end_date = "1990-08-30")
 
@@ -160,7 +163,7 @@ mcs2 <- mcs$clim
 mcs2 <- mcs2[2990:3190,]
 
 # # Note that the plot centres on the polygons, so it may be necessary to manually zoom out a bit
-ggplot(data = mcs2, aes(x = date)) +
+ggplot(data = mcs2, aes(x = t)) +
   geom_flame(aes(y = thresh_clim_year, y2 = temp), fill = "steelblue3", show.legend = F) +
   geom_line(aes(y = temp, colour = "temp")) +
   geom_line(aes(y = thresh_clim_year, colour = "thresh"), size = 1.0) +
@@ -186,10 +189,11 @@ In addition to the calculation of extreme events, consecutive days over a given 
 
 ```{r exceedance-example1, message = FALSE, warning = FALSE}
 exc <- exceedance(ts, threshold = 25)
-exc$exceedance %>% 
+exc$exceedance %>%
   ungroup() %>%
-  select(exceedance_no, duration, date_start, date_peak, int_mean, int_max, int_cum) %>% 
-  dplyr::arrange(-int_cum)
+  select(exceedance_no, duration, date_start, date_peak, int_mean, int_cum) %>%
+  dplyr::arrange(-int_cum) %>%
+  head(5)
 ```
 
 The same function may be used to calculate consecutive days below a threshold, too.
@@ -197,9 +201,10 @@ The same function may be used to calculate consecutive days below a threshold, t
 ```{r exceedance-example2, message = FALSE, warning = FALSE}
 exc <- exceedance(ts, threshold = 19, below = TRUE)
 exc$exceedance %>%
-  ungroup() %>%
-  select(exceedance_no, duration, date_start, date_peak, int_mean, int_max, int_cum) %>%
-  dplyr::arrange(int_cum)
+  dplyr::ungroup() %>%
+  dplyr::select(exceedance_no, duration, date_start, date_peak, int_mean, int_cum) %>%
+  dplyr::arrange(int_cum) %>%
+  head(5)
 ```
 
 # Working with gridded SST data

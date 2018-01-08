@@ -20,7 +20,7 @@ Default is \code{date_start}.}
 }
 \value{
 The function will return a graph of the intensity of the selected
-metric along the y-axis versus either \code{date} or \code{event_no}.
+metric along the y-axis versus either \code{t} or \code{event_no}.
 The number of top events as per \code{event_count} will be highlighted
 in a brighter colour. This function differs in use from \code{\link{geom_lolli}}
 in that it creates a stand alone figure. The benefit of this being
@@ -30,8 +30,8 @@ that one must not have any prior knowledge of ggplot2 to create the figure.
 Visualise a timeline of several event metrics as 'lollipop' graphs.
 }
 \examples{
-t_dat <- make_whole(sst_NW_Atl)
-res <- detect(t_dat, climatology_start = 1983, climatology_end = 2012) # using default values
+ts_dat <- make_whole(sst_NW_Atl)
+res <- detect(ts_dat, climatology_start = 1983, climatology_end = 2012) # using default values
 
 \dontrun{
 lolli_plot(res, metric = "int_cum", event_count = 3, xaxis = "date_peak")

@@ -4,18 +4,28 @@
 \alias{exceedance}
 \title{Detect consecutive days in exceedance of a given threshold.}
 \usage{
-exceedance(data, threshold = 20, below = FALSE, min_duration = 5,
-  join_across_gaps = TRUE, max_gap = 2, max_pad_length = 3)
+exceedance(data, x = t, y = temp, threshold = 20, below = FALSE,
+  min_duration = 5, join_across_gaps = TRUE, max_gap = 2,
+  max_pad_length = 3)
 }
 \arguments{
 \item{data}{A data frame with at least the two following columns:
-a \code{date} column which is a vector of dates of class \code{Date},
+a \code{t} column which is a vector of dates of class \code{Date},
 and a \code{temp} column, which is the temperature on those given
-dates. The function will not accurately detect consecutive days of
-temperatures in exceedance of the \code{threshold} if missing days of
+dates. If columns are named differently, their names can be supplied as \code{x}
+and \code{y} (see below). The function will not accurately detect consecutive
+days of temperatures in exceedance of the \code{threshold} if missing days of
 data are not filled in with \code{NA}. Data of the appropriate format are created
 by the function \code{\link{make_whole}}, but your own data may be used
 directly if they meet the given criteria.}
+
+\item{x}{This column is expected to contain a vector of dates as per the
+specification of \code{make_whole}. If a column headed \code{t} is present in
+the dataframe, this argument may be ommitted; otherwise, specify the name of
+the column with dates here.}
+
+\item{y}{This is a column containing the measurement variable. If the column
+name differs from the default (i.e. \code{temp}), specify the name here.}
 
 \item{threshold}{The static threshold used to determine how many consecutive
 days are in exceedance of the temperature of interest. Default is
@@ -55,8 +65,12 @@ columns left in the data frame given to this function will be output in the
 in the \code{doy} column, this column will appear in the output.
 
 The information shown in the \code{threshold} component is:
-  \item{date}{The date of the temperature measurement.}
-  \item{temp}{Temperature on the specified date [deg. C].}
+  \item{t}{The date of the temperature measurement. This variable may named
+  differently if an alternative name is supplied to the function's \code{x}
+  argument.}
+  \item{temp}{Temperature on the specified date [deg. C]. This variable may
+  named differently if an alternative name is supplied to the function's \code{y}
+  argument.}
   \item{thresh}{The static \code{threshold} chosen by the user [deg. C].}
   \item{thresh_criterion}{Boolean indicating if \code{temp} exceeds
   \code{threshold}.}
@@ -119,18 +133,13 @@ Oliver, Institute for Marine and Antarctic Studies, University of Tasmania,
 Feb 2015, and is documented by Hobday et al. (2016).
 }
 \examples{
-# t_dat <- make_whole(sst_WA)
-# res <- exceedance(t_dat, threshold = 25)
+ts_dat <- make_whole(sst_WA)
+res <- exceedance(ts_dat, threshold = 25)
 # show first ten days of daily data:
-# res$threshold[1:10, ]
+res$threshold[1:10, ]
 # show first five exceedances:
-# res$exceedance[1:5, ]
-}
-\references{
-Hobday, A.J. et al. (2016). A hierarchical approach to defining
-marine heatwaves, Progress in Oceanography, 141, pp. 227-238,
-doi:10.1016/j.pocean.2015.12.014
+res$exceedance[1:5, ]
 }
 \author{
-Robert W. Schlegel, Albertus J. Smit, Eric C. J. Oliver
+Robert W. Schlegel, Albertus J. Smit
 }

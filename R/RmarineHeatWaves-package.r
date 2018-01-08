@@ -6,9 +6,12 @@
 #'
 #' @details Although the title of the package refers to marine heat waves (MHW),
 #' it is equally capable of detecting marine cold spells (MCS). This
-#' functionality is also present in the python package, where it was
-#' implemented as a result of the publication Schlegel et al. (2017)
+#' functionality to detect cold events is also present in the python package,
+#' where it was implemented as a result of the publication Schlegel et al. (2017)
 #' that discusses the quantification and detection of anomalously cold events.
+#' As of release 0.16.0, the detect function may also be applied to time series
+#' of other natural phenomena which one might want to express in terms of the
+#' summary metrics outlined in the paper by Hobday et al. (2016).
 #'
 #' The main function is the detection function \code{\link{detect}} which takes as
 #' input a time series of temperature (and a corresponding series of dates)

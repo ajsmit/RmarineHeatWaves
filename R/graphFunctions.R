@@ -7,7 +7,7 @@
 #' scale_fill_manual scale_x_date xlab ylab theme theme_grey element_text
 #' element_blank element_rect element_line
 #' @importFrom grid unit
-#' @importFrom magrittr %>%
+#' @importFrom plyr .
 #'
 #' @param data The function receives the output from the \code{\link{detect}} function.
 #' @param min_duration The minimum duration that an event has to for it to
@@ -49,8 +49,8 @@
 #' @export
 #'
 #' @examples
-#' t_dat <- make_whole(sst_WA)
-#' res <- detect(t_dat, climatology_start = 1983, climatology_end = 2012) # using default values
+#' ts_dat <- make_whole(sst_WA)
+#' res <- detect(ts_dat, climatology_start = 1983, climatology_end = 2012) # using default values
 #'
 #' \dontrun{
 #' event_line(res, spread = 200, metric = "int_cum",
@@ -72,15 +72,15 @@ event_line <- function(data,
 
   date_spread <- seq((event_top$date_start - spread), (event_top$date_stop + spread), by = 1)
 
-  clim <- dplyr::filter(data$clim, date %in% date_spread)
+  clim <- dplyr::filter(data$clim, t %in% date_spread)
 
   temp <- event_no <- thresh_clim_year <- seas_clim_year <- NULL # avoids annoying notes during check...
   dat3 <- data.frame()
   for (i in min(clim$event_no, na.rm = TRUE):max(clim$event_no, na.rm = TRUE)) {
     x <- clim[stats::complete.cases(clim$event_no) & clim$event_no == i,]
     grid.df <-
-      data.frame(date = seq(x$date[1], x$date[nrow(x)], by = "day"))
-    x <- merge(x, grid.df, by = "date", all.y = TRUE)
+      data.frame(t = seq(x$t[1], x$t[nrow(x)], by = "day"))
+    x <- merge(x, grid.df, by = "t", all.y = TRUE)
 
     if (nrow(x[x$thresh_criterion != FALSE,]) != nrow(x)) {
       ex1 <- rle(x$thresh_criterion)
@@ -97,8 +97,8 @@ event_line <- function(data,
         out <- proto_data %>%
           dplyr::mutate(duration = index_stop - index_start + 1) %>%
           dplyr::filter(duration >= min_duration) %>%
-          dplyr::mutate(date_start = x[index_start, "date"]) %>%
-          dplyr::mutate(date_stop = x[index_stop, "date"])
+          dplyr::mutate(date_start = x[index_start, "t"]) %>%
+          dplyr::mutate(date_stop = x[index_stop, "t"])
       }
       proto_events <- do.call(rbind, proto_events_rng) %>%
         dplyr::mutate(event_no = cumsum(ex1$values[ex1$values == TRUE])) %>%
@@ -119,14 +119,14 @@ event_line <- function(data,
       event_no_sub <- NULL
       y <- data.frame(
         temp = x$temp,
-        date = x$date,
+        t = x$t,
         event_no = x$event_no,
         event_no_sub = x$event_no_sub
       )
       z <-
         rbind(y, data.frame(
           temp = rev(x$thresh_clim_year),
-          date = rev(x$date),
+          t = rev(x$t),
           event_no = x$event_no,
           event_no_sub = x$event_no_sub
         ))
@@ -158,11 +158,11 @@ event_line <- function(data,
   if (metric == "duration") ylabel <- "Duration [days]"
   if (!exists("ylabel")) ylabel <- metric
 
-  ggplot(data = clim, aes(x = date, y = temp)) +
+  ggplot(data = clim, aes(x = t, y = temp)) +
     geom_polygon(data = dat3,
-                 aes(x = date, y = temp, group = event_no_sub, fill = "events"), size = 0.5) +
+                 aes(x = t, y = temp, group = event_no_sub, fill = "events"), size = 0.5) +
     geom_polygon(data = dat3[dat3$event_no == event_top$event_no[1],],
-                 aes(x = date, y = temp, group = event_no_sub, fill = "peak event"),
+                 aes(x = t, y = temp, group = event_no_sub, fill = "peak event"),
                  size = 0.5) +
     geom_line(aes(y = seas_clim_year, col = "climatology"),
               size = 0.7, alpha = 1) +
@@ -194,7 +194,6 @@ event_line <- function(data,
 #'
 #' Visualise a timeline of several event metrics as 'lollipop' graphs.
 #'
-#' @importFrom magrittr %<>%
 #' @importFrom ggplot2 aes_string geom_segment geom_point scale_x_continuous
 #' element_rect element_line
 #'
@@ -206,7 +205,7 @@ event_line <- function(data,
 #' Default is \code{date_start}.
 #'
 #' @return The function will return a graph of the intensity of the selected
-#' metric along the y-axis versus either \code{date} or \code{event_no}.
+#' metric along the y-axis versus either \code{t} or \code{event_no}.
 #' The number of top events as per \code{event_count} will be highlighted
 #' in a brighter colour. This function differs in use from \code{\link{geom_lolli}}
 #' in that it creates a stand alone figure. The benefit of this being
@@ -217,8 +216,8 @@ event_line <- function(data,
 #' @export
 #'
 #' @examples
-#' t_dat <- make_whole(sst_NW_Atl)
-#' res <- detect(t_dat, climatology_start = 1983, climatology_end = 2012) # using default values
+#' ts_dat <- make_whole(sst_NW_Atl)
+#' res <- detect(ts_dat, climatology_start = 1983, climatology_end = 2012) # using default values
 #'
 #' \dontrun{
 #' lolli_plot(res, metric = "int_cum", event_count = 3, xaxis = "date_peak")
@@ -233,7 +232,7 @@ lolli_plot <- function(data,
 
   peak_sort <- NULL
   expr <- lazyeval::interp(~abs(x), x = as.name(metric))
-  event %<>%
+  event <- event %>%
     dplyr::select_("event_no", "date_start", "date_peak", metric) %>%
     dplyr::ungroup() %>%
     dplyr::mutate_(.dots = stats::setNames(list(expr), "peak_sort")) %>%

@@ -1,6 +1,6 @@
 citHeader("To cite the theory behind marine heat waves and the underlying algorithm,
           please cite Hobday et al. (2016). To cite the RmarineHeatWaves package,
-          the reference is Smit et al. (2017). Details follow:")
+          the reference is Smit et al. (2018). Details follow:")
 
 year <- sub("-.*", "", meta$Date)
 note <- sprintf("R package version %s", meta$Version)
@@ -38,9 +38,9 @@ citEntry(entry = "manual",
     note = note,
     year = year,
     url = "https://github.com/ajsmit/RmarineHeatWaves",
-    textVersion  = paste("Smit, A. J. et al. (2017)",
+    textVersion  = paste("Smit, A. J. et al. (2018)",
         "RmarineHeatWaves: Package for the calculation of marine heat waves",
-        "Version 0.14.1. University of the Western Cape, Bellville, Cape Town, South Africa.",
+        "Version 0.16.0. University of the Western Cape, Bellville, Cape Town, South Africa.",
         "https://github.com/ajsmit/RmarineHeatWaves")
 )
 
