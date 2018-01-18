@@ -3,6 +3,9 @@ output: pdf_document
 ---
 
 # VERSION CHANGES
+## Changes in version 0.16.0.9000 (18 January 2018)
+* detect() now reurns a list with two tibbles, rather than data.frames as before.
+
 ## Changes in version 0.16.0 (6 January 2018)
 * The make_whole(), detect() and exceedance() functions now handle any arbitrary
 column names, which are specified via arguments to the function.
