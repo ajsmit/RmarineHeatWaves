@@ -64,7 +64,7 @@ The function will return a list of two tibbles (see the 'tidyverse'), `clim` and
 *  `thresh_clim_year`---Seasonally varying threshold (e.g., 90th percentile) [deg. C].
 *  `var_clim_year`---Seasonally varying variance (standard deviation) [deg. C].
 *  `thresh_criterion`---Boolean indicating if `temp` exceeds `thresh_clim_year`.
-*  `duration_criterion`---Boolean indicating whether periods of consecutive*  `thresh_criterion` are >= `min_duration`.
+*  `duration_criterion`---Boolean indicating whether periods of consecutive `thresh_criterion` are >= `min_duration`.
 *  `event`---Boolean indicating if all criteria that define a MHW or MCS are  met.
 *  `event_no`---A sequential number indicating the ID and order of occurence of the MHWs or MCSs.
 
@@ -247,7 +247,7 @@ exc$exceedance %>%
   head(5)
 ```
 
-# Working with gridded SST data
+## Working with gridded SST data
 
 We can also load the gridded 0.25 degree Reynolds [OISST data](https://www.ncei.noaa.gov/thredds/blended-global/oisst-catalog.html) and apply the function pixel by pixel over all of the days of data. The example data used here have 93 longitude steps, 43 latitude steps, and cover 12797 days (1981 to 2016). We apply the `detect()` function to these data, fit a generalised linear model (GLM), and then plot the trend per decade of the marine heatwave count. In other words, have marine heatwaves become more or less frequent in recent years? Under climate change we can expect that extreme events would tend to occur more frequently and be of greater intensity. Indeed, we can clearly see in the figure below of the result of the GLM, how the Agulhas Current has been experiencing marine heat waves more frequently in recent decades. But there are two smaller areas, one along the western side of the Cape Peninsula in the Benguela Upwelling system and another around the Eastern Cape Province near Algoa Bay, where the frequency of marine heat waves seems to have actually been decreasing -- although the *P*-value of the decreasing trend is > 0.05, and therefore not significant.
 
@@ -262,6 +262,8 @@ Please read the package [vignette](https://github.com/ajsmit/RmarineHeatWaves/bl
 Hobday, A.J. et al. (2016). A hierarchical approach to defining marine heatwaves, Progress in Oceanography, 141, pp. 227-238.
 
 Schlegel, R. W., Oliver, E. C. J., Wernberg, T. W., Smit, A. J. (2017). Coastal and offshore co-occurrences of marine heatwaves and cold-spells. Progress in Oceanography, 151, pp. 189-205.
+
+Schlegel, R. W., Oliver, E. C., Perkins-Kirkpatrick, S., Kruger, A., Smit, A. J. (2017). Predominant atmospheric and oceanic patterns during coastal marine heatwaves. Frontiers in Marine Science, 4, 323.
 
 # Acknowledgements
 
