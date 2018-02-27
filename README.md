@@ -66,34 +66,34 @@ The package also provides data of observed SST records for three historical MHWs
 The heat wave metrics
 ---------------------
 
-The function will return a list of two tibbles (see the 'tidyverse'), `clim` and `event`, which are the climatology and MHW (or MCS) events, respectively. The climatology contains the full time series of daily temperatures, as well as the the seasonal climatology, the threshold and various aspects of the events that were detected. The software was designed for detecting extreme thermal events, and the units specified below reflect that intended purpose. However, the various other kinds of extreme events may be detected according to the 'marine heat wave' specifications, and if that is the case, the appropriate units need to be determined by the user.
+The function will return a list of two tibbles (see the ‘tidyverse’), `clim` and `event`, which are the climatology and MHW (or MCS) events, respectively. The climatology contains the full time series of daily temperatures, as well as the the seasonal climatology, the threshold and various aspects of the events that were detected. The software was designed for detecting extreme thermal events, and the units specified below reflect that intended purpose. However, the various other kinds of extreme events may be detected according to the ‘marine heat wave’ specifications, and if that is the case, the appropriate units need to be determined by the user.
 
--   `doy`???Julian day (day-of-year). For non-leap years it runs 1...59 and 61...366, while leap years run 1...366. This column will be named differently if another name was specified to the `doy` argument.
--   `t`???The date of the temperature measurement. This column will be named differently if another name was specified to the `x` argument.
--   `temp`???If the software was used for the purpose for which it was designed, seawater temperature \[deg. C\] on the specified date will be returned. This column will of course be named differently if another kind of measurement was specified to the `y` argument.
--   `seas_clim_year`???Climatological seasonal cycle \[deg. C\].
--   `thresh_clim_year`???Seasonally varying threshold (e.g., 90th percentile) \[deg. C\].
--   `var_clim_year`???Seasonally varying variance (standard deviation) \[deg. C\].
--   `thresh_criterion`???Boolean indicating if `temp` exceeds `thresh_clim_year`.
--   `duration_criterion`???Boolean indicating whether periods of consecutive\* `thresh_criterion` are &gt;= `min_duration`.
--   `event`???Boolean indicating if all criteria that define a MHW or MCS are met.
--   `event_no`???A sequential number indicating the ID and order of occurence of the MHWs or MCSs.
+-   `doy` – Julian day (day-of-year). For non-leap years it runs 1…59 and 61…366, while leap years run 1…366. This column will be named differently if another name was specified to the `doy` argument.
+-   `t` – The date of the temperature measurement. This column will be named differently if another name was specified to the `x` argument.
+-   `temp` – If the software was used for the purpose for which it was designed, seawater temperature \[deg. C\] on the specified date will be returned. This column will of course be named differently if another kind of measurement was specified to the `y` argument.
+-   `seas_clim_year` – Climatological seasonal cycle \[deg. C\].
+-   `thresh_clim_year` – Seasonally varying threshold (e.g., 90th percentile) \[deg. C\].
+-   `var_clim_year` – Seasonally varying variance (standard deviation) \[deg. C\].
+-   `thresh_criterion` – Boolean indicating if `temp` exceeds `thresh_clim_year`.
+-   `duration_criterion` – Boolean indicating whether periods of consecutive\* `thresh_criterion` are &gt;= `min_duration`.
+-   `event` – Boolean indicating if all criteria that define a MHW or MCS are met.
+-   `event_no` – A sequential number indicating the ID and order of occurence of the MHWs or MCSs.
 
 The events are summarised using a range of event metrics:
 
--   `index_start`???Start index of event.
--   `index_stop`???Stop index of event.
--   `event_no`???A sequential number indicating the ID and order of the events.
--   `duration`???Duration of event \[days\].
--   `date_start`???Start date of event \[date\].
--   `date_stop`???Stop date of event \[date\].
--   `date_peak`???Date of event peak \[date\].
--   `int_mean`???Mean intensity \[deg. C\].
--   `int_max`???Maximum (peak) intensity \[deg. C\].
--   `int_var`???Intensity variability (standard deviation) \[deg. C\].
--   `int_cum`???Cumulative intensity \[deg. C x days\].
--   `rate_onset`???Onset rate of event \[deg. C / day\].
--   `rate_decline`???Decline rate of event \[deg. C / day\].
+-   `index_start` – Start index of event.
+-   `index_stop` – Stop index of event.
+-   `event_no` – A sequential number indicating the ID and order of the events.
+-   `duration` – Duration of event \[days\].
+-   `date_start` – Start date of event \[date\].
+-   `date_stop` – Stop date of event \[date\].
+-   `date_peak` – Date of event peak \[date\].
+-   `int_mean` – Mean intensity \[deg. C\].
+-   `int_max` – Maximum (peak) intensity \[deg. C\].
+-   `int_var` – Intensity variability (standard deviation) \[deg. C\].
+-   `int_cum` – Cumulative intensity \[deg. C x days\].
+-   `rate_onset` – Onset rate of event \[deg. C / day\].
+-   `rate_decline` – Decline rate of event \[deg. C / day\].
 
 `int_max_rel_thresh`, `int_mean_rel_thresh`, `int_var_rel_thresh`, and `int_cum_rel_thresh` are as above except relative to the threshold (e.g., 90th percentile) rather than the seasonal climatology.
 
@@ -106,7 +106,7 @@ Note that `rate_onset` and `rate_decline` will return `NA` when the event begins
 Examples of detection and graphing
 ----------------------------------
 
-The `detect()` function is the package's core function. Here is the `detect()` function applied to the Western Australian test data, which are also discussed by Hobday et al. (2016):
+The `detect()` function is the package’s core function. Here is the `detect()` function applied to the Western Australian test data, which are also discussed by Hobday et al. (2016):
 
 ``` r
 library(RmarineHeatWaves); library(plyr); library(dplyr); library(ggplot2)
@@ -142,7 +142,7 @@ lolli_plot(mhw)
 
 ![](tools/fig-example2-1.png)
 
-The `event_line()` and `lolli_plot()` functions were designed to work directly on one of the list returned by `detect()`. If more control over the figures is required, it may be useful to create them in **ggplot2** by stacking 'geoms'. We specifically created two new **ggplot2** geoms to reproduce the functionality of `event_line()` and `lolli_plot()`. These functions are more general in their functionality and can be used outside of the **RmarineHeatWave** package too. To apply them to MHWs and MCSs, they require that we access the `clim` or `event` data frames within the list that is produced by `detect()`. Here is how:
+The `event_line()` and `lolli_plot()` functions were designed to work directly on one of the list returned by `detect()`. If more control over the figures is required, it may be useful to create them in **ggplot2** by stacking ‘geoms’. We specifically created two new **ggplot2** geoms to reproduce the functionality of `event_line()` and `lolli_plot()`. These functions are more general in their functionality and can be used outside of the **RmarineHeatWave** package too. To apply them to MHWs and MCSs, they require that we access the `clim` or `event` data frames within the list that is produced by `detect()`. Here is how:
 
 ``` r
 mhw2 <- mhw$clim # find the climatology dataframe
@@ -288,7 +288,7 @@ exc$exceedance %>%
 Working with gridded SST data
 =============================
 
-We can also load the gridded 0.25 degree Reynolds [OISST data](https://www.ncei.noaa.gov/thredds/blended-global/oisst-catalog.html) and apply the function pixel by pixel over all of the days of data. The example data used here have 93 longitude steps, 43 latitude steps, and cover 12797 days (1981 to 2016). We apply the `detect()` function to these data, fit a generalised linear model (GLM), and then plot the trend per decade of the marine heatwave count. In other words, have marine heatwaves become more or less frequent in recent years? Under climate change we can expect that extreme events would tend to occur more frequently and be of greater intensity. Indeed, we can clearly see in the figure below of the result of the GLM, how the Agulhas Current has been experiencing marine heat waves more frequently in recent decades. But there are two smaller areas, one along the western side of the Cape Peninsula in the Benguela Upwelling system and another around the Eastern Cape Province near Algoa Bay, where the frequency of marine heat waves seems to have actually been decreasing -- although the *P*-value of the decreasing trend is &gt; 0.05, and therefore not significant.
+We can also load the gridded 0.25 degree Reynolds [OISST data](https://www.ncei.noaa.gov/thredds/blended-global/oisst-catalog.html) and apply the function pixel by pixel over all of the days of data. The example data used here have 93 longitude steps, 43 latitude steps, and cover 12797 days (1981 to 2016). We apply the `detect()` function to these data, fit a generalised linear model (GLM), and then plot the trend per decade of the marine heatwave count. In other words, have marine heatwaves become more or less frequent in recent years? Under climate change we can expect that extreme events would tend to occur more frequently and be of greater intensity. Indeed, we can clearly see in the figure below of the result of the GLM, how the Agulhas Current has been experiencing marine heat waves more frequently in recent decades. But there are two smaller areas, one along the western side of the Cape Peninsula in the Benguela Upwelling system and another around the Eastern Cape Province near Algoa Bay, where the frequency of marine heat waves seems to have actually been decreasing – although the *P*-value of the decreasing trend is &gt; 0.05, and therefore not significant.
 
 ![Count-trend](vignettes/README-grid-example1.png)
 
@@ -299,9 +299,9 @@ Please read the package [vignette](https://github.com/ajsmit/RmarineHeatWaves/bl
 References
 ==========
 
-Hobday, A.J. et al. (2016). A hierarchical approach to defining marine heatwaves, Progress in Oceanography, 141, pp. 227-238.
+Hobday, A.J. et al. (2016). A hierarchical approach to defining marine heatwaves, Progress in Oceanography, 141, pp. 227-238.
 
-Schlegel, R. W., Oliver, E. C. J., Wernberg, T. W., Smit, A. J. (2017). Coastal and offshore co-occurrences of marine heatwaves and cold-spells. Progress in Oceanography, 151, pp. 189-205.
+Schlegel, R. W., Oliver, E. C. J., Wernberg, T. W., Smit, A. J. (2017). Coastal and offshore co-occurrences of marine heatwaves and cold-spells. Progress in Oceanography, 151, pp. 189-205.
 
 Acknowledgements
 ================
