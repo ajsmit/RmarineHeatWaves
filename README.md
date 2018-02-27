@@ -63,6 +63,20 @@ The functions
 
 The package also provides data of observed SST records for three historical MHWs: the 2011 Western Australia event, the 2012 Northwest Atlantic event and the 2003 Mediterranean event.
 
+The heat wave metrics
+---------------------
+
+The function will return a list of two tibbles (see the 'tidyverse'), and , which are the climatology and MHW (or MCS) events, respectively. The climatology contains the full time series of daily temperatures, as well as the the seasonal climatology, the threshold and various aspects of the events that were detected. The software was designed for detecting extreme thermal events, and the units specified below reflect that intended purpose. However, the various other kinds of extreme events may be detected according to the 'marine heat wave' specifications, and if that is the case, the appropriate units need to be determined by the user.
+
+The events are summarised using a range of event metrics:
+, , , and are as above except relative to the threshold (e.g., 90th percentile) rather than the seasonal climatology.
+
+, , , and are as above except as absolute magnitudes rather than relative to the seasonal climatology or threshold.
+
+ and are as above except units are in multiples of threshold exceedances, i.e., a value of 1.5 indicates the event intensity (relative to the climatology) was 1.5 times the value of the threshold (relative to climatology, i.e., threshold - climatology.)
+
+Note that and will return when the event begins/ends on the first/last day of the time series. This may be particularly evident when the function is applied to large gridded data sets. Although the other metrics do not contain any errors and provide sensible values, please take this into account in its interpretation.
+
 The detection and graphing functions
 ------------------------------------
 
@@ -77,12 +91,14 @@ mhw$event %>%
   dplyr::select(event_no, duration, date_start, date_peak, int_mean, int_max, int_cum) %>% 
   dplyr::arrange(-int_cum) %>% 
   head(5)
-#>   event_no duration date_start  date_peak int_mean  int_max   int_cum
-#> 1       22       95 1999-05-13 1999-05-22 2.498305 3.601700 237.33900
-#> 2       42       60 2011-02-06 2011-02-28 3.211903 6.505969 192.71420
-#> 3       49       47 2012-01-11 2012-01-27 2.225734 3.300112 104.60948
-#> 4       50       46 2012-03-01 2012-04-10 1.993709 2.957609  91.71061
-#> 5       41       40 2010-12-24 2011-01-28 2.157016 3.274803  86.28064
+#> # A tibble: 5 x 7
+#>   event_no duration date_start date_peak  int_mean int_max int_cum
+#>      <int>    <dbl> <date>     <date>        <dbl>   <dbl>   <dbl>
+#> 1       22     95.0 1999-05-13 1999-05-22     2.50    3.60   237  
+#> 2       42     60.0 2011-02-06 2011-02-28     3.21    6.51   193  
+#> 3       49     47.0 2012-01-11 2012-01-27     2.23    3.30   105  
+#> 4       50     46.0 2012-03-01 2012-04-10     1.99    2.96    91.7
+#> 5       41     40.0 2010-12-24 2011-01-28     2.16    3.27    86.3
 ```
 
 The corresponding `event_line()` and `lolli_plot()`, which represent the massive Western Australian heatwave of 2011, look like this:
@@ -109,11 +125,6 @@ mhw2 <- mhw2[10580:10690,] # identify the region of the time series of interest
 ggplot(mhw2, aes(x = t, y = temp, y2 = thresh_clim_year)) +
   geom_flame() +
   geom_text(aes(x = as.Date("2011-02-01"), y = 28, label = "The MHW that launched\na thousand papers."))
-```
-
-![](tools/fig-example3-1.png)
-
-``` r
 
 ggplot(mhw$event, aes(x = date_start, y = int_max)) +
   geom_lolli(colour = "salmon", colour.n = "red", n = 3) +
@@ -121,8 +132,6 @@ ggplot(mhw$event, aes(x = date_start, y = int_max)) +
                 label = "The distribution of events\nis skewed towards the\nend of the time series."),
             colour = "black")
 ```
-
-![](tools/fig-example3-2.png)
 
 The default output of these function may not be to your liking. If so, not to worry. As **ggplot2** geoms, they are highly maleable. For example, if we were to choose to reproduce the format of the MHWs as seen in Hobday et al. (2016), the code would look something like this:
 
@@ -165,12 +174,14 @@ mcs$event %>%
   dplyr::select(event_no, duration, date_start, date_peak, int_mean, int_max, int_cum) %>% 
   dplyr::arrange(int_cum) %>% 
   head(5)
-#>   event_no duration date_start  date_peak  int_mean   int_max    int_cum
-#> 1       16       76 1990-04-13 1990-05-11 -2.538017 -3.218054 -192.88929
-#> 2       54       58 2003-12-19 2004-01-23 -1.798455 -2.662320 -104.31038
-#> 3       71       52 2014-04-14 2014-05-05 -1.818984 -2.565533  -94.58715
-#> 4        8       38 1986-06-24 1986-07-17 -2.009802 -2.950536  -76.37248
-#> 5       51       32 2003-09-08 2003-09-16 -1.560817 -2.116583  -49.94613
+#> # A tibble: 5 x 7
+#>   event_no duration date_start date_peak  int_mean int_max int_cum
+#>      <int>    <dbl> <date>     <date>        <dbl>   <dbl>   <dbl>
+#> 1       16     76.0 1990-04-13 1990-05-11    -2.54   -3.22  -193  
+#> 2       54     58.0 2003-12-19 2004-01-23    -1.80   -2.66  -104  
+#> 3       71     52.0 2014-04-14 2014-05-05    -1.82   -2.57  - 94.6
+#> 4        8     38.0 1986-06-24 1986-07-17    -2.01   -2.95  - 76.4
+#> 5       51     32.0 2003-09-08 2003-09-16    -1.56   -2.12  - 49.9
 ```
 
 The plots showing the marine cold spells look like this:
