@@ -7,9 +7,14 @@
 #' scale_fill_manual scale_x_date xlab ylab theme theme_grey element_text
 #' element_blank element_rect element_line
 #' @importFrom grid unit
-#' @importFrom plyr .
 #'
 #' @param data The function receives the output from the \code{\link{detect}} function.
+#' @param x This column is expected to contain a vector of dates as per the
+#' specification of \code{make_whole}. If a column headed \code{t} is present in
+#' the dataframe, this argument may be ommitted; otherwise, specify the name of
+#' the column with dates here.
+#' @param y This is a column containing the measurement variable. If the column
+#' name differs from the default (i.e. \code{temp}), specify the name here.
 #' @param min_duration The minimum duration that an event has to for it to
 #' qualify as a marine heat wave or marine cold spell.
 #' @param spread The the number of days leading and trailing the largest event
@@ -39,8 +44,10 @@
 #' brighter colour. This function differs in use from \code{\link{geom_flame}}
 #' in that it creates a stand alone figure. The benefit of this being
 #' that one must not have any prior knowledge of ggplot2 to create the figure.
+#' Currently the figure labels will be appropriate for thermal events only, but this
+#' may be generalised to other kinds of extremes in the future.
 #'
-#' @author Robert W. Schlegel
+#' @author Robert W. Schlegel, Albertus J. Smit
 #'
 #' @references Hobday, A.J. et al. (2016), A hierarchical approach to defining
 #' marine heatwaves, Progress in Oceanography, 141, pp. 227-238,
@@ -57,12 +64,16 @@
 #' start_date = "2010-10-01", end_date = "2011-08-30")
 #' }
 event_line <- function(data,
+                       x = t,
+                       y = temp,
                        min_duration = 5,
                        spread = 150,
                        metric = "int_cum",
                        start_date = "1999-06-30",
                        end_date = "2000-05-30") {
-  date_stop <- date_start <- int_max <- int_mean <- int_cum <- duration <- NULL
+
+  temp <- date_stop <- date_start <- int_max <- int_mean <- int_cum <- duration <- NULL
+  . <- "Shut up" # sorts out an annoying note produced during 'Check'
 
   event <- data$event %>%
     dplyr::filter(date_stop >= start_date & date_start <= end_date)
@@ -72,10 +83,16 @@ event_line <- function(data,
 
   date_spread <- seq((event_top$date_start - spread), (event_top$date_stop + spread), by = 1)
 
-  clim <- dplyr::filter(data$clim, t %in% date_spread)
+  quo_x <- rlang::enquo(x)
+  quo_y <- rlang::enquo(y)
 
-  temp <- event_no <- thresh_clim_year <- seas_clim_year <- NULL # avoids annoying notes during check...
-  dat3 <- data.frame()
+  clim <- data$clim %>%
+    dplyr::rename(t = !! quo_x,
+                  temp = !! quo_y) %>%
+    dplyr::filter(t %in% date_spread)
+
+  event_no <- thresh_clim_year <- seas_clim_year <- NULL
+
   for (i in min(clim$event_no, na.rm = TRUE):max(clim$event_no, na.rm = TRUE)) {
     x <- clim[stats::complete.cases(clim$event_no) & clim$event_no == i,]
     grid.df <-
@@ -103,7 +120,7 @@ event_line <- function(data,
       proto_events <- do.call(rbind, proto_events_rng) %>%
         dplyr::mutate(event_no = cumsum(ex1$values[ex1$values == TRUE])) %>%
         protoFunc()
-      sub.event <- function(proto_event){
+      sub.event <- function(proto_event) {
         df <-  x[proto_event$index_start:proto_event$index_stop,]
         df$event_no_sub <- paste(df$event_no, proto_event$event_no, sep = ".")
         return(df)
@@ -115,7 +132,7 @@ event_line <- function(data,
       x$event_no_sub <- x$event_no
     }
 
-    mirror <- function(x){
+    mirror <- function(x) {
       event_no_sub <- NULL
       y <- data.frame(
         temp = x$temp,
@@ -135,8 +152,6 @@ event_line <- function(data,
     }
     z <- plyr::ddply(x, .(event_no_sub), mirror)
     z$event_no_sub <- as.character(z$event_no_sub)
-    dat3 <- rbind(dat3, z)
-
   }
 
   lineCol <- c(
@@ -159,9 +174,9 @@ event_line <- function(data,
   if (!exists("ylabel")) ylabel <- metric
 
   ggplot(data = clim, aes(x = t, y = temp)) +
-    geom_polygon(data = dat3,
+    geom_polygon(data = z,
                  aes(x = t, y = temp, group = event_no_sub, fill = "events"), size = 0.5) +
-    geom_polygon(data = dat3[dat3$event_no == event_top$event_no[1],],
+    geom_polygon(data = z[z$event_no == event_top$event_no[1],],
                  aes(x = t, y = temp, group = event_no_sub, fill = "peak event"),
                  size = 0.5) +
     geom_line(aes(y = seas_clim_year, col = "climatology"),
@@ -172,7 +187,7 @@ event_line <- function(data,
     scale_colour_manual(name = NULL, values = lineCol) +
     scale_fill_manual(name = NULL, values = fillCol, guide = FALSE) +
     scale_x_date(expand = c(0, 0), date_labels = "%b %Y") +
-    ylab(ylabel) +
+    ylab(ylabel) + xlab("Date") +
     theme(plot.background = element_blank(),
           panel.background = element_rect(fill = "white"),
           panel.border = element_rect(colour = "black", fill = NA, size = 0.75),
@@ -189,6 +204,7 @@ event_line <- function(data,
           legend.key = element_blank()
     )
 }
+
 
 #' Create a Timeline of Selected Event Metrics.
 #'

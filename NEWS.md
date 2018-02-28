@@ -3,21 +3,26 @@ output: pdf_document
 ---
 
 # VERSION CHANGES
+## Changes in version 0.16.1 (28 February 2018)
+* Fix event_line(), which broke in v.0.16.0 due to an edit there to enable using 
+  arbitrary column headers for the date and temperature columns (previously the 
+  defaults were 't' and 'temp').
+
 ## Changes in version 0.16.0.9000 (18 January 2018)
 * detect() now reurns a list with two tibbles, rather than data.frames as before.
 
 ## Changes in version 0.16.0 (6 January 2018)
 * The make_whole(), detect() and exceedance() functions now handle any arbitrary
-column names, which are specified via arguments to the function.
+  column names, which are specified via arguments to the function.
 * Remove dependence on magrittr.
 * More consistent use of tidyverse packages throughout.
 * Updates to examples.
 * Miscellaneous other improvements troughout the function internals.
 
 ## Changes in version 0.15.9 (19 June 2017)
-* Warnings given by exceedance() when exceedances begin/end on the first/last day of the
-  time series have been corrected --- it will now report an NA when the exceedance
-  occurs at the start/end of the time series.
+* Warnings given by exceedance() when exceedances begin/end on the first/last day 
+  of the time series have been corrected --- it will now report an NA when the 
+  exceedance occurs at the start/end of the time series.
 * Some plyr routines phased out in exceedance function in favour of a dplyr approach.
   
 ## Changes in version 0.15.8 (18 June 2017)
@@ -40,8 +45,8 @@ column names, which are specified via arguments to the function.
  
 ## Changes in version 0.15.5 (6 March 2017)
 * Update to 'protoFunc' helper function within 'detect'; in the previous version
-it returned the error "Error: not compatible with STRSXP" under rare circumstances,
-the cause of which remains unknown.
+    it returned the error "Error: not compatible with STRSXP" under rare circumstances,
+    the cause of which remains unknown.
 * Update the calculation of proto_gaps for the same reason.
 
 ## Changes in version 0.15.4 (5 March 2017)
@@ -77,11 +82,11 @@ the cause of which remains unknown.
 ## Changes in version 0.14.3 (31 January 2017)
 * Corrected plotting error in event polygons in 'event_line' function
 * Added two new functions: 'geom_event_line' and 'geom_lolli_plot' which may be 
-used with ggplot2 directly as geoms.
+  used with ggplot2 directly as geoms.
 
 ## Changes in version 0.14.2 (26 January 2017)
 * Fix bug which was that was brought to my attention by Mahmoud Haouari: enable 
-the pctile option in the detect() function, which was accidentally disabled.
+  the pctile option in the detect() function, which was accidentally disabled.
 
 ## Changes in version 0.14.1 (10 January 2017)
 * Improved error messages in exceedance().
@@ -93,14 +98,14 @@ the pctile option in the detect() function, which was accidentally disabled.
 ## Changes in version 0.13.9.9200 (11 December 2016)
 * Minor edits to documentation.
 * Corrected issue where the event_line graph's y-axis did not reflect the correct 
-units for the metric selected for plotting.
+  units for the metric selected for plotting.
 * Updated the theme, i.e. removed the default ggplot2 theme in favour
-of a more conventional white background with nice black axes.
+  of a more conventional white background with nice black axes.
 * Removed the legend that indicated the peak and secondary events from the 
-event_line plot. 
+  event_line plot. 
 * Repositioned the legend in the event_line plot: it is now int he bottom right 
-corner as here it has less chance of plotting over the peak events when the 
-graph is rescaled.
+  corner as here it has less chance of plotting over the peak events when the 
+  graph is rescaled.
 
 ## Changes in version 0.13.8.9200 (23 November 2016)
 * Minor update to exceedance() function to improve usability.
@@ -108,12 +113,12 @@ graph is rescaled.
 
 ## Changes in version 0.13.7.9100 (22 October 2016)
 * The additions to the detect() function madde in the previous update have been 
-rolled back in favour of creating an independent function to calculate exceedances.
+  rolled back in favour of creating an independent function to calculate exceedances.
 
 ## Changes in version 0.13.6.9000 (22 October 2016)
 * Added 'threshold' variable to detect() function.
 * This now allows the function to detect when temperatures are over (under) a 
-static threshold supplied by the user.
+  static threshold supplied by the user.
 * An example is given in the README.md file
 
 ## Changes in version 0.13.5.9000 (8 October 2016)
@@ -154,17 +159,17 @@ static threshold supplied by the user.
 
 ## Changes in version 0.11.2 (2 June 2016)
 * Simplify make_whole() -- it should accept dates as class POSIXct or Date 
-without the need for unneccesary 'if' logic.
+  without the need for unneccesary 'if' logic.
 * All example data dates (t) changed to class Date.
 * Some minor rewording to documentation.
 
 ## Changes in version 0.11.1 (1 June 2016)
 * Minor edits to event_line() as per Robert Schlegel (allows broader selection of
-metrics for plotting.)
+  metrics for plotting.)
 
 ## Changes in version 0.11.0 (1 June 2016)
 * block_average() rewritten -- it is now based upon dplyr functions so it is 
-faster and more stream-lined.
+  faster and more stream-lined.
 * Completely removed the use of reshape2 in favour of tidyr.
 
 ## Changes in version 0.10.3 (1 June 2016)
@@ -175,10 +180,10 @@ faster and more stream-lined.
 
 ## Changes in version 0.10.1 (31 May 2016)
 * Fixed a bug that caused detect() to fail whenever it encountered fewer than two 
-non-NAs in the period doy 59 to doy 61 when it was asked to interpolate over 
-the non-existent day-60 during non-leap years. This is specific to versions of
-'zoo' (required for na.approx()) up to 1.7-12; from 1.7-13 it works fine. A few 
-extra lines of code were added to fix this.
+  non-NAs in the period doy 59 to doy 61 when it was asked to interpolate over 
+  the non-existent day-60 during non-leap years. This is specific to versions of
+  'zoo' (required for na.approx()) up to 1.7-12; from 1.7-13 it works fine. A few 
+  extra lines of code were added to fix this.
 
 ## Changes in version 0.10.0 (30 May 2016)
 * Added the block_average() function.
@@ -197,9 +202,9 @@ extra lines of code were added to fix this.
 ## Changes in version 0.9.0 (28 May 2016)
 * Replace 'mhw' with 'event'.
 * Add basic plotting functionality a-la Robert Schlegel in the form of the 
-event_line() function (plus edits to make Rob's code produce a clean build 
-process, thereby avoiding throwing 'notes' that might be frowned upon by the 
-CRAN people.)
+  event_line() function (plus edits to make Rob's code produce a clean build 
+  process, thereby avoiding throwing 'notes' that might be frowned upon by the 
+  CRAN people.)
 * Renamed some things: 'make_whole.R' -> 'makeWhole.R'; 'marineHeatWaves-package.r' 
 -> 'RmarineHeatWaves-package.r'; 'marineHeatWaves.R' -> 'RmarineHeatWaves.R'.
 
@@ -214,7 +219,7 @@ CRAN people.)
 ## Changes in version 0.8.0 (22 May 2016)
 * Marine cold spell option enabled.
 * Hacky changes to suppress some notes during package compilation, needed for
-acceptance to CRAN, apparently.
+  acceptance to CRAN, apparently.
 
 ## Changes in version 0.7.0 (20 May 2016)
 * Internal variable name changes (replace more camelCase).
@@ -235,13 +240,13 @@ acceptance to CRAN, apparently.
 
 ## Changes in version 0.3.0 (18 May 2016)
 * Changed 'eventNo' calculation to properly reflect the actual events, and not 
-one of the proto-event types.
+  one of the proto-event types.
 * Changed ID variable in 'mhw' output to 'eventNo', thereby following the same
-naming convention.
+  naming convention.
 * Removed ', .id = NULL' from the event metrics 'ldply' calculations, enabling
-compatibility with plyr (version < 1.8.3).
+  compatibility with plyr (version < 1.8.3).
 
 ## Changes in version 0.2.0 (17 May 2016)
 * Add 'eventNo' to climatology output to identify each unique event and to
-fascilitate plotting of filled polygons using 'geom_polygon' in ggplot2, as per
-Robert Schlegel's suggestion.
+  fascilitate plotting of filled polygons using 'geom_polygon' in ggplot2, as per
+  Robert Schlegel's suggestion.

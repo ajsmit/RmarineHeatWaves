@@ -40,7 +40,7 @@ citEntry(entry = "manual",
     url = "https://github.com/ajsmit/RmarineHeatWaves",
     textVersion  = paste("Smit, A. J. et al. (2018)",
         "RmarineHeatWaves: Package for the calculation of marine heat waves",
-        "Version 0.16.0. University of the Western Cape, Bellville, Cape Town, South Africa.",
+        "Version 0.16.1 University of the Western Cape, Bellville, Cape Town, South Africa.",
         "https://github.com/ajsmit/RmarineHeatWaves")
 )
 
