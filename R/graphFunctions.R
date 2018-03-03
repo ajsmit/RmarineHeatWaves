@@ -7,6 +7,7 @@
 #' scale_fill_manual scale_x_date xlab ylab theme theme_grey element_text
 #' element_blank element_rect element_line
 #' @importFrom grid unit
+#' @importFrom plyr .
 #'
 #' @param data The function receives the output from the \code{\link{detect}} function.
 #' @param x This column is expected to contain a vector of dates as per the
@@ -44,10 +45,8 @@
 #' brighter colour. This function differs in use from \code{\link{geom_flame}}
 #' in that it creates a stand alone figure. The benefit of this being
 #' that one must not have any prior knowledge of ggplot2 to create the figure.
-#' Currently the figure labels will be appropriate for thermal events only, but this
-#' may be generalised to other kinds of extremes in the future.
 #'
-#' @author Robert W. Schlegel, Albertus J. Smit
+#' @author Robert W. Schlegel
 #'
 #' @references Hobday, A.J. et al. (2016), A hierarchical approach to defining
 #' marine heatwaves, Progress in Oceanography, 141, pp. 227-238,
@@ -69,11 +68,9 @@ event_line <- function(data,
                        min_duration = 5,
                        spread = 150,
                        metric = "int_cum",
-                       start_date = "1999-06-30",
-                       end_date = "2000-05-30") {
-
-  temp <- date_stop <- date_start <- int_max <- int_mean <- int_cum <- duration <- NULL
-  . <- "Shut up" # sorts out an annoying note produced during 'Check'
+                       start_date,
+                       end_date) {
+  date_stop <- date_start <- int_max <- int_mean <- int_cum <- duration <- NULL
 
   event <- data$event %>%
     dplyr::filter(date_stop >= start_date & date_start <= end_date)
@@ -91,8 +88,8 @@ event_line <- function(data,
                   temp = !! quo_y) %>%
     dplyr::filter(t %in% date_spread)
 
-  event_no <- thresh_clim_year <- seas_clim_year <- NULL
-
+  temp <- event_no <- thresh_clim_year <- seas_clim_year <- NULL # avoids annoying notes during check...
+  dat3 <- data.frame()
   for (i in min(clim$event_no, na.rm = TRUE):max(clim$event_no, na.rm = TRUE)) {
     x <- clim[stats::complete.cases(clim$event_no) & clim$event_no == i,]
     grid.df <-
@@ -120,7 +117,7 @@ event_line <- function(data,
       proto_events <- do.call(rbind, proto_events_rng) %>%
         dplyr::mutate(event_no = cumsum(ex1$values[ex1$values == TRUE])) %>%
         protoFunc()
-      sub.event <- function(proto_event) {
+      sub.event <- function(proto_event){
         df <-  x[proto_event$index_start:proto_event$index_stop,]
         df$event_no_sub <- paste(df$event_no, proto_event$event_no, sep = ".")
         return(df)
@@ -152,6 +149,8 @@ event_line <- function(data,
     }
     z <- plyr::ddply(x, .(event_no_sub), mirror)
     z$event_no_sub <- as.character(z$event_no_sub)
+    dat3 <- rbind(dat3, z)
+
   }
 
   lineCol <- c(
@@ -174,9 +173,9 @@ event_line <- function(data,
   if (!exists("ylabel")) ylabel <- metric
 
   ggplot(data = clim, aes(x = t, y = temp)) +
-    geom_polygon(data = z,
+    geom_polygon(data = dat3,
                  aes(x = t, y = temp, group = event_no_sub, fill = "events"), size = 0.5) +
-    geom_polygon(data = z[z$event_no == event_top$event_no[1],],
+    geom_polygon(data = dat3[dat3$event_no == event_top$event_no[1],],
                  aes(x = t, y = temp, group = event_no_sub, fill = "peak event"),
                  size = 0.5) +
     geom_line(aes(y = seas_clim_year, col = "climatology"),
@@ -204,7 +203,6 @@ event_line <- function(data,
           legend.key = element_blank()
     )
 }
-
 
 #' Create a Timeline of Selected Event Metrics.
 #'
