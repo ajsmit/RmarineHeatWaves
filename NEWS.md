@@ -3,8 +3,11 @@ output: pdf_document
 ---
 
 # VERSION CHANGES
+## Changes in version 0.16.2 (3 March 2018)
+* Bug fix to event_line().
+
 ## Changes in version 0.16.1 (28 February 2018)
-* Bug fix. Repaired event_line(), which broke in v.0.16.0 due to an edit there
+* Repaired event_line(), which broke in v.0.16.0 due to an edit there
   to enable using arbitrary column headers for the date and temperature columns
   (previously the defaults were 't' and 'temp').
 
