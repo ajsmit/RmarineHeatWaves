@@ -4,9 +4,9 @@ output: pdf_document
 
 # VERSION CHANGES
 ## Changes in version 0.16.1 (28 February 2018)
-* Fix event_line(), which broke in v.0.16.0 due to an edit there to enable using 
-  arbitrary column headers for the date and temperature columns (previously the 
-  defaults were 't' and 'temp').
+* Bug fix. Repaired event_line(), which broke in v.0.16.0 due to an edit there
+  to enable using arbitrary column headers for the date and temperature columns
+  (previously the defaults were 't' and 'temp').
 
 ## Changes in version 0.16.0.9000 (18 January 2018)
 * detect() now reurns a list with two tibbles, rather than data.frames as before.
