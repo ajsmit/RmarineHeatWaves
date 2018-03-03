@@ -84,12 +84,13 @@ event_line <- function(data,
   quo_y <- rlang::enquo(y)
 
   clim <- data$clim %>%
-    dplyr::rename(t = !! quo_x,
-                  temp = !! quo_y) %>%
+    dplyr::rename(t = !!quo_x,
+                  temp = !!quo_y) %>%
     dplyr::filter(t %in% date_spread)
 
-  temp <- event_no <- thresh_clim_year <- seas_clim_year <- NULL # avoids annoying notes during check...
-  dat3 <- data.frame()
+  temp <- event_no <- thresh_clim_year <- seas_clim_year <- NULL
+
+  plot.df <- data.frame()
   for (i in min(clim$event_no, na.rm = TRUE):max(clim$event_no, na.rm = TRUE)) {
     x <- clim[stats::complete.cases(clim$event_no) & clim$event_no == i,]
     grid.df <-
@@ -101,12 +102,12 @@ event_line <- function(data,
       ind1 <- rep(seq_along(ex1$lengths), ex1$lengths)
       s1 <- split(zoo::index(x$thresh_criterion), ind1)
       proto_events <- s1[ex1$values == TRUE]
-      index_stop <- index_start <- NULL ###
+      index_stop <- index_start <- NULL
       proto_events_rng <-
         lapply(proto_events, function(x)
           data.frame(index_start = min(x), index_stop = max(x)))
-      duration <- NULL ###
-      # min_duration <- NULL ###
+      duration <- NULL
+      # min_duration <- NULL
       protoFunc <- function(proto_data) {
         out <- proto_data %>%
           dplyr::mutate(duration = index_stop - index_start + 1) %>%
@@ -117,7 +118,7 @@ event_line <- function(data,
       proto_events <- do.call(rbind, proto_events_rng) %>%
         dplyr::mutate(event_no = cumsum(ex1$values[ex1$values == TRUE])) %>%
         protoFunc()
-      sub.event <- function(proto_event){
+      sub.event <- function(proto_event) {
         df <-  x[proto_event$index_start:proto_event$index_stop,]
         df$event_no_sub <- paste(df$event_no, proto_event$event_no, sep = ".")
         return(df)
@@ -128,7 +129,6 @@ event_line <- function(data,
       event_no_sub <- NULL
       x$event_no_sub <- x$event_no
     }
-
     mirror <- function(x) {
       event_no_sub <- NULL
       y <- data.frame(
@@ -149,8 +149,7 @@ event_line <- function(data,
     }
     z <- plyr::ddply(x, .(event_no_sub), mirror)
     z$event_no_sub <- as.character(z$event_no_sub)
-    dat3 <- rbind(dat3, z)
-
+    plot.df <- rbind(plot.df, z)
   }
 
   lineCol <- c(
@@ -173,9 +172,9 @@ event_line <- function(data,
   if (!exists("ylabel")) ylabel <- metric
 
   ggplot(data = clim, aes(x = t, y = temp)) +
-    geom_polygon(data = dat3,
+    geom_polygon(data = plot.df,
                  aes(x = t, y = temp, group = event_no_sub, fill = "events"), size = 0.5) +
-    geom_polygon(data = dat3[dat3$event_no == event_top$event_no[1],],
+    geom_polygon(data = plot.df[plot.df$event_no == event_top$event_no[1],],
                  aes(x = t, y = temp, group = event_no_sub, fill = "peak event"),
                  size = 0.5) +
     geom_line(aes(y = seas_clim_year, col = "climatology"),
