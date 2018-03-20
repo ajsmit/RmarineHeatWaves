@@ -4,7 +4,7 @@ output: pdf_document
 
 # VERSION CHANGES
 ## Changes in version 0.16.2 (3 March 2018)
-* Bug fix to event_line().
+* Bug fix to the event_line() function.
 
 ## Changes in version 0.16.1 (28 February 2018)
 * Repaired event_line(), which broke in v.0.16.0 due to an edit there
