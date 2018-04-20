@@ -9,4 +9,5 @@
 ^\.gitignore$
 ^cran-comments\.md$
 ^_test\.R$
+^_testing$
 ^RmarineHeatWaves\.code-workspace
