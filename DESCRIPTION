@@ -1,6 +1,6 @@
 Package: RmarineHeatWaves
-Version: 0.16.0
-Date: 2018-01-06
+Version: 0.16.3
+Date: 2018-04-18
 Title: Detect Marine Heat Waves and Marine Cold Spells
 Type: Package
 Authors@R: c(person("Albertus J.", "Smit", role = c("aut", "cre"),
@@ -23,7 +23,8 @@ Imports:
     plyr,
     raster,
     grid,
-    lazyeval
+    lazyeval,
+    rlang
 Suggests:
     knitr,
     rmarkdown

@@ -10,6 +10,12 @@
 #' @importFrom plyr .
 #'
 #' @param data The function receives the output from the \code{\link{detect}} function.
+#' @param x This column is expected to contain a vector of dates as per the
+#' specification of \code{make_whole}. If a column headed \code{t} is present in
+#' the dataframe, this argument may be ommitted; otherwise, specify the name of
+#' the column with dates here.
+#' @param y This is a column containing the measurement variable. If the column
+#' name differs from the default (i.e. \code{temp}), specify the name here.
 #' @param min_duration The minimum duration that an event has to for it to
 #' qualify as a marine heat wave or marine cold spell.
 #' @param spread The the number of days leading and trailing the largest event
@@ -57,11 +63,13 @@
 #' start_date = "2010-10-01", end_date = "2011-08-30")
 #' }
 event_line <- function(data,
+                       x = t,
+                       y = temp,
                        min_duration = 5,
                        spread = 150,
                        metric = "int_cum",
-                       start_date = "1999-06-30",
-                       end_date = "2000-05-30") {
+                       start_date,
+                       end_date) {
   date_stop <- date_start <- int_max <- int_mean <- int_cum <- duration <- NULL
 
   event <- data$event %>%
@@ -72,10 +80,17 @@ event_line <- function(data,
 
   date_spread <- seq((event_top$date_start - spread), (event_top$date_stop + spread), by = 1)
 
-  clim <- dplyr::filter(data$clim, t %in% date_spread)
+  quo_x <- rlang::enquo(x)
+  quo_y <- rlang::enquo(y)
 
-  temp <- event_no <- thresh_clim_year <- seas_clim_year <- NULL # avoids annoying notes during check...
-  dat3 <- data.frame()
+  clim <- data$clim %>%
+    dplyr::rename(t = !!quo_x,
+                  temp = !!quo_y) %>%
+    dplyr::filter(t %in% date_spread)
+
+  temp <- event_no <- thresh_clim_year <- seas_clim_year <- NULL
+
+  plot.df <- data.frame()
   for (i in min(clim$event_no, na.rm = TRUE):max(clim$event_no, na.rm = TRUE)) {
     x <- clim[stats::complete.cases(clim$event_no) & clim$event_no == i,]
     grid.df <-
@@ -87,12 +102,12 @@ event_line <- function(data,
       ind1 <- rep(seq_along(ex1$lengths), ex1$lengths)
       s1 <- split(zoo::index(x$thresh_criterion), ind1)
       proto_events <- s1[ex1$values == TRUE]
-      index_stop <- index_start <- NULL ###
+      index_stop <- index_start <- NULL
       proto_events_rng <-
         lapply(proto_events, function(x)
           data.frame(index_start = min(x), index_stop = max(x)))
-      duration <- NULL ###
-      # min_duration <- NULL ###
+      duration <- NULL
+      # min_duration <- NULL
       protoFunc <- function(proto_data) {
         out <- proto_data %>%
           dplyr::mutate(duration = index_stop - index_start + 1) %>%
@@ -103,7 +118,7 @@ event_line <- function(data,
       proto_events <- do.call(rbind, proto_events_rng) %>%
         dplyr::mutate(event_no = cumsum(ex1$values[ex1$values == TRUE])) %>%
         protoFunc()
-      sub.event <- function(proto_event){
+      sub.event <- function(proto_event) {
         df <-  x[proto_event$index_start:proto_event$index_stop,]
         df$event_no_sub <- paste(df$event_no, proto_event$event_no, sep = ".")
         return(df)
@@ -114,8 +129,7 @@ event_line <- function(data,
       event_no_sub <- NULL
       x$event_no_sub <- x$event_no
     }
-
-    mirror <- function(x){
+    mirror <- function(x) {
       event_no_sub <- NULL
       y <- data.frame(
         temp = x$temp,
@@ -135,8 +149,7 @@ event_line <- function(data,
     }
     z <- plyr::ddply(x, .(event_no_sub), mirror)
     z$event_no_sub <- as.character(z$event_no_sub)
-    dat3 <- rbind(dat3, z)
-
+    plot.df <- rbind(plot.df, z)
   }
 
   lineCol <- c(
@@ -159,9 +172,9 @@ event_line <- function(data,
   if (!exists("ylabel")) ylabel <- metric
 
   ggplot(data = clim, aes(x = t, y = temp)) +
-    geom_polygon(data = dat3,
+    geom_polygon(data = plot.df,
                  aes(x = t, y = temp, group = event_no_sub, fill = "events"), size = 0.5) +
-    geom_polygon(data = dat3[dat3$event_no == event_top$event_no[1],],
+    geom_polygon(data = plot.df[plot.df$event_no == event_top$event_no[1],],
                  aes(x = t, y = temp, group = event_no_sub, fill = "peak event"),
                  size = 0.5) +
     geom_line(aes(y = seas_clim_year, col = "climatology"),
@@ -172,7 +185,7 @@ event_line <- function(data,
     scale_colour_manual(name = NULL, values = lineCol) +
     scale_fill_manual(name = NULL, values = fillCol, guide = FALSE) +
     scale_x_date(expand = c(0, 0), date_labels = "%b %Y") +
-    ylab(ylabel) +
+    ylab(ylabel) + xlab("Date") +
     theme(plot.background = element_blank(),
           panel.background = element_rect(fill = "white"),
           panel.border = element_rect(colour = "black", fill = NA, size = 0.75),
