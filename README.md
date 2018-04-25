@@ -12,7 +12,7 @@ This package may be found on [CRAN](https://cran.r-project.org/package=RmarineHe
 `devtools::install_github("ajsmit/RmarineHeatWaves")`
 
 The functions
-=============
+-------------
 
 <table style="width:47%;">
 <colgroup>
@@ -63,10 +63,96 @@ The functions
 
 The package also provides data of observed SST records for three historical MHWs: the 2011 Western Australia event, the 2012 Northwest Atlantic event and the 2003 Mediterranean event.
 
-The detection and graphing functions
-------------------------------------
+The heat wave metrics
+---------------------
 
-The `detect()` function is the package's core function. Here is the `detect()` function applied to the Western Australian test data, which are also discussed by Hobday et al. (2016):
+The function will return a list of two tibbles (see the ‘tidyverse’), `clim` and `event`, which are the climatology and MHW (or MCS) events, respectively. The climatology contains the full time series of daily temperatures, as well as the the seasonal climatology, the threshold and various aspects of the events that were detected. The software was designed for detecting extreme thermal events, and the units specified below reflect that intended purpose. However, the various other kinds of extreme events may be detected according to the ‘marine heat wave’ specifications, and if that is the case, the appropriate units need to be determined by the user.
+
+<table style="width:49%;">
+<colgroup>
+<col width="29%" />
+<col width="19%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Climatology metric</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>doy</code></td>
+<td>Julian day (day-of-year). For non-leap years it runs 1…59 and 61…366, while leap years run 1…366. This column will be named differently if another name was specified to the <code>doy</code> argument.</td>
+</tr>
+<tr class="even">
+<td><code>t</code></td>
+<td>The date of the temperature measurement. This column will be named differently if another name was specified to the <code>x</code> argument.</td>
+</tr>
+<tr class="odd">
+<td><code>temp</code></td>
+<td>If the software was used for the purpose for which it was designed, seawater temperature [deg. C] on the specified date will be returned. This column will of course be named differently if another kind of measurement was specified to the <code>y</code> argument.</td>
+</tr>
+<tr class="even">
+<td><code>seas_clim_year</code></td>
+<td>Climatological seasonal cycle [deg. C].</td>
+</tr>
+<tr class="odd">
+<td><code>thresh_clim_year</code></td>
+<td>Seasonally varying threshold (e.g., 90th percentile) [deg. C].</td>
+</tr>
+<tr class="even">
+<td><code>var_clim_year</code></td>
+<td>Seasonally varying variance (standard deviation) [deg. C].</td>
+</tr>
+<tr class="odd">
+<td><code>thresh_criterion</code></td>
+<td>Boolean indicating if <code>temp</code> exceeds <code>thresh_clim_year</code>.</td>
+</tr>
+<tr class="even">
+<td><code>duration_criterion</code></td>
+<td>Boolean indicating whether periods of consecutive <code>thresh_criterion</code> are &gt;= <code>min_duration</code>.</td>
+</tr>
+<tr class="odd">
+<td><code>event</code></td>
+<td>Boolean indicating if all criteria that define a MHW or MCS are met.</td>
+</tr>
+<tr class="even">
+<td><code>event_no</code></td>
+<td>A sequential number indicating the ID and order of occurence of the MHWs or MCSs.</td>
+</tr>
+</tbody>
+</table>
+
+The events are summarised using a range of event metrics:
+
+| Event metric   | Description                                                    |
+|----------------|----------------------------------------------------------------|
+| `index_start`  | Start index of event.                                          |
+| `index_stop`   | Stop index of event.                                           |
+| `event_no`     | A sequential number indicating the ID and order of the events. |
+| `duration`     | Duration of event \[days\].                                    |
+| `date_start`   | Start date of event \[date\].                                  |
+| `date_stop`    | Stop date of event \[date\].                                   |
+| `date_peak`    | Date of event peak \[date\].                                   |
+| `int_mean`     | Mean intensity \[deg. C\].                                     |
+| `int_max`      | Maximum (peak) intensity \[deg. C\].                           |
+| `int_var`      | Intensity variability (standard deviation) \[deg. C\].         |
+| `int_cum`      | Cumulative intensity \[deg. C x days\].                        |
+| `rate_onset`   | Onset rate of event \[deg. C / day\].                          |
+| `rate_decline` | Decline rate of event \[deg. C / day\].                        |
+
+`int_max_rel_thresh`, `int_mean_rel_thresh`, `int_var_rel_thresh`, and `int_cum_rel_thresh` are as above except relative to the threshold (e.g., 90th percentile) rather than the seasonal climatology.
+
+`int_max_abs`, `int_mean_abs`, `int_var_abs`, and `int_cum_abs` are as above except as absolute magnitudes rather than relative to the seasonal climatology or threshold.
+
+`int_max_norm` and `int_mean_norm` are as above except units are in multiples of threshold exceedances, i.e., a value of 1.5 indicates the event intensity (relative to the climatology) was 1.5 times the value of the threshold (relative to climatology, i.e., threshold - climatology.)
+
+Note that `rate_onset` and `rate_decline` will return `NA` when the event begins/ends on the first/last day of the time series. This may be particularly evident when the function is applied to large gridded data sets. Although the other metrics do not contain any errors and provide sensible values, please take this into account in its interpretation.
+
+Examples of detection and graphing
+----------------------------------
+
+The `detect()` function is the package’s core function. Here is the `detect()` function applied to the Western Australian test data, which are also discussed by Hobday et al. (2016):
 
 ``` r
 library(RmarineHeatWaves); library(plyr); library(dplyr); library(ggplot2)
@@ -77,12 +163,14 @@ mhw$event %>%
   dplyr::select(event_no, duration, date_start, date_peak, int_mean, int_max, int_cum) %>% 
   dplyr::arrange(-int_cum) %>% 
   head(5)
-#>   event_no duration date_start  date_peak int_mean  int_max   int_cum
-#> 1       22       95 1999-05-13 1999-05-22 2.498305 3.601700 237.33900
-#> 2       42       60 2011-02-06 2011-02-28 3.211903 6.505969 192.71420
-#> 3       49       47 2012-01-11 2012-01-27 2.225734 3.300112 104.60948
-#> 4       50       46 2012-03-01 2012-04-10 1.993709 2.957609  91.71061
-#> 5       41       40 2010-12-24 2011-01-28 2.157016 3.274803  86.28064
+#> # A tibble: 5 x 7
+#>   event_no duration date_start date_peak  int_mean int_max int_cum
+#>      <int>    <dbl> <date>     <date>        <dbl>   <dbl>   <dbl>
+#> 1       22      95. 1999-05-13 1999-05-22     2.50    3.60   237. 
+#> 2       42      60. 2011-02-06 2011-02-28     3.21    6.51   193. 
+#> 3       49      47. 2012-01-11 2012-01-27     2.23    3.30   105. 
+#> 4       50      46. 2012-03-01 2012-04-10     1.99    2.96    91.7
+#> 5       41      40. 2010-12-24 2011-01-28     2.16    3.27    86.3
 ```
 
 The corresponding `event_line()` and `lolli_plot()`, which represent the massive Western Australian heatwave of 2011, look like this:
@@ -100,7 +188,7 @@ lolli_plot(mhw)
 
 ![](tools/fig-example2-1.png)
 
-The `event_line()` and `lolli_plot()` functions were designed to work directly on one of the list returned by `detect()`. If more control over the figures is required, it may be useful to create them in **ggplot2** by stacking 'geoms'. We specifically created two new **ggplot2** geoms to reproduce the functionality of `event_line()` and `lolli_plot()`. These functions are more general in their functionality and can be used outside of the **RmarineHeatWave** package too. To apply them to MHWs and MCSs, they require that we access the `clim` or `event` data frames within the list that is produced by `detect()`. Here is how:
+The `event_line()` and `lolli_plot()` functions were designed to work directly on one of the list returned by `detect()`. If more control over the figures is required, it may be useful to create them in **ggplot2** by stacking ‘geoms’. We specifically created two new **ggplot2** geoms to reproduce the functionality of `event_line()` and `lolli_plot()`. These functions are more general in their functionality and can be used outside of the **RmarineHeatWave** package too. To apply them to MHWs and MCSs, they require that we access the `clim` or `event` data frames within the list that is produced by `detect()`. Here is how:
 
 ``` r
 mhw2 <- mhw$clim # find the climatology dataframe
@@ -109,11 +197,6 @@ mhw2 <- mhw2[10580:10690,] # identify the region of the time series of interest
 ggplot(mhw2, aes(x = t, y = temp, y2 = thresh_clim_year)) +
   geom_flame() +
   geom_text(aes(x = as.Date("2011-02-01"), y = 28, label = "The MHW that launched\na thousand papers."))
-```
-
-![](tools/fig-example3-1.png)
-
-``` r
 
 ggplot(mhw$event, aes(x = date_start, y = int_max)) +
   geom_lolli(colour = "salmon", colour.n = "red", n = 3) +
@@ -121,8 +204,6 @@ ggplot(mhw$event, aes(x = date_start, y = int_max)) +
                 label = "The distribution of events\nis skewed towards the\nend of the time series."),
             colour = "black")
 ```
-
-![](tools/fig-example3-2.png)
 
 The default output of these function may not be to your liking. If so, not to worry. As **ggplot2** geoms, they are highly maleable. For example, if we were to choose to reproduce the format of the MHWs as seen in Hobday et al. (2016), the code would look something like this:
 
@@ -165,12 +246,14 @@ mcs$event %>%
   dplyr::select(event_no, duration, date_start, date_peak, int_mean, int_max, int_cum) %>% 
   dplyr::arrange(int_cum) %>% 
   head(5)
-#>   event_no duration date_start  date_peak  int_mean   int_max    int_cum
-#> 1       16       76 1990-04-13 1990-05-11 -2.538017 -3.218054 -192.88929
-#> 2       54       58 2003-12-19 2004-01-23 -1.798455 -2.662320 -104.31038
-#> 3       71       52 2014-04-14 2014-05-05 -1.818984 -2.565533  -94.58715
-#> 4        8       38 1986-06-24 1986-07-17 -2.009802 -2.950536  -76.37248
-#> 5       51       32 2003-09-08 2003-09-16 -1.560817 -2.116583  -49.94613
+#> # A tibble: 5 x 7
+#>   event_no duration date_start date_peak  int_mean int_max int_cum
+#>      <int>    <dbl> <date>     <date>        <dbl>   <dbl>   <dbl>
+#> 1       16      76. 1990-04-13 1990-05-11    -2.54   -3.22  -193. 
+#> 2       54      58. 2003-12-19 2004-01-23    -1.80   -2.66  -104. 
+#> 3       71      52. 2014-04-14 2014-05-05    -1.82   -2.57   -94.6
+#> 4        8      38. 1986-06-24 1986-07-17    -2.01   -2.95   -76.4
+#> 5       51      32. 2003-09-08 2003-09-16    -1.56   -2.12   -49.9
 ```
 
 The plots showing the marine cold spells look like this:
@@ -249,9 +332,9 @@ exc$exceedance %>%
 ```
 
 Working with gridded SST data
-=============================
+-----------------------------
 
-We can also load the gridded 0.25 degree Reynolds [OISST data](https://www.ncei.noaa.gov/thredds/blended-global/oisst-catalog.html) and apply the function pixel by pixel over all of the days of data. The example data used here have 93 longitude steps, 43 latitude steps, and cover 12797 days (1981 to 2016). We apply the `detect()` function to these data, fit a generalised linear model (GLM), and then plot the trend per decade of the marine heatwave count. In other words, have marine heatwaves become more or less frequent in recent years? Under climate change we can expect that extreme events would tend to occur more frequently and be of greater intensity. Indeed, we can clearly see in the figure below of the result of the GLM, how the Agulhas Current has been experiencing marine heat waves more frequently in recent decades. But there are two smaller areas, one along the western side of the Cape Peninsula in the Benguela Upwelling system and another around the Eastern Cape Province near Algoa Bay, where the frequency of marine heat waves seems to have actually been decreasing -- although the *P*-value of the decreasing trend is &gt; 0.05, and therefore not significant.
+We can also load the gridded 0.25 degree Reynolds [OISST data](https://www.ncei.noaa.gov/thredds/blended-global/oisst-catalog.html) and apply the function pixel by pixel over all of the days of data. The example data used here have 93 longitude steps, 43 latitude steps, and cover 12797 days (1981 to 2016). We apply the `detect()` function to these data, fit a generalised linear model (GLM), and then plot the trend per decade of the marine heatwave count. In other words, have marine heatwaves become more or less frequent in recent years? Under climate change we can expect that extreme events would tend to occur more frequently and be of greater intensity. Indeed, we can clearly see in the figure below of the result of the GLM, how the Agulhas Current has been experiencing marine heat waves more frequently in recent decades. But there are two smaller areas, one along the western side of the Cape Peninsula in the Benguela Upwelling system and another around the Eastern Cape Province near Algoa Bay, where the frequency of marine heat waves seems to have actually been decreasing – although the *P*-value of the decreasing trend is &gt; 0.05, and therefore not significant.
 
 ![Count-trend](vignettes/README-grid-example1.png)
 
@@ -262,9 +345,11 @@ Please read the package [vignette](https://github.com/ajsmit/RmarineHeatWaves/bl
 References
 ==========
 
-Hobday, A.J. et al. (2016). A hierarchical approach to defining marine heatwaves, Progress in Oceanography, 141, pp. 227-238.
+Hobday, A.J. et al. (2016). A hierarchical approach to defining marine heatwaves, Progress in Oceanography, 141, pp. 227-238.
 
-Schlegel, R. W., Oliver, E. C. J., Wernberg, T. W., Smit, A. J. (2017). Coastal and offshore co-occurrences of marine heatwaves and cold-spells. Progress in Oceanography, 151, pp. 189-205.
+Schlegel, R. W., Oliver, E. C. J., Wernberg, T. W., Smit, A. J. (2017). Coastal and offshore co-occurrences of marine heatwaves and cold-spells. Progress in Oceanography, 151, pp. 189-205.
+
+Schlegel, R. W., Oliver, E. C., Perkins-Kirkpatrick, S., Kruger, A., Smit, A. J. (2017). Predominant atmospheric and oceanic patterns during coastal marine heatwaves. Frontiers in Marine Science, 4, 323.
 
 Acknowledgements
 ================
