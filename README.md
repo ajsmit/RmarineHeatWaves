@@ -157,7 +157,8 @@ The `detect()` function is the package’s core function. Here is the `detect()`
 ``` r
 library(RmarineHeatWaves); library(plyr); library(dplyr); library(ggplot2)
 ts <- make_whole(sst_WA)
-mhw <- detect(ts, climatology_start = 1983, climatology_end = 2012)
+mhw <- detect(ts, climatology_start = "1983-01-01",
+              climatology_end = "2012-12-31")
 mhw$event %>% 
   dplyr::ungroup() %>%
   dplyr::select(event_no, duration, date_start, date_peak, int_mean, int_max, int_cum) %>% 
@@ -240,7 +241,8 @@ ggplot(mhw$event, aes(x = date_start, y = int_cum)) +
 The calculation and visualisation of marine cold spells is also accommodated within this package. Here is a cold spell detected in the OISST data for Western Australia:
 
 ``` r
-mcs <- detect(ts, climatology_start = 1983, climatology_end = 2012, cold_spells = TRUE)
+mcs <- detect(ts, climatology_start = "1983-01-01", climatology_end = "2012-12-31",
+              cold_spells = TRUE)
 mcs$event %>% 
   dplyr::ungroup() %>%
   dplyr::select(event_no, duration, date_start, date_peak, int_mean, int_max, int_cum) %>% 
