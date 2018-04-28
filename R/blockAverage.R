@@ -68,9 +68,9 @@
 #' @export
 #'
 #' @examples
-#' # t_dat <- make_whole(sst_Med)
-#' res <- detect(ts_dat, climatology_start = "1983-01-01",
-#'               climatology_end = "2012-12-31")
+#' # ts_dat <- make_whole(sst_Med)
+#' # res <- detect(ts_dat, climatology_start = "1983-01-01",
+#' #               climatology_end = "2012-12-31")
 #' # out <- block_average(res)
 #' # summary(glm(count ~ year, out, family = "poisson"))
 #'
