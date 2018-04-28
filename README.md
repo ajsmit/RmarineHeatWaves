@@ -3,7 +3,10 @@ RmarineHeatWaves
 
 [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/RmarineHeatWaves)](https://cran.r-project.org/package=RmarineHeatWaves) [![Travis-CI Build Status](https://travis-ci.org/ajsmit/RmarineHeatWaves.svg?branch=master)](https://travis-ci.org/ajsmit/RmarineHeatWaves) ![](https://cranlogs.r-pkg.org/badges/grand-total/RmarineHeatWaves)
 
-The **RmarineHeatWaves** package is a translation of the original Python code written by Eric C. J. Oliver that can be found on [GitHub](https://github.com/ecjoliver/marineHeatWaves).
+The **RmarineHeatWaves** package is a translation of the original Python code written 
+by Eric C. J. Oliver that can be found on [GitHub](https://github.com/ecjoliver/marineHeatWaves). 
+
+This package is actively maintained, but on 2018-04-24 it was forked to a new package called [**heatwaveR**](https://robwschlegel.github.io/heatwaveR/index.html), which will supercede and eventually replace **RmarineHeatWaves** in the near future. For continuity, we are ensuring that the functionality in **heatwaveR** will be exactly the same in **RmarineHeatWaves**, and for a while the two packages will be maintained in sync, at least as far as developments around the existing code-base are concerned. New functions will only be added to **heatwaveR**.
 
 The **RmarineHeatWaves** R package contains a number of functions which calculate and display marine heat waves according to the definition of Hobday et al. (2016). The marine cold spell option was implemented in version 0.13 (21 Nov 2015) of the Python module as a result of the preparation of Schlegel et al. (2017), wherein the cold events are introduced and briefly discussed.
 

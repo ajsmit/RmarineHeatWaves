@@ -23,7 +23,9 @@ knitr::opts_chunk$set(
 ![](https://cranlogs.r-pkg.org/badges/grand-total/RmarineHeatWaves)
 
 The **RmarineHeatWaves** package is a translation of the original Python code written 
-by Eric C. J. Oliver that can be found on [GitHub](https://github.com/ecjoliver/marineHeatWaves). This package is actively maintained, but it has been forked to a new package called [heatwaveR](https://robwschlegel.github.io/heatwaveR/index.html), which will supercede and replace RmarineHeatWaves in the near future (for continuity, we are ensuring that the functionality here will be exactly the same in heatwaveR). 
+by Eric C. J. Oliver that can be found on [GitHub](https://github.com/ecjoliver/marineHeatWaves). 
+
+This package is actively maintained, but on 2018-04-24 it was forked to a new package called [**heatwaveR**](https://robwschlegel.github.io/heatwaveR/index.html), which will supercede and eventually replace **RmarineHeatWaves** in the near future. For continuity, we are ensuring that the functionality in **heatwaveR** will be exactly the same in **RmarineHeatWaves**, and for a while the two packages will be maintained in sync, at least as far as developments around the existing code-base are concerned. New functions will only be added to **heatwaveR**.
 
 The **RmarineHeatWaves** R package contains a number of functions which calculate 
 and display marine heat waves according to the definition of Hobday et al. (2016). 
