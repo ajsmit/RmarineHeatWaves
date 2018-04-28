@@ -73,7 +73,8 @@
 #' @examples
 #' ts_dat <- make_whole(sst_NW_Atl)
 #' # with defaults:
-#' res <- detect(ts_dat, climatology_start = 1983, climatology_end = 2012)
+#' res <- detect(ts_dat, climatology_start = "1983-01-01",
+#'               climatology_end = "2012-12-31")
 #' mhw <- res$event
 #'
 #' \dontrun{

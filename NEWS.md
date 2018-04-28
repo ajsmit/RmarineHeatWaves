@@ -3,6 +3,11 @@ output: pdf_document
 ---
 
 # VERSION CHANGES
+## Changes in version 0.16.4 (28 April 2018)
+* Remove restriction to require full years for start/end points of
+  climatology calculations in`detect()`
+* Documentation updated accordingly
+
 ## Changes in version 0.16.3 (18 April 2018)
 * Bug fix to the block_event() function.
 
