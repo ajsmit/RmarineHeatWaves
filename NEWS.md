@@ -7,6 +7,8 @@ output: pdf_document
 * Remove restriction to require full years for start/end points of
   climatology calculations in`detect()`
 * Documentation updated accordingly
+* Fix error with smooth_percentile and smooth_percentile_width descriptions
+  that were interchanged
 
 ## Changes in version 0.16.3 (18 April 2018)
 * Bug fix to the block_event() function.
