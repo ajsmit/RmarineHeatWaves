@@ -1,6 +1,6 @@
 Package: RmarineHeatWaves
-Version: 0.16.4
-Date: 2018-04-28
+Version: 0.16.5
+Date: 2018-06-04
 Title: Detect Marine Heat Waves and Marine Cold Spells
 Type: Package
 Authors@R: c(person("Albertus J.", "Smit", role = c("aut", "cre"),
