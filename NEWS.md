@@ -3,10 +3,11 @@
 ## Changes in version 0.17.0 (4 June 2018)
 * Add start-up message.
 * Minor bug fixes.
+* Reached end of active development cycle.
 
 ## Changes in version 0.16.4 (28 April 2018)
 * Remove restriction to require full years for start/end points of
-  climatology calculations in `detect()`.
+  climatology calculations in detect().
 * Documentation updated accordingly.
 * Fix error with smooth_percentile and smooth_percentile_width descriptions
   that were interchanged.
