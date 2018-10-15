@@ -1,5 +1,9 @@
 # VERSION CHANGES
 
+## Changes in version 0.17.0 (15 October 2018)
+* Minor bug fix in RmarineHeatWaves.R, i.e. sort function in 'clim_only'
+  on l.336.
+
 ## Changes in version 0.17.0 (4 June 2018)
 * Add start-up message.
 * Minor bug fixes.

@@ -333,7 +333,7 @@ detect <-
 
     if (clim_only) {
       t_series <- merge(data, clim, by = "doy")
-      t_series <- t_series[order(t_series$ts.x),]
+      t_series <- t_series[order(t_series[, 2]),]
       return(t_series)
 
     } else {
