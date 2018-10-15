@@ -332,8 +332,13 @@ detect <-
     }
 
     if (clim_only) {
-      t_series <- merge(data, clim, by = "doy")
-      t_series <- t_series[order(t_series[, 2]),]
+      t_series <- merge(t_series, clim, by = "doy")
+      t_series <- t_series[order(t_series[2]),]
+
+      names(t_series)[1] <- paste(substitute(doy))
+      names(t_series)[2] <- paste(substitute(x))
+      names(t_series)[3] <- paste(substitute(y))
+
       return(t_series)
 
     } else {
